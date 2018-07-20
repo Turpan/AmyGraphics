@@ -2,11 +2,12 @@ package movement;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Room {
 	protected List<Entity> contents;
-	protected BufferedImage background;
+	protected BufferedImage[] background;
 	private List<RoomListener> listeners;
 	
 	public Room() {
@@ -14,7 +15,7 @@ public abstract class Room {
 		listeners = new ArrayList<RoomListener>();
 	}
 	
-	public Room(BufferedImage background) {
+	public Room(BufferedImage[] background) {
 		this();
 		setBackground(background);
 	}
@@ -23,12 +24,16 @@ public abstract class Room {
 		return contents;
 	}
 	
-	public void setBackground(BufferedImage background) {
+	public void setBackground(BufferedImage[] background) {
 		this.background = background;
 		for (RoomListener listener : listeners) listener.backgroundChanged(background);
 	}
 	
-	public BufferedImage getBackground() {
+	public BufferedImage[] getBackground() {
+		if (background == null || Arrays.asList(background).contains(null)) {
+			return null;
+		}
+		
 		return background;
 	}
 	

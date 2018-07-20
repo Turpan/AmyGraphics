@@ -53,22 +53,11 @@ public abstract class GLObject {
 		GLBound = true;
 		objectID = glGenVertexArrays();
 		glBindVertexArray(objectID);
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(getVertices().size() * GLVertex.elementCount);
-		for (var vertex : getVertices()) {
-			buffer.put(vertex.getElements());
-		}
-		buffer.flip();
+		FloatBuffer buffer = createVertexBuffer();
 		objectBufferID = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, objectBufferID);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STREAM_DRAW);
-		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
-                false, GLVertex.stride, GLVertex.positionByteOffset);
-		glVertexAttribPointer(NORMALPOSITION, GLVertex.normalElementCount, GL_FLOAT, 
-                false, GLVertex.stride, GLVertex.normalByteOffset);
-        glVertexAttribPointer(COLOURPOSITION, GLVertex.colorElementCount, GL_FLOAT, 
-                false, GLVertex.stride, GLVertex.colorByteOffset);
-        glVertexAttribPointer(TEXTUREPOSITION, GLVertex.textureElementCount, GL_FLOAT, 
-                false, GLVertex.stride, GLVertex.textureByteOffset);
+		createAttributePointers();
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         objectIndicesBufferID = createOrderBuffer();
 		glBindVertexArray(0);
@@ -98,6 +87,10 @@ public abstract class GLObject {
 	
 	public abstract void update();
 	
+	protected abstract void createAttributePointers();
+	
+	protected abstract FloatBuffer createVertexBuffer();
+	
 	public void unbindObject() {
 		GLBound = false;
 		glBindVertexArray(objectID);
@@ -121,7 +114,6 @@ public abstract class GLObject {
 	public int getObjectIndicesBufferID() {
 		return objectIndicesBufferID;
 	}
-	public abstract BufferedImage getSprite();
 	
 	protected abstract void calculateVertices();
 	

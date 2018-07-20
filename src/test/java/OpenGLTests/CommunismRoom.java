@@ -44,13 +44,17 @@ public class CommunismRoom extends Room {
 		lucy = new TestLucy();
 		lucy.setPosition(new double[] {4000, 4000, 4000});
 		lucy.setDimensions(new double[] {4000, 4000, 4000});
-		try {
-			BufferedImage trueneutral = ImageIO.read(new File("graphics/trueneutral.png"));
-			setBackground(trueneutral);
-		} catch (IOException e) {
-			System.out.println("where is ambrose?");
-			System.exit(1);
+		
+		BufferedImage[] background = new BufferedImage[6];
+		for (int i=0; i<6; i++) {
+			try {
+				background[i] = ImageIO.read(new File("graphics/skybox/skybox" + i + ".png"));
+			} catch (IOException e) {
+				System.out.println("where is picture?");
+				System.exit(1);
+			}
 		}
+		setBackground(background);
 		addEntity(comm);
 		addEntity(farComm);
 		addEntity(highComm);

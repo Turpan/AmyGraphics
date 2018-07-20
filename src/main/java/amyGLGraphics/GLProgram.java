@@ -33,9 +33,9 @@ public abstract class GLProgram {
 	protected void createProgram() {
 		GLBound = true;
 		programID = glCreateProgram();
-		glBindAttribLocation(programID, GLRoomRenderer.VERTEXPOSITION, "in_Position");
-		glBindAttribLocation(programID, GLRoomRenderer.COLOURPOSITION, "in_Color");
-		glBindAttribLocation(programID, GLRoomRenderer.TEXTUREPOSITION, "in_TextureCoord");
+		//glBindAttribLocation(programID, GLRoomRenderer.VERTEXPOSITION, "in_Position");
+		//glBindAttribLocation(programID, GLRoomRenderer.COLOURPOSITION, "in_Color");
+		//glBindAttribLocation(programID, GLRoomRenderer.TEXTUREPOSITION, "in_TextureCoord");
 		createShaders();
 	}
 	

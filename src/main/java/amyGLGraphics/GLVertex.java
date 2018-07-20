@@ -1,10 +1,10 @@
 package amyGLGraphics;
 
 public class GLVertex {
-	float[] xyzw = new float[] {1f, 1f, 0f, 1f};
-	float[] abc = new float[] {0.0f, 0.0f, 0.0f};
-	float[] rgba = new float[] {1f, 0f, 1f, 1f};
-	float[] st = new float[] {0f, 0f};
+	public float[] xyzw = new float[] {1f, 1f, 0f, 1f};
+	public float[] abc = new float[] {0.0f, 0.0f, 0.0f};
+	public float[] rgba = new float[] {1f, 0f, 1f, 1f};
+	public float[] st = new float[] {0f, 0f};
     public static final int elementBytes = 4;
     public static final int positionElementCount = 4;
     public static final int normalElementCount = 3;

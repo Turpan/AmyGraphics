@@ -20,11 +20,6 @@ public class GLEntityProgram extends GLWorldProgram {
 		
 	}
 	
-	public void createProgram() {
-		super.createProgram();
-		setUpVars();
-	}
-	
 	@Override
 	protected void createShaders() {
 		createVertexShader("shaders/entityvertex.glsl");

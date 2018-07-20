@@ -12,7 +12,6 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glPixelStorei;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
@@ -28,22 +27,35 @@ import org.lwjgl.BufferUtils;
 
 import amyGLGraphicsIO.DecodedPNG;
 
-public abstract class GLTexture {
-	protected int textureID;
-	
-	public GLTexture() {
-		
+public class GLTexture2D extends GLTexture {
+	private DecodedPNG textureData;
+
+	public GLTexture2D(BufferedImage sprite) {
+		textureData = new DecodedPNG(sprite);
+		createTexture();
+	}
+
+	@Override
+	protected void createTexture() {
+		int width = textureData.getWidth();
+		int height = textureData.getHeight();
+		ByteBuffer byteBuffer = BufferUtils.createByteBuffer(textureData.getData().length);
+		byteBuffer.put(textureData.getData());
+		byteBuffer.flip();
+		textureID = glGenTextures();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, byteBuffer);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
 	
-	protected abstract void createTexture();
-	
-	public void unbindTexture() {
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glDeleteTextures(textureID);
+	public byte[] getTextureData() {
+		return textureData.getData();
 	}
-	
-	public int getTextureID() {
-		return textureID;
-	}
-	
+
 }

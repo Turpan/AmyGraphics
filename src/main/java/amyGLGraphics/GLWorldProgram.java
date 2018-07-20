@@ -6,9 +6,6 @@ public class GLWorldProgram extends GLProgram{
 	
 	private static final Matrix4f perspective
 	= new Matrix4f().perspective((float) Math.toRadians(90f), 1.77f, 0.1f, 100f);
-	
-	private static final Matrix4f model
-		= new Matrix4f().rotate((float) Math.toRadians(-0.0f), 1.0f, 0.0f, 0.0f);
 		
 	private static final Matrix4f view
 		= new Matrix4f().lookAt(0f, 3f, -3f, 0f, 0f, 0f, 0f, 1f, 0f);
@@ -19,7 +16,6 @@ public class GLWorldProgram extends GLProgram{
 	
 	public void createProgram() {
 		super.createProgram();
-		setUpVars();
 	}
 	
 	protected void linkProgram() {
@@ -31,7 +27,6 @@ public class GLWorldProgram extends GLProgram{
 		modelLocation = queryVariable("model");
 		viewLocation = queryVariable("view");
 		persLocation = queryVariable("projection");
-		updateModelMatrix(model);
 		updateViewMatrix(view);
 		updatePersMatrix(perspective);
 	}

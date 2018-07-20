@@ -1,11 +1,15 @@
 package amyGLGraphics;
 
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.GL_LESS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
@@ -16,11 +20,12 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
@@ -30,7 +35,6 @@ import movement.Entity;
 import movement.Light;
 import movement.LightType;
 import movement.Room;
-import movement.RoomListener;
 
 public class GLRoomRenderer extends RoomRenderer {
 	
@@ -42,10 +46,12 @@ public class GLRoomRenderer extends RoomRenderer {
 	private List<Light> lightSources = new ArrayList<Light>();
 	private Map<BufferedImage, GLTexture> textureMap = new HashMap<BufferedImage, GLTexture>();
 	private Map<Entity, GLEntity> entityMap = new HashMap<Entity, GLEntity>();
-	private GLBackground background = new GLBackground();
+	private GLSkyBox skyBox = new GLSkyBox();
+	private GLTextureCube skyBoxTexture;
 	private GLEntityProgram entityProgram = new GLEntityProgram();
 	private GLWorldProgram lightProgram = new GLWorldProgram();
 	private GLNormalRenderer normalRenderer = new GLNormalRenderer();
+	private GLSkyBoxProgram skyBoxProgram = new GLSkyBoxProgram();
 	private Light directionalLight;
 	public boolean renderNormals;
 	public GLCamera camera = new GLCamera();
@@ -96,17 +102,17 @@ public class GLRoomRenderer extends RoomRenderer {
 			removeEntity(entity);
 		}
 	}
-	private void setBackground(BufferedImage sprite) {
-		background.setSprite(sprite);
+	
+	private void setBackground(BufferedImage[] background) {
+		if (hasBackground()) {
+			skyBoxTexture = new GLTextureCube(background);
+		}
 	}
 	/*
 	 * Eveything in this class, but this most of all, assumes the openGl context has already been created
 	 */
 	public void renderRoom() {
 		updateMatrices();
-		if (background.isGLBound()) {
-			//renderBackground();
-		}
 		for (var entity : room.getContents()) {
 			if (isAffectedByLight(entity)) {
 				renderEntity(entity);
@@ -123,6 +129,10 @@ public class GLRoomRenderer extends RoomRenderer {
 				}
 			}
 			normalRenderer.renderNormals(entitys);
+		}
+		
+		if (skyBox.isGLBound() && hasBackground()) {
+			renderSkyBox();
 		}
 		
 	}
@@ -182,27 +192,24 @@ public class GLRoomRenderer extends RoomRenderer {
 		GL20.glUseProgram(0);
 	}
 	
-	private void renderBackground() {
-		int textureID = background.getTextureID();
-		int objectID = background.getObjectID();
-		int objectIndicesID = background.getObjectIndicesBufferID();
-		int programID = entityProgram.getProgramID();
-		background.update();
+	private void renderSkyBox() {
+		int textureID = skyBoxTexture.getTextureID();
+		int objectID = skyBox.getObjectID();
+		int objectIndicesID = skyBox.getObjectIndicesBufferID();
+		int programID = skyBoxProgram.getProgramID();
+		glDepthFunc(GL_LEQUAL);
 		GL20.glUseProgram(programID);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 		glBindVertexArray(objectID);
 		glEnableVertexAttribArray(VERTEXPOSITION);
-		glEnableVertexAttribArray(COLOURPOSITION);
-		glEnableVertexAttribArray(TEXTUREPOSITION);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectIndicesID);
-		glDrawElements(GL_TRIANGLES, background.getDrawLength(), GL_UNSIGNED_BYTE, 0);
+		glDrawElements(GL_TRIANGLES, skyBox.getDrawLength(), GL_UNSIGNED_BYTE, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glDisableVertexAttribArray(VERTEXPOSITION);
-		glDisableVertexAttribArray(COLOURPOSITION);
-		glDisableVertexAttribArray(TEXTUREPOSITION);
 		glBindVertexArray(0);
 		GL20.glUseProgram(0);
+		glDepthFunc(GL_LESS);
 	}
 	private void createBufferedEntity(Entity entity) {
 		var bufferedEntity = new GLEntity(entity);
@@ -210,7 +217,7 @@ public class GLRoomRenderer extends RoomRenderer {
 	}
 	private void createTexture(Entity entity) {
 		if (!textureMap.containsKey(entity.getTexture().getSprite())) {
-			var texture = new GLTexture(entity.getTexture().getSprite());
+			var texture = new GLTexture2D(entity.getTexture().getSprite());
 	        textureMap.put(entity.getTexture().getSprite(), texture);
 		}
 	}
@@ -221,21 +228,26 @@ public class GLRoomRenderer extends RoomRenderer {
 		entityMap = new HashMap<Entity, GLEntity>();
 		entityProgram.createProgram();
 		lightProgram.createProgram();
+		skyBoxProgram.createProgram();
 		directionalLight = null;
 		normalRenderer.resetState();
+		skyBox = new GLSkyBox();
 	}
 	private void unBindOpenGL() {
 		if (hasRoom()) {
 			removeEntity(room.getContents());
 		}
-		if (background.isGLBound()) {
-			background.unbindObject();
+		if (skyBox.isGLBound()) {
+			skyBox.unbindObject();
 		}
 		if (entityProgram.isGLBound()) {
 			entityProgram.unbindProgram();
 		}
 		if (lightProgram.isGLBound()) {
 			lightProgram.unbindProgram();
+		}
+		if (skyBoxProgram.isGLBound()) {
+			skyBoxProgram.unbindProgram();
 		}
 		normalRenderer.unbindOpenGL();
 	}
@@ -431,6 +443,7 @@ public class GLRoomRenderer extends RoomRenderer {
 		entityProgram.updateViewMatrix(camera.getCameraMatrix());
 		entityProgram.updateViewPosition(camera.getPosition());
 		lightProgram.updateViewMatrix(camera.getCameraMatrix());
+		skyBoxProgram.updateViewMatrix(new Matrix4f(new Matrix3f(camera.getCameraMatrix())));
 		
 		if (renderNormals) {
 			normalRenderer.updateMatrix(camera.getCameraMatrix());
@@ -443,10 +456,10 @@ public class GLRoomRenderer extends RoomRenderer {
 			getRoom().removeListener(this);
 			unBindOpenGL();
 		}
+		super.setRoom(room);
 		addEntity(room.getContents());
 		setBackground(room.getBackground());
 		room.addListener(this);
-		super.setRoom(room);
 	}
 	
 	@Override
@@ -458,7 +471,19 @@ public class GLRoomRenderer extends RoomRenderer {
 		removeEntity(entity);
 	}
 	@Override
-	public void backgroundChanged(BufferedImage background) {
+	public void backgroundChanged(BufferedImage[] background) {
 		setBackground(background);
+	}
+	
+	private boolean hasBackground() {
+		if (room.getBackground() == null) {
+			return false;
+		}
+		
+		if (room.getBackground().length != 6) {
+			return false;
+		}
+		
+		return true;
 	}
 }

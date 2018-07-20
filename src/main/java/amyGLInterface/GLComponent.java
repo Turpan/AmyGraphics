@@ -1,6 +1,12 @@
 package amyGLInterface;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+
 import java.awt.image.BufferedImage;
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
 
 import amyGLGraphics.GLObject;
 import amyGLGraphics.GLVertex;
@@ -16,7 +22,6 @@ public class GLComponent extends GLObject{
 		calculateVertices();
 		bindBuffer();
 	}
-	@Override
 	public BufferedImage getSprite() {
 		return component.getBackground();
 	}
@@ -57,5 +62,27 @@ public class GLComponent extends GLObject{
 	@Override
 	public void update() {
 		updateBuffer();
+	}
+	@Override
+	protected void createAttributePointers() {
+		int stride = GLVertex.positionBytesCount + GLVertex.colorByteCount + GLVertex.textureByteCount;
+		
+		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
+                false, stride, GLVertex.positionByteOffset);
+        glVertexAttribPointer(COLOURPOSITION, GLVertex.colorElementCount, GL_FLOAT, 
+                false, stride, GLVertex.colorByteOffset - GLVertex.normalByteOffset);
+        glVertexAttribPointer(TEXTUREPOSITION, GLVertex.textureElementCount, GL_FLOAT, 
+                false, stride, GLVertex.textureByteOffset - GLVertex.normalByteOffset);
+	}
+	@Override
+	protected FloatBuffer createVertexBuffer() {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(getVertices().size() * GLVertex.elementCount);
+		for (var vertex : getVertices()) {
+			buffer.put(vertex.xyzw);
+			buffer.put(vertex.rgba);
+			buffer.put(vertex.st);
+		}
+		buffer.flip();
+		return buffer;
 	}
 }

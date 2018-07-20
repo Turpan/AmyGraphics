@@ -1,9 +1,14 @@
 package amyGLGraphics;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+
 import java.awt.image.BufferedImage;
+import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 
 import amyGraphics.Animation;
 import amyGraphics.Texture;
@@ -27,10 +32,10 @@ public class GLEntity extends GLObject{
 		setNormals();
 		bindBuffer();
 	}
-	@Override
+	/*@Override
 	public BufferedImage getSprite() {
 		return entity.getTexture().getSprite();
-	}
+	}*/
 	@Override
 	protected void calculateVertices() {
 		if (is3D()) {
@@ -257,5 +262,25 @@ public class GLEntity extends GLObject{
 	
 	protected boolean isAnimated() {
 		return (entity.getTexture() instanceof Animation);
+	}
+	@Override
+	protected void createAttributePointers() {
+		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
+                false, GLVertex.stride, GLVertex.positionByteOffset);
+		glVertexAttribPointer(NORMALPOSITION, GLVertex.normalElementCount, GL_FLOAT, 
+                false, GLVertex.stride, GLVertex.normalByteOffset);
+        glVertexAttribPointer(COLOURPOSITION, GLVertex.colorElementCount, GL_FLOAT, 
+                false, GLVertex.stride, GLVertex.colorByteOffset);
+        glVertexAttribPointer(TEXTUREPOSITION, GLVertex.textureElementCount, GL_FLOAT, 
+                false, GLVertex.stride, GLVertex.textureByteOffset);
+	}
+	@Override
+	protected FloatBuffer createVertexBuffer() {
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(getVertices().size() * GLVertex.elementCount);
+		for (var vertex : getVertices()) {
+			buffer.put(vertex.getElements());
+		}
+		buffer.flip();
+		return buffer;
 	}
 }
