@@ -3,16 +3,17 @@ package movement;
 import java.awt.image.BufferedImage;
 
 import amyGraphics.Texture;
-
-//import movement.Shapes.OutlineShape;
+import movement.Vectors.Vector;
 
 public abstract class Entity {
-	double[] position;
-	double[] dimensions;
-	Texture texture;
-	//OutlineShape outline;	//determines collisions. Technically, doesn't at all map to the sprite
+	private float[] position;
+	private double[]dimensions;
+	private Texture texture;
 
-	public void setDimensions(double[] dimensions) {
+	public void setDimensions(double[] dimensions) throws MalformedEntityException {
+		if (dimensions.length != Vector.DIMENSIONS) {
+			throw new MalformedEntityException("attempt to set dimensions to wrong number of dimensions");
+		}
 		for (double dim : dimensions) {
 			if (dim <0) {dim = 0;}
 		}
@@ -27,19 +28,16 @@ public abstract class Entity {
 	public void setTexture(Texture texture) {
 		this.texture = texture;
 	}
-	public void setPosition(double[] position) {
+	public void setPosition(float[] position) throws MalformedEntityException {
+		if (position.length != Vector.DIMENSIONS) {
+			throw new MalformedEntityException("attempt to set position to wrong number of dimensions");
+		}
 		this.position = position;
 	}
-	public double[] getPosition() {
+	public float[] getPosition() {
 		return position;
 	}
-	/*public void setOutline(OutlineShape outline) {
-		this.outline = outline;
-	}
-	public OutlineShape getOutline() {
-		return outline;
-	}*/
-	
+	abstract public boolean inside(float[] point);
 	
 	
 	public class MalformedEntityException extends Exception {

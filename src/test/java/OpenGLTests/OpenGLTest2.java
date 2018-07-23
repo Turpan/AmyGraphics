@@ -78,6 +78,7 @@ import org.lwjgl.system.MemoryStack;
 import amyGLGraphics.GLGraphicsHandler;
 import amyGLGraphics.GLRoomRenderer;
 import amyGLGraphicsIO.ShaderLoader;
+import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class OpenGLTest2 {
@@ -159,7 +160,11 @@ public class OpenGLTest2 {
 		glEnable(GL11.GL_DEPTH_TEST);
 		renderer = new GLRoomRenderer();
 		renderer.renderNormals = false;
-		communismRoom = new CommunismRoom();
+		try {
+			communismRoom = new CommunismRoom();
+		} catch (MalformedEntityException e) {
+			System.exit(-1);
+		}
 		renderer.setRoom(communismRoom);
 	}
 
@@ -251,9 +256,9 @@ public class OpenGLTest2 {
 	private void createSquare() {
 		var position = renderer.camera.getPosition();
 		
-		double x = position.x * GLGraphicsHandler.viewWidth;
-		double y = position.y * GLGraphicsHandler.viewHeight;
-		double z = position.z * GLGraphicsHandler.viewDepth;
+		float x = position.x * GLGraphicsHandler.viewWidth;
+		float y = position.y * GLGraphicsHandler.viewHeight;
+		float z = position.z * GLGraphicsHandler.viewDepth;
 		
 		communismRoom.addSquare(x, y, z);
 	}

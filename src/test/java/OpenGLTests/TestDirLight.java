@@ -33,4 +33,10 @@ public class TestDirLight extends Light{
 		Texture texture = new Texture(img);
 		setTexture(texture);
 	}
+
+	@Override
+	public boolean inside(float[] point) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -25,4 +25,9 @@ public class Communism extends Entity {
 		texture.setHeight(img.getHeight());
 		setTexture(texture);
 	}
+	@Override
+	public boolean inside(float[] point) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

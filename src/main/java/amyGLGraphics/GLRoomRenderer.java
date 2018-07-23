@@ -289,13 +289,13 @@ public class GLRoomRenderer extends RoomRenderer {
 	
 	private List<Light> getClosestLights(Entity entity) {
 		Collections.sort(lightSources, (Light l1, Light l2) -> {
-			double[] dpos1 = l1.getPosition();
-			double[] dpos2 = l2.getPosition();
-			double[] enpos = entity.getPosition();
+			float[] dpos1 = l1.getPosition();
+			float[] dpos2 = l2.getPosition();
+			float[] enpos = entity.getPosition();
 			
-			Vector3f vec1 = new Vector3f((float) dpos1[0], (float) dpos1[1], (float) dpos1[2]);
-			Vector3f vec2 = new Vector3f((float) dpos2[0], (float) dpos2[1], (float) dpos2[2]);
-			Vector3f envec = new Vector3f((float) enpos[0], (float) enpos[1], (float) enpos[2]);
+			Vector3f vec1 = new Vector3f( dpos1[0],  dpos1[1],  dpos1[2]);
+			Vector3f vec2 = new Vector3f( dpos2[0],  dpos2[1],  dpos2[2]);
+			Vector3f envec = new Vector3f( enpos[0],  enpos[1],  enpos[2]);
 			
 			var distance1 = envec.distance(vec1);
 			var distance2 = envec.distance(vec2);

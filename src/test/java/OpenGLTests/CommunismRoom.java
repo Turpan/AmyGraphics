@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import amyGLGraphics.GLEntity;
 import amyGraphics.Animation;
+import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class CommunismRoom extends Room {
@@ -21,28 +22,28 @@ public class CommunismRoom extends Room {
 	int tickCount;
 	
 	private boolean movingLeft;
-	public CommunismRoom() {
+	public CommunismRoom() throws MalformedEntityException {
 		super();
 		comm = new Communism();
-		comm.setPosition(new double[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 1000});
+		comm.setPosition(new float[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 1000});
 		comm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
 		farComm = new Communism();
-		farComm.setPosition(new double[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 10000});
+		farComm.setPosition(new float[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 10000});
 		farComm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
 		highComm = new Communism();
-		highComm.setPosition(new double[] {GLEntity.viewWidth / 2, 3000, 2000});
+		highComm.setPosition(new float[] {GLEntity.viewWidth / 2, 3000, 2000});
 		highComm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
 		square = new TestSquare();
-		square.setPosition(new double[] {0, 0, 100});
+		square.setPosition(new float[] {0, 0, 100});
 		square.setDimensions(new double[] {square.getTexture().getSprite().getWidth(), square.getTexture().getSprite().getHeight(), 50});
 		light = new TestLight();
 		light.setPosition(comm.getPosition());
 		light.setDimensions(new double[] {50, 50, 50});
 		dirLight = new TestDirLight();
-		dirLight.setPosition(new double[] {-50000, 50000, 0});
+		dirLight.setPosition(new float[] {-50000, 50000, 0});
 		dirLight.setDimensions(new double[] {50, 50, 50});
 		lucy = new TestLucy();
-		lucy.setPosition(new double[] {4000, 4000, 4000});
+		lucy.setPosition(new float[] {4000, 4000, 4000});
 		lucy.setDimensions(new double[] {4000, 4000, 4000});
 		
 		BufferedImage[] background = new BufferedImage[6];
@@ -81,11 +82,15 @@ public class CommunismRoom extends Room {
 			}
 		}
 		
-		double x = comm.getPosition()[0] + (1000 * Math.cos(Math.toRadians(tickCount)));
-		double y = comm.getPosition()[1] + (1000 * Math.sin(Math.toRadians(tickCount)));
-		double z = comm.getPosition()[2] + (1000 * Math.sin(Math.toRadians(tickCount)));
-		double[] pos = light.getPosition();
-		light.setPosition(new double[] {x, pos[1], z});
+		float x = (float) (comm.getPosition()[0] + (1000 * Math.cos(Math.toRadians(tickCount))));
+		float y = (float) (comm.getPosition()[1] + (1000 * Math.sin(Math.toRadians(tickCount))));
+		float z = (float) (comm.getPosition()[2] + (1000 * Math.sin(Math.toRadians(tickCount))));
+		float[] pos = light.getPosition();
+		try {
+			light.setPosition(new float[] {x, pos[1], z});
+		} catch (MalformedEntityException e) {
+			System.exit(-1);
+		}
 		
 		if (tickCount % 5 == 0) {
 			Animation anim = (Animation) lucy.getTexture();
@@ -93,10 +98,14 @@ public class CommunismRoom extends Room {
 		}
 	}
 	
-	public void addSquare(double x, double y, double z) {
+	public void addSquare(float x, float y, float z) {
 		Communism square = new Communism();
-		square.setPosition(new double[] {x, y, z});
-		square.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+		try {
+			square.setPosition(new float[] {x, y, z});
+			square.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+		} catch (MalformedEntityException e) {
+			System.exit(-1);
+		}
 		addEntity(square);
 	}
 }
