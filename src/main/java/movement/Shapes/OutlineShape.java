@@ -8,7 +8,6 @@ import movement.Vectors.Vector.MalformedVectorException;
 public interface OutlineShape {
 	final static int collisionDetectionGranularity = 10;
 	
-	public double getCoDmodifier();							//impacts CoD. The shape of the object has an effect!
 	public Vector getNormal(float[] position) throws MalformedVectorException; //normal of the shape at a point.
 	public double[] getDimensions();
 	public void setDimensions(double[] dimensions);
