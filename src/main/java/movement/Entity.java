@@ -3,6 +3,7 @@ package movement;
 import java.awt.image.BufferedImage;
 
 import amyGraphics.Texture;
+import movement.Entity.MalformedEntityException;
 import movement.Vectors.Vector;
 
 public abstract class Entity {
@@ -39,7 +40,20 @@ public abstract class Entity {
 	}
 	abstract public boolean inside(float[] point);
 	
-	
+	public void teleport(Vector movement) {
+		float[] newPosition = new float[Vector.DIMENSIONS];
+		float[] currentPosition = getPosition();
+		double[] moveCmpnts = movement.getComponents();
+		for (int i=0;i<Vector.DIMENSIONS;i++) {
+			newPosition[i] = (float) (currentPosition[i] + moveCmpnts[i]);
+		}
+		try {
+			setPosition(newPosition);
+		} catch (MalformedEntityException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	public class MalformedEntityException extends Exception {
 		private static final long serialVersionUID = 1L;
 
