@@ -1,16 +1,14 @@
 package amyGLGraphics;
 
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glBindAttribLocation;
 import static org.lwjgl.opengl.GL20.glCreateProgram;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
-import static org.lwjgl.opengl.GL20.glDeleteShader;
 import static org.lwjgl.opengl.GL20.glDetachShader;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.nio.FloatBuffer;
 
@@ -119,6 +117,12 @@ public abstract class GLProgram {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
 		vector.get(buffer);
 		GL20.glUniform3fv(location, buffer);
+		GL20.glUseProgram(0);
+	}
+	
+	protected void updateFloat(float f, int location) {
+		GL20.glUseProgram(programID);
+		GL20.glUniform1f(location, f);
 		GL20.glUseProgram(0);
 	}
 	

@@ -1,6 +1,5 @@
 package OpenGLTests;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,29 +7,23 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import amyGraphics.Texture;
-import movement.Light;
-import movement.LightType;
+import movement.Entity;
 
-public class TestDirLight extends Light{
+public class Neutral extends Entity {
 	
-	static final Color color = Color.YELLOW;
-	
-	public TestDirLight() {
-		super(LightType.DIRECTIONAL, color);
+	public Neutral() {
 		loadImage();
-		setAmbient(0.1);
-		setDiffuse(0.7);
-		setSpecular(0.7);
 	}
-	
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/testsquare.png"));
+		    img = ImageIO.read(new File("graphics/trueneutral.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
 		Texture texture = new Texture(img);
+		texture.setWidth(img.getWidth());
+		texture.setHeight(img.getHeight());
 		setTexture(texture);
 	}
 
@@ -39,4 +32,5 @@ public class TestDirLight extends Light{
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 }

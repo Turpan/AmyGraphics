@@ -1,10 +1,13 @@
 package amyGLGraphics;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -18,7 +21,6 @@ public class GLEntity extends GLObject{
 	
 	private Entity entity;
 	private boolean is3d;
-	private Matrix4f modelMatrix;
 	
 	public GLEntity(Entity entity) {
 		super();
@@ -256,15 +258,12 @@ public class GLEntity extends GLObject{
 		modelMatrix = new Matrix4f().translate(fx, fy, 0);
 	}
 	
-	public Matrix4f getModelMatrix() {
-		return modelMatrix;
-	}
-	
 	protected boolean isAnimated() {
 		return (entity.getTexture() instanceof Animation);
 	}
+	
 	@Override
-	protected void createAttributePointers() {
+	protected List<Integer> createAttributePointers() {
 		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
                 false, GLVertex.stride, GLVertex.positionByteOffset);
 		glVertexAttribPointer(NORMALPOSITION, GLVertex.normalElementCount, GL_FLOAT, 
@@ -273,7 +272,15 @@ public class GLEntity extends GLObject{
                 false, GLVertex.stride, GLVertex.colorByteOffset);
         glVertexAttribPointer(TEXTUREPOSITION, GLVertex.textureElementCount, GL_FLOAT, 
                 false, GLVertex.stride, GLVertex.textureByteOffset);
+        
+        List<Integer> attribPointers = new ArrayList<Integer>();
+        attribPointers.add(VERTEXPOSITION);
+        attribPointers.add(NORMALPOSITION);
+        attribPointers.add(COLOURPOSITION);
+        attribPointers.add(TEXTUREPOSITION);
+        return attribPointers;
 	}
+	
 	@Override
 	protected FloatBuffer createVertexBuffer() {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(getVertices().size() * GLVertex.elementCount);
@@ -282,5 +289,9 @@ public class GLEntity extends GLObject{
 		}
 		buffer.flip();
 		return buffer;
+	}
+	
+	public void setDiffuseTexture(GLTexture2D texture) {
+		addTexture(texture, GL_TEXTURE0);
 	}
 }

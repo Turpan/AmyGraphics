@@ -1,5 +1,9 @@
 package amyGLGraphics;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 public class GLVertex {
 	public float[] xyzw = new float[] {1f, 1f, 0f, 1f};
 	public float[] abc = new float[] {0.0f, 0.0f, 0.0f};
@@ -102,5 +106,21 @@ public class GLVertex {
     			st[0],
     			st[1]
     	};
+    }
+    
+    public Vector4f xyzwVector() {
+    	return new Vector4f(xyzw[0], xyzw[1], xyzw[2], xyzw[3]);
+    }
+    
+    public Vector3f abcVector() {
+    	return new Vector3f(abc[0], abc[1], abc[2]);
+    }
+    
+    public Vector4f rgbaVector() {
+    	return new Vector4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+    
+    public Vector2f stVector() {
+    	return new Vector2f(st[0], st[1]);
     }
 }

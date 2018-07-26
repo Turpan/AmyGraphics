@@ -76,7 +76,7 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import amyGLGraphics.GLGraphicsHandler;
-import amyGLGraphics.GLRoomRenderer;
+import amyGLGraphics.GLRoomHandler;
 import amyGLGraphicsIO.ShaderLoader;
 import movement.Entity.MalformedEntityException;
 import movement.Room;
@@ -94,7 +94,7 @@ public class OpenGLTest2 {
 	private float yaw;
 	
 	private long window;
-	private GLRoomRenderer renderer;
+	private GLRoomHandler renderer;
 	private CommunismRoom communismRoom;
 	public void run() {
 		init();
@@ -158,7 +158,7 @@ public class OpenGLTest2 {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable( GL_BLEND );
 		glEnable(GL11.GL_DEPTH_TEST);
-		renderer = new GLRoomRenderer();
+		renderer = new GLRoomHandler();
 		renderer.renderNormals = false;
 		try {
 			communismRoom = new CommunismRoom();

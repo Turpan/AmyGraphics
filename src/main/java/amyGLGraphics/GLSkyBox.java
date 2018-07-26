@@ -1,9 +1,13 @@
 package amyGLGraphics;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 
@@ -79,11 +83,19 @@ public class GLSkyBox extends GLObject {
 		vertices.get(22).setXYZ(fr, fy, fba);
 		vertices.get(23).setXYZ(fx, fy, fba);
 	}
+	
+	public void setSkyBox(GLTextureCube texture) {
+		addTexture(texture, GL_TEXTURE0);
+	}
 
 	@Override
-	protected void createAttributePointers() {
+	protected List<Integer> createAttributePointers() {
 		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
                 false, GLVertex.positionBytesCount, GLVertex.positionByteOffset);
+		
+		List<Integer> attribPointers = new ArrayList<Integer>();
+		attribPointers.add(VERTEXPOSITION);
+		return attribPointers;
 	}
 
 	@Override

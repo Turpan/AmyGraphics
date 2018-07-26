@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
@@ -29,10 +30,23 @@ import amyGLGraphicsIO.DecodedPNG;
 
 public class GLTexture2D extends GLTexture {
 	private DecodedPNG textureData;
+	private boolean transparent;
+	static int counter = 0;
 
 	public GLTexture2D(BufferedImage sprite) {
 		textureData = new DecodedPNG(sprite);
 		createTexture();
+		transparent = determineTransparency();
+	}
+	
+	private boolean determineTransparency() {
+		byte[] data = textureData.getData();
+		for (int i=0; i<data.length/4; i++) {
+			if (data[(i*4)+3] != -1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -46,7 +60,7 @@ public class GLTexture2D extends GLTexture {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureID);
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, byteBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, byteBuffer);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -56,6 +70,16 @@ public class GLTexture2D extends GLTexture {
 	
 	public byte[] getTextureData() {
 		return textureData.getData();
+	}
+
+	@Override
+	public boolean isTransparent() {
+		return transparent;
+	}
+
+	@Override
+	public int getTextureType() {
+		return GL_TEXTURE_2D;
 	}
 
 }

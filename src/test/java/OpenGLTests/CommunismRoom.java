@@ -12,6 +12,7 @@ import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class CommunismRoom extends Room {
+	Neutral neutral;
 	Communism comm;
 	Communism highComm;
 	Communism farComm;
@@ -24,6 +25,9 @@ public class CommunismRoom extends Room {
 	private boolean movingLeft;
 	public CommunismRoom() throws MalformedEntityException {
 		super();
+		neutral = new Neutral();
+		neutral.setPosition(new float[] {-1000, 0, 2600});
+		neutral.setDimensions(new double[] {10000, 4000, 100});
 		comm = new Communism();
 		comm.setPosition(new float[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 1000});
 		comm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
@@ -41,7 +45,7 @@ public class CommunismRoom extends Room {
 		light.setDimensions(new double[] {50, 50, 50});
 		dirLight = new TestDirLight();
 		dirLight.setPosition(new float[] {-50000, 50000, 0});
-		dirLight.setDimensions(new double[] {50, 50, 50});
+		dirLight.setDimensions(new double[] {10000, 10000, 10000});
 		lucy = new TestLucy();
 		lucy.setPosition(new float[] {4000, 4000, 4000});
 		lucy.setDimensions(new double[] {4000, 4000, 4000});
@@ -56,6 +60,7 @@ public class CommunismRoom extends Room {
 			}
 		}
 		setBackground(background);
+		addEntity(neutral);
 		addEntity(comm);
 		addEntity(farComm);
 		addEntity(highComm);

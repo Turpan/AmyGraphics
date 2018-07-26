@@ -3,14 +3,14 @@ package amyGraphics;
 import movement.Room;
 import movement.RoomListener;
 
-public abstract class RoomRenderer implements RoomListener{
+public abstract class RoomHandler implements RoomListener{
 	protected Room room;
 	
-	public RoomRenderer() {
+	public RoomHandler() {
 		
 	}
 	
-	public RoomRenderer(Room room) {
+	public RoomHandler(Room room) {
 		this();
 		setRoom(room);
 	}

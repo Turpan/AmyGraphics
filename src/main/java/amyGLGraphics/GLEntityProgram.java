@@ -4,10 +4,10 @@ import org.joml.Vector3f;
 
 public class GLEntityProgram extends GLWorldProgram {
 	
-	private int[] pointLightAmbientLocation = new int[GLRoomRenderer.POINTLIGHTCOUNT];
-	private int[] pointLightDiffuseLocation = new int[GLRoomRenderer.POINTLIGHTCOUNT];
-	private int[] pointLightSpecularLocation = new int[GLRoomRenderer.POINTLIGHTCOUNT];
-	private int[] pointLightPositionLocation = new int[GLRoomRenderer.POINTLIGHTCOUNT];
+	private int[] pointLightAmbientLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
+	private int[] pointLightDiffuseLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
+	private int[] pointLightSpecularLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
+	private int[] pointLightPositionLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
 	
 	private int dirLightAmbientLocation;
 	private int dirLightDiffuseLocation;
@@ -15,6 +15,8 @@ public class GLEntityProgram extends GLWorldProgram {
 	private int dirLightDirectionLocation;
 	
 	private int viewPositionLocation;
+	
+	private int gammaLocation;
 	
 	public GLEntityProgram() {
 		
@@ -30,7 +32,7 @@ public class GLEntityProgram extends GLWorldProgram {
 	protected void setUpVars() {
 		super.setUpVars();
 		
-		for (int i=0; i<GLRoomRenderer.POINTLIGHTCOUNT; i++) {
+		for (int i=0; i<GLRoomHandler.POINTLIGHTCOUNT; i++) {
 			pointLightAmbientLocation[i] = queryVariable("pointLights[" + i + "].ambient");
 			pointLightDiffuseLocation[i] = queryVariable("pointLights[" + i + "].diffuse");
 			pointLightSpecularLocation[i] = queryVariable("pointLights[" + i + "].specular");
@@ -43,6 +45,8 @@ public class GLEntityProgram extends GLWorldProgram {
 		dirLightDirectionLocation = queryVariable("dirLight.direction");
 		
 		viewPositionLocation = queryVariable("viewPosition");
+		
+		gammaLocation = queryVariable("gamma");
 	}
 	
 	public void updatePointLightAmbient(Vector3f colour, int count) {
@@ -79,5 +83,9 @@ public class GLEntityProgram extends GLWorldProgram {
 	
 	public void updateViewPosition(Vector3f position) {
 		updateVec3(position, viewPositionLocation);
+	}
+	
+	public void updateGamma(float gamma) {
+		updateFloat(gamma, gammaLocation);
 	}
 }

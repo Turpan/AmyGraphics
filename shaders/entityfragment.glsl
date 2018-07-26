@@ -25,6 +25,8 @@ struct PointLight {
 #define POINTLIGHTS 4  
 uniform PointLight pointLights[POINTLIGHTS];
 
+uniform float gamma;
+
 in vec4 passColour;
 in vec3 passNormal;
 in vec2 passTexcoord;
@@ -53,11 +55,11 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPosition, vec3 
 	float quadratic = 0.07;
 
 	vec3 lightDirection = normalize(light.position - fragPosition);
+	vec3 halfwayDirection = normalize(lightDirection + viewDirection);
 	
 	float diff = max(dot(normal, lightDirection), 0.0);
 	
-	vec3 reflectDirection = reflect(-lightDirection, normal);
-	float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), 32);
+	float spec = pow(max(dot(normal, halfwayDirection), 0.0), 32);
 	
 	float dist = length(light.position - fragPosition);
 	float attenuation = 1.0 / (constant + linear * dist + 
@@ -73,6 +75,11 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPosition, vec3 
 	return (ambient + diffuse + specular);
 }
 
+vec4 gammaCorrection(vec4 fragColour) {
+	fragColour.rgb = pow(fragColour.rgb, vec3(1.0/gamma));
+	return fragColour;
+}
+
 void main(void) {
 	vec3 normal = normalize(passNormal);
 	vec3 viewDirection = normalize(viewPosition - fragPosition);
@@ -84,6 +91,8 @@ void main(void) {
 	}	
 	
 	vec4 fragColour = texture(texture_diffuse, passTexcoord);
-	//outColour = passColour * vec4(result, 1.0);
+
 	outColour = fragColour * vec4(result, 1.0);
+	
+	outColour = gammaCorrection(outColour);
 }

@@ -1,6 +1,5 @@
 package amyGLGraphics;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
@@ -10,18 +9,19 @@ import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
@@ -29,10 +29,10 @@ public abstract class GLObject {
 	public static final int viewWidth = GLGraphicsHandler.viewWidth;
 	public static final int viewHeight = GLGraphicsHandler.viewHeight;
 	public static final int viewDepth = GLGraphicsHandler.viewDepth;
-	public static final int VERTEXPOSITION = GLRoomRenderer.VERTEXPOSITION;
-	public static final int NORMALPOSITION = GLRoomRenderer.NORMALPOSITION;
-	public static final int COLOURPOSITION = GLRoomRenderer.COLOURPOSITION;
-	public static final int TEXTUREPOSITION = GLRoomRenderer.TEXTUREPOSITION;
+	public static final int VERTEXPOSITION = GLRoomHandler.VERTEXPOSITION;
+	public static final int NORMALPOSITION = GLRoomHandler.NORMALPOSITION;
+	public static final int COLOURPOSITION = GLRoomHandler.COLOURPOSITION;
+	public static final int TEXTUREPOSITION = GLRoomHandler.TEXTUREPOSITION;
 	static final float[] texturecoords = {
 			0.0f, 0.0f,
 			1.0f, 0.0f,
@@ -44,8 +44,11 @@ public abstract class GLObject {
 	private int objectID;
 	private int objectBufferID;
 	private int objectIndicesBufferID;
+	private List<Integer> attributePointers;
 	private boolean GLBound;
 	protected List<GLVertex> vertices = new ArrayList<GLVertex>();
+	protected Matrix4f modelMatrix = new Matrix4f();
+	protected Map<GLTexture, Integer> textures = new HashMap<GLTexture, Integer>();
 	
 	protected abstract byte[] createDrawOrder();
 	
@@ -57,7 +60,7 @@ public abstract class GLObject {
 		objectBufferID = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, objectBufferID);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STREAM_DRAW);
-		createAttributePointers();
+		attributePointers = createAttributePointers();
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         objectIndicesBufferID = createOrderBuffer();
 		glBindVertexArray(0);
@@ -87,7 +90,7 @@ public abstract class GLObject {
 	
 	public abstract void update();
 	
-	protected abstract void createAttributePointers();
+	protected abstract List<Integer> createAttributePointers();
 	
 	protected abstract FloatBuffer createVertexBuffer();
 	
@@ -99,6 +102,15 @@ public abstract class GLObject {
 		glBindVertexArray(0);
 		glDeleteVertexArrays(objectID);
 	}
+	
+	public void addTexture(GLTexture texture, int target) {
+		textures.put(texture, target);
+	}
+	
+	public Map<GLTexture, Integer> getTextures() {
+		return textures;
+	}
+	
 	protected abstract void createVertices();
 	
 	public List<GLVertex> getVertices() {
@@ -148,30 +160,26 @@ public abstract class GLObject {
 		return draworder.length;
 	}
 	
+	public List<Integer> getAttributePointers() {
+		return attributePointers;
+	}
+	
 	protected void setDrawOrder() {
 		draworder = createDrawOrder();
 	}
 	
+	public Matrix4f getModelMatrix() {
+		return modelMatrix;
+	}
+	
 	protected Vector3f calculateSurfaceNormal(Vector3f pointA, Vector3f pointB, Vector3f pointC) {
-		// this formula https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
 		Vector3f U = new Vector3f();
 		Vector3f V = new Vector3f();
 		
 		pointB.sub(pointA, U);
 		pointC.sub(pointA, V);
 		
-		/*float x = (U.y * V.z) - (U.z * V.y);
-		float y = (U.z * V.x) - (U.x * V.z);
-		float z = (U.x * V.y) - (U.y * V.x);
-		
-		Vector3f normal = new Vector3f();
-		normal.x = x;
-		normal.y = y;
-		normal.z = z;
-		normal = normal.normalize();*/
-		
 		Vector3f normal;
-		//normal = U.cross(V);
 		normal = V.cross(U);
 		normal = normal.normalize();
 		

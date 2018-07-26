@@ -3,12 +3,12 @@ package amyGraphics;
 import movement.Room;
 
 public abstract class GraphicsHandler {
-	protected RoomRenderer roomRenderer;
+	protected RoomHandler roomHandler;
 	protected InterfaceRenderer interfaceRenderer;
 	
 	public void render() {
 		if (roomRendererCreated()) {
-			roomRenderer.renderRoom();
+			roomHandler.renderRoom();
 		}
 		if (interfaceRendererCreated()) {
 			interfaceRenderer.renderInterface();
@@ -23,12 +23,12 @@ public abstract class GraphicsHandler {
 	
 	public void setRoom(Room room) {
 		if (roomRendererCreated()) {
-			roomRenderer.setRoom(room);
+			roomHandler.setRoom(room);
 		}
 	}
 	
 	protected boolean roomRendererCreated() {
-		return roomRenderer != null;
+		return roomHandler != null;
 	}
 	
 	protected boolean interfaceRendererCreated() {

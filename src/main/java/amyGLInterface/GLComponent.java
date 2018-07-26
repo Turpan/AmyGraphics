@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 
@@ -64,7 +66,7 @@ public class GLComponent extends GLObject{
 		updateBuffer();
 	}
 	@Override
-	protected void createAttributePointers() {
+	protected List<Integer> createAttributePointers() {
 		int stride = GLVertex.positionBytesCount + GLVertex.colorByteCount + GLVertex.textureByteCount;
 		
 		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
@@ -73,6 +75,12 @@ public class GLComponent extends GLObject{
                 false, stride, GLVertex.colorByteOffset - GLVertex.normalByteOffset);
         glVertexAttribPointer(TEXTUREPOSITION, GLVertex.textureElementCount, GL_FLOAT, 
                 false, stride, GLVertex.textureByteOffset - GLVertex.normalByteOffset);
+        
+        List<Integer> attribs = new ArrayList<Integer>();
+        attribs.add(VERTEXPOSITION);
+        attribs.add(COLOURPOSITION);
+        attribs.add(TEXTUREPOSITION);
+        return attribs;
 	}
 	@Override
 	protected FloatBuffer createVertexBuffer() {

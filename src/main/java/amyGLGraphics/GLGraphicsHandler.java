@@ -10,14 +10,18 @@ public class GLGraphicsHandler extends GraphicsHandler {
 	public static final int viewWidth = 4000;
 	public static final int viewHeight = 4000;
 	public static final int viewDepth = 4000;
+	
 	public GLGraphicsHandler() {
-		roomRenderer = new GLRoomRenderer();
+		roomHandler = new GLRoomHandler();
 		interfaceRenderer = new GLInterfaceRenderer();
 	}
 	
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
+		roomHandler.renderRoom();
+	}
+	
+	public void unbindGL() {
 		
 	}
 
