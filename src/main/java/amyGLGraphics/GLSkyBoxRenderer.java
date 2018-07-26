@@ -4,6 +4,9 @@ import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.GL_LESS;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+
 public class GLSkyBoxRenderer extends GLRenderer {
 	
 	private GLSkyBoxProgram skyboxProgram;
@@ -15,7 +18,9 @@ public class GLSkyBoxRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		skyboxProgram.updateViewMatrix(camera.getCameraMatrix());
+		Matrix4f cameraMatrix = new Matrix4f(new Matrix3f(camera.getCameraMatrix()));
+		
+		skyboxProgram.updateViewMatrix(cameraMatrix);
 	}
 
 	@Override
