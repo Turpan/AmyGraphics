@@ -17,9 +17,6 @@ public class Triangle implements OutlineShape {
 	public double[] getDimensions() {
 		return dimensions;
 	}
-	public double getCoDmodifier() {							//impacts CoD. The shape of the object has an effect!
-		return 0.0;
-	}
 	public Vector getNormal(float[] position) throws MalformedVectorException {
 		return new Vector();
 	}

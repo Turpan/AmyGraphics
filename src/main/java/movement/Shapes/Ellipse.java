@@ -59,10 +59,6 @@ public class Ellipse implements OutlineShape{
 	public double[] getDimensions() {
 		return dimensions;
 	}
-
-	public double getCoDmodifier() {							//impacts CoD. The shape of the object could have an effect!
-		return 1.0;
-	}
 	public Vector getNormal(float[] position) throws MalformedVectorException {	
 		//takes the multivariate derivative, which gives a linear function equivalent at the point, 
 		//generating a plane (or dimensional equiv), and outputting the coefficient vector. Which /is/ the normal. Wild.
