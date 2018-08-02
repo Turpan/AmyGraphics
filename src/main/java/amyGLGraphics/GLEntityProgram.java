@@ -1,8 +1,14 @@
 package amyGLGraphics;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL13;
 
 public class GLEntityProgram extends GLWorldProgram {
+	
+	static final int diffuseTextureUnit = 0;
+	static final int dirDepthTextureUnit = 1;
+	static final int pointDepthTextureUnit = 2;
 	
 	private int[] pointLightAmbientLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
 	private int[] pointLightDiffuseLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
@@ -14,9 +20,18 @@ public class GLEntityProgram extends GLWorldProgram {
 	private int dirLightSpecularLocation;
 	private int dirLightDirectionLocation;
 	
+	private int dirLightMatrixLocation;
+	
 	private int viewPositionLocation;
 	
 	private int gammaLocation;
+	
+	private int diffuseTextureLocation;
+	private int dirShadowMapLocation;
+	
+	private int[] pointShadowMapLocation = new int[GLRoomHandler.POINTLIGHTCOUNT];
+	
+	private int farPlaneLocation;
 	
 	public GLEntityProgram() {
 		
@@ -44,9 +59,32 @@ public class GLEntityProgram extends GLWorldProgram {
 		dirLightSpecularLocation = queryVariable("dirLight.specular");
 		dirLightDirectionLocation = queryVariable("dirLight.direction");
 		
+		dirLightMatrixLocation = queryVariable("dirLightMatrix");
+		
 		viewPositionLocation = queryVariable("viewPosition");
 		
 		gammaLocation = queryVariable("gamma");
+		
+		diffuseTextureLocation = queryVariable("texture_diffuse");
+		
+		dirShadowMapLocation = queryVariable("dirShadowMap");
+		
+		for (int i=0; i<GLRoomHandler.POINTLIGHTCOUNT; i++) {
+			//pointShadowMapLocation[i] = queryVariable("pointShadowMap[" + i + "]");
+			
+			pointShadowMapLocation[i] = queryVariable("pointShadowMap");
+			
+			//updatePointShadowMapUnit(i + pointDepthTextureUnit, i);
+		}
+		
+		farPlaneLocation = queryVariable("farPlane");
+		
+		updateDiffuseTextureUnit(diffuseTextureUnit);
+		updateDirShadowMapUnit(dirDepthTextureUnit);
+		
+		updatePointShadowMapUnit(0 + pointDepthTextureUnit, 0);
+		
+		updateFarPlane(GLPointDepthProgram.far);
 	}
 	
 	public void updatePointLightAmbient(Vector3f colour, int count) {
@@ -81,11 +119,31 @@ public class GLEntityProgram extends GLWorldProgram {
 		updateVec3(direction, dirLightDirectionLocation);
 	}
 	
+	public void updateDirLightMatrix(Matrix4f matrix) {
+		updateMat4(matrix, dirLightMatrixLocation);
+	}
+	
 	public void updateViewPosition(Vector3f position) {
 		updateVec3(position, viewPositionLocation);
 	}
 	
 	public void updateGamma(float gamma) {
 		updateFloat(gamma, gammaLocation);
+	}
+	
+	public void updateDiffuseTextureUnit(int unit) {
+		updateInt(unit, diffuseTextureLocation);
+	}
+	
+	public void updateDirShadowMapUnit(int unit) {
+		updateInt(unit, dirShadowMapLocation);
+	}
+	
+	public void updatePointShadowMapUnit(int unit, int index) {
+		updateInt(unit, pointShadowMapLocation[index]);
+	}
+	
+	public void updateFarPlane(float farPlane) {
+		updateFloat(farPlane, farPlaneLocation);
 	}
 }

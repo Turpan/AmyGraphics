@@ -9,6 +9,7 @@ import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
@@ -31,6 +32,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 
+import amyGLGraphics.depthDebug.GLDepthDisplayRenderer;
+import amyGLGraphics.depthDebug.GLFrameBufferDisplay;
 import amyGraphics.RoomHandler;
 import movement.Entity;
 import movement.Light;
@@ -45,17 +48,19 @@ public class GLRoomHandler extends RoomHandler {
 	public static final int COLOURPOSITION = 2;
 	public static final int TEXTUREPOSITION = 3;
 	private Map<Entity, GLEntity> entityMap = new HashMap<Entity, GLEntity>();
+	private Map<Light, GLPointDepthRenderer> lightDepthMap = new HashMap<Light, GLPointDepthRenderer>();
 	private GLSkyBox skyBox = new GLSkyBox();
 	private GLNormalRenderer normalRenderer = new GLNormalRenderer();
 	private GLEntityRenderer entityRenderer = new GLEntityRenderer();
 	private GLLightRenderer lightRenderer = new GLLightRenderer();
 	private GLSkyBoxRenderer skyboxRenderer = new GLSkyBoxRenderer();
+	private GLDirDepthRenderer dirDepthRenderer = new GLDirDepthRenderer();
 	
 	public boolean renderNormals;
 	public GLCamera camera = new GLCamera();
 	//TODO camera only public temporarily
 	public GLRoomHandler() {
-		resetState();
+		//resetState();
 		normalRenderer.setCamera(camera);
 		entityRenderer.setCamera(camera);
 		lightRenderer.setCamera(camera);
@@ -67,10 +72,11 @@ public class GLRoomHandler extends RoomHandler {
 	}
 	private void addEntity(Entity entity) {
 		if (!entityMap.containsKey(entity)) {
-			GLObject object = createBufferedEntity(entity);
-			GLTexture texture = createDiffuseTexture(entity);
+			GLEntity object = createBufferedEntity(entity);
+			GLTexture2D texture = createDiffuseTexture(entity);
 			
-	        object.addTexture(texture, GL_TEXTURE0);
+	        object.setDiffuseTexture(texture);
+	        object.setDirShadowMap(dirDepthRenderer.getShadowMap().getDepthTexture());
 		}
 		if (entity instanceof Light) {
 			addLight(entity);
@@ -81,9 +87,13 @@ public class GLRoomHandler extends RoomHandler {
 		var bufferedentity = entityMap.get(entity);
 		var light = (Light) entity;
 		if (light.getType() == LightType.POINT) {
-			entityRenderer.addLight(light, bufferedentity);
+			GLPointDepthRenderer renderer = new GLPointDepthRenderer(light, bufferedentity);
+			lightDepthMap.put(light, renderer);
+			
+			entityRenderer.addLight(light, bufferedentity, renderer.getShadowMap().getDepthTexture());
 		} else if (light.getType() == LightType.DIRECTIONAL) {
 			entityRenderer.setDirectionalLight(light, bufferedentity);
+			dirDepthRenderer.setDirectionalLight(light, bufferedentity);
 		}
 		
 		bufferedentity.universalColour(colourAsVec(light.getColor()));
@@ -101,6 +111,16 @@ public class GLRoomHandler extends RoomHandler {
 			var sprite = entity.getTexture().getSprite();
 			GLTextureCache.removeTexture(sprite);
 		}
+		
+		if (entity instanceof Light) {
+			Light light = (Light) entity;
+			if (light.getType() == LightType.POINT) {
+				entityRenderer.removeLight(light);
+				lightDepthMap.remove(light);
+			} else if (light.getType() == LightType.DIRECTIONAL) {
+				entityRenderer.setDirectionalLight(null, null);
+			}
+		}
 	}
 	private void removeEntity(List<Entity> entityList) {
 		for (var entity : entityList) {
@@ -113,6 +133,8 @@ public class GLRoomHandler extends RoomHandler {
 			GLTextureCube skyBoxTexture = new GLTextureCube(background);
 			GLTextureCache.setSkybox(skyBoxTexture);
 			skyBox.addTexture(skyBoxTexture, GL_TEXTURE0);
+		} else {
+			skyBox.getTextures().clear();
 		}
 	}
 	/*
@@ -120,19 +142,39 @@ public class GLRoomHandler extends RoomHandler {
 	 */
 	public void renderRoom() {
 		List<GLObject> entitys = new ArrayList<GLObject>();
+		
+		List<GLObject> opaque = new ArrayList<GLObject>();
+		List<GLObject> transparent = new ArrayList<GLObject>();
+		
 		List<GLObject> lights = new ArrayList<GLObject>();
 		for (var entity : room.getContents()) {
 			GLObject object = entityMap.get(entity);
 			object.update();
 			if (isAffectedByLight(entity)) {
 				entitys.add(object);
+				
+				if (object.isTransparent()) {
+					transparent.add(object);
+				} else {
+					opaque.add(object);
+				}
 			} else {
 				lights.add(object);
 			}
 		}
 		
-		entityRenderer.render(entitys);
+		dirDepthRenderer.render(entitys);
+		
+		for (Light light : lightDepthMap.keySet()) {
+			GLPointDepthRenderer renderer = lightDepthMap.get(light);
+			renderer.render(entitys);
+		}
+		
+		entityRenderer.render(opaque);
+		
 		lightRenderer.render(lights);
+		
+		
 		
 		if (renderNormals) {
 			normalRenderer.render(entitys);
@@ -142,16 +184,18 @@ public class GLRoomHandler extends RoomHandler {
 			skyboxRenderer.render(skyBox);
 		}
 		
+		entityRenderer.render(transparent);
+		
 	}
 	
-	private GLObject createBufferedEntity(Entity entity) {
+	private GLEntity createBufferedEntity(Entity entity) {
 		var bufferedEntity = new GLEntity(entity);
 		entityMap.put(entity, bufferedEntity);
 		
 		return bufferedEntity;
 	}
-	private GLTexture createDiffuseTexture(Entity entity) {
-		GLTexture texture;
+	private GLTexture2D createDiffuseTexture(Entity entity) {
+		GLTexture2D texture;
 		if (!GLTextureCache.hasTexture(entity.getTexture().getSprite())) {
 			texture = new GLTexture2D(entity.getTexture().getSprite());
 	        GLTextureCache.addTexture(entity.getTexture().getSprite(), texture);
@@ -163,11 +207,13 @@ public class GLRoomHandler extends RoomHandler {
 	}
 	public void resetState() {
 		unBindOpenGL();
-		entityMap.clear();
 		entityRenderer.resetState();
 		lightRenderer.resetState();
 		skyboxRenderer.resetState();
 		normalRenderer.resetState();
+		dirDepthRenderer.resetState();
+		entityMap.clear();
+		lightDepthMap.clear();
 		skyBox = new GLSkyBox();
 	}
 	private void unBindOpenGL() {
@@ -177,10 +223,15 @@ public class GLRoomHandler extends RoomHandler {
 		if (skyBox.isGLBound()) {
 			skyBox.unbindObject();
 		}
+		for (Light light : lightDepthMap.keySet()) {
+			GLPointDepthRenderer renderer = lightDepthMap.get(light);
+			renderer.unbindGL();
+		}
 		entityRenderer.unbindGL();
 		lightRenderer.unbindGL();
 		skyboxRenderer.unbindGL();
 		normalRenderer.unbindGL();
+		dirDepthRenderer.unbindGL();
 	}
 	/*
 	 * returns true if texture was unbound

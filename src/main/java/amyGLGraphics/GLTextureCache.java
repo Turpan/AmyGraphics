@@ -5,23 +5,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GLTextureCache {
-	private static Map<BufferedImage, GLTexture> textureMap = new HashMap<BufferedImage, GLTexture>();
+	private static Map<BufferedImage, GLTexture2D> diffuseTextureMap = new HashMap<BufferedImage, GLTexture2D>();
 	private static GLTextureCube skyboxTexture;
 	
-	public static void addTexture(BufferedImage key, GLTexture value) {
-		textureMap.put(key, value);
+	public static void addTexture(BufferedImage key, GLTexture2D value) {
+		diffuseTextureMap.put(key, value);
 	}
 	
 	public static void removeTexture(BufferedImage key) {
-		textureMap.remove(key);
+		diffuseTextureMap.remove(key);
 	}
 	
-	public static GLTexture getTexture(BufferedImage key) {
-		return textureMap.get(key);
+	public static GLTexture2D getTexture(BufferedImage key) {
+		return diffuseTextureMap.get(key);
 	}
 	
 	public static boolean hasTexture(BufferedImage key) {
-		return textureMap.containsKey(key);
+		return diffuseTextureMap.containsKey(key);
 	}
 	
 	public static void setSkybox(GLTextureCube texture) {

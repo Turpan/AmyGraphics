@@ -291,7 +291,13 @@ public class GLEntity extends GLObject{
 		return buffer;
 	}
 	
-	public void setDiffuseTexture(GLTexture2D texture) {
-		addTexture(texture, GL_TEXTURE0);
+	@Override
+	public void setDiffuseTexture(GLTexture texture) {
+		super.setDiffuseTexture(texture);
+		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.diffuseTextureUnit);
+	}
+	
+	public void setDirShadowMap(GLTextureDepth texture) {
+		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.dirDepthTextureUnit);
 	}
 }

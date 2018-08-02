@@ -20,6 +20,8 @@ public class GLSkyBoxProgram extends GLWorldProgram {
 	protected void createShaders() {
 		createVertexShader("shaders/skyvertex.glsl");
 		createFragmentShader("shaders/skyfragment.glsl");
+		
+		//createFragmentShader("shaders/skyboxdepthfragment.glsl");
 	}
 
 }

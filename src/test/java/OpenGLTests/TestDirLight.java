@@ -13,12 +13,12 @@ import movement.LightType;
 
 public class TestDirLight extends Light{
 	
-	static final Color color = Color.YELLOW;
+	static final Color color = Color.WHITE;
 	
 	public TestDirLight() {
 		super(LightType.DIRECTIONAL, color);
 		loadImage();
-		setAmbient(0.1);
+		setAmbient(0.05);
 		setDiffuse(0.7);
 		setSpecular(0.7);
 	}

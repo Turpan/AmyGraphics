@@ -12,6 +12,7 @@ import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class CommunismRoom extends Room {
+	Communism floor;
 	Neutral neutral;
 	Communism comm;
 	Communism highComm;
@@ -25,6 +26,9 @@ public class CommunismRoom extends Room {
 	private boolean movingLeft;
 	public CommunismRoom() throws MalformedEntityException {
 		super();
+		floor = new Communism();
+		floor.setPosition(new float[] {-2000, -1000, -5000});
+		floor.setDimensions(new double[] {15000, 100, 15000});
 		neutral = new Neutral();
 		neutral.setPosition(new float[] {-1000, 0, 2600});
 		neutral.setDimensions(new double[] {10000, 4000, 100});
@@ -38,14 +42,14 @@ public class CommunismRoom extends Room {
 		highComm.setPosition(new float[] {GLEntity.viewWidth / 2, 3000, 2000});
 		highComm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
 		square = new TestSquare();
-		square.setPosition(new float[] {0, 0, 100});
-		square.setDimensions(new double[] {square.getTexture().getSprite().getWidth(), square.getTexture().getSprite().getHeight(), 50});
+		square.setPosition(new float[] {0, 0, 500});
+		square.setDimensions(new double[] {500, 500, 500});
 		light = new TestLight();
 		light.setPosition(comm.getPosition());
 		light.setDimensions(new double[] {50, 50, 50});
 		dirLight = new TestDirLight();
-		dirLight.setPosition(new float[] {-50000, 50000, 0});
-		dirLight.setDimensions(new double[] {10000, 10000, 10000});
+		dirLight.setPosition(new float[] {-5000, 10000, 0});
+		dirLight.setDimensions(new double[] {1000, 1000, 1000});
 		lucy = new TestLucy();
 		lucy.setPosition(new float[] {4000, 4000, 4000});
 		lucy.setDimensions(new double[] {4000, 4000, 4000});
@@ -60,6 +64,7 @@ public class CommunismRoom extends Room {
 			}
 		}
 		setBackground(background);
+		addEntity(floor);
 		addEntity(neutral);
 		addEntity(comm);
 		addEntity(farComm);

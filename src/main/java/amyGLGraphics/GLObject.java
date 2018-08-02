@@ -49,6 +49,7 @@ public abstract class GLObject {
 	protected List<GLVertex> vertices = new ArrayList<GLVertex>();
 	protected Matrix4f modelMatrix = new Matrix4f();
 	protected Map<GLTexture, Integer> textures = new HashMap<GLTexture, Integer>();
+	protected GLTexture diffuseTexture;
 	
 	protected abstract byte[] createDrawOrder();
 	
@@ -184,5 +185,21 @@ public abstract class GLObject {
 		normal = normal.normalize();
 		
 		return normal;
+	}
+	
+	public void setDiffuseTexture(GLTexture diffuseTexture) {
+		this.diffuseTexture = diffuseTexture;
+	}
+	
+	public GLTexture getDiffuseTexture() {
+		return diffuseTexture;
+	}
+	
+	public boolean isTransparent() {
+		if (diffuseTexture == null) {
+			return false;
+		}
+		
+		return diffuseTexture.isTransparent();
 	}
 }

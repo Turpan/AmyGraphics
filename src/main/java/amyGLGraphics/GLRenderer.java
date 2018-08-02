@@ -26,15 +26,19 @@ public abstract class GLRenderer {
 	}
 	
 	public void render(List<GLObject> objects) {
+		globalSetup();
 		updateUniversalUniforms();
 		for (GLObject object : objects) {
 			renderObject(object);
 		}
+		resetGlobal();
 	}
 	
 	public void render(GLObject object) {
+		globalSetup();
 		updateUniversalUniforms();
 		renderObject(object);
+		resetGlobal();
 	}
 	
 	protected void renderObject(GLObject object) {
@@ -44,7 +48,6 @@ public abstract class GLRenderer {
 		int objectIndicesID = object.getObjectIndicesBufferID();
 		int programID = program.getProgramID();
 		updateUniforms(object);
-		globalSetup();
 		GL20.glUseProgram(programID);
 		for (GLTexture texture : textures.keySet()) {
 			int target = textures.get(texture);
@@ -66,7 +69,6 @@ public abstract class GLRenderer {
 			glActiveTexture(target);
 			glBindTexture(texture.getTextureType(), 0);
 		}
-		resetGlobal();
 		glBindVertexArray(0);
 		GL20.glUseProgram(0);
 	}

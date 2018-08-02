@@ -70,6 +70,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLUtil;
@@ -158,6 +159,9 @@ public class OpenGLTest2 {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable( GL_BLEND );
 		glEnable(GL11.GL_DEPTH_TEST);
+		
+		int num = GL11.glGetInteger(GL13.GL_MAX_TEXTURE_UNITS);
+		
 		renderer = new GLRoomHandler();
 		renderer.renderNormals = false;
 		try {

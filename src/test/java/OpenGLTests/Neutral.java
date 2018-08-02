@@ -18,6 +18,7 @@ public class Neutral extends Entity {
 		BufferedImage img = null;
 		try {
 		    img = ImageIO.read(new File("graphics/trueneutral.png"));
+			//img = ImageIO.read(new File("graphics/triangle.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

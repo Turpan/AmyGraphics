@@ -6,27 +6,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 import movement.Light;
 
 public class GLEntityRenderer extends GLRenderer {
 	
-	GLEntityProgram entityProgram;
-	List<Light> lightSources;
-	Map<Light, GLObject> lightMap;
-	Light directionalLight;
-	GLObject dirLightObject;
+	private GLEntityProgram entityProgram;
+	private List<Light> lightSources;
+	private Map<Light, GLObject> lightMap;
+	private Map<Light, GLTextureDepth> lightDepthMap;
+	private Light directionalLight;
+	private GLObject dirLightObject;
 	
-	public void addLight(Light light, GLObject lightObject) {
+	public void addLight(Light light, GLObject lightObject, GLTextureDepth glTextureDepth) {
 		lightSources.add(light);
 		lightMap.put(light, lightObject);
+		lightDepthMap.put(light, glTextureDepth);
 	}
 	
 	public void removeLight(Light light) {
 		lightSources.remove(light);
 		lightMap.remove(light);
+		lightDepthMap.remove(light);
 	}
 	
 	public void setDirectionalLight(Light directionalLight, GLObject dirLightObject) {
@@ -106,16 +115,23 @@ public class GLEntityRenderer extends GLRenderer {
 	}
 	
 	private void clearDirectionalLight() {
+		Matrix4f blankM = new Matrix4f();
+		
 		Vector3f blank = new Vector3f(0.0f);
 		
 		entityProgram.updateDirLightDirection(blank);
 		entityProgram.updateDirLightAmbient(blank);
 		entityProgram.updateDirLightDiffuse(blank);
 		entityProgram.updateDirLightSpecular(blank);
+		entityProgram.updateDirLightMatrix(blankM);
 	}
 	
 	private void clearPointLight(int count) {
 		Vector3f blank = new Vector3f(0.0f);
+		
+		int target = GLEntityProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
+		glActiveTexture(target);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		
 		entityProgram.updatePointLightPosition(blank, count);
 		entityProgram.updatePointLightAmbient(blank, count);
@@ -124,6 +140,8 @@ public class GLEntityRenderer extends GLRenderer {
 	}
 	
 	private void sendDirectionalLightData() {
+		Matrix4f lightMatrix = GLDirDepthRenderer.getDirLightMatrix(dirLightObject);
+		
 		Vector3f direction = getLightDirection(directionalLight);
 		Vector3f ambient = getLightAmbience(directionalLight);
 		Vector3f diffuse = getLightDiffuse(directionalLight);
@@ -133,13 +151,20 @@ public class GLEntityRenderer extends GLRenderer {
 		entityProgram.updateDirLightAmbient(ambient);
 		entityProgram.updateDirLightDiffuse(diffuse);
 		entityProgram.updateDirLightSpecular(specular);
+		entityProgram.updateDirLightMatrix(lightMatrix);
 	}
 	
 	private void sendPointLightData(Light light, int count) {
+		GLTextureDepth texture = lightDepthMap.get(light);
+		
 		Vector3f position = getLightPosition(lightMap.get(light));
 		Vector3f ambient = getLightAmbience(light);
 		Vector3f diffuse = getLightDiffuse(light);
 		Vector3f specular = getLightSpecular(light);
+		
+		int target = GLEntityProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
+		glActiveTexture(target);
+		glBindTexture(texture.getTextureType(), texture.getTextureID());
 		
 		entityProgram.updatePointLightPosition(position, count);
 		entityProgram.updatePointLightAmbient(ambient, count);
@@ -224,7 +249,9 @@ public class GLEntityRenderer extends GLRenderer {
 		super.resetState();
 		lightSources = new ArrayList<Light>();
 		lightMap = new HashMap<Light, GLObject>();
+		lightDepthMap = new HashMap<Light, GLTextureDepth>();
 		directionalLight = null;
+		dirLightObject = null;
 	}
 
 }

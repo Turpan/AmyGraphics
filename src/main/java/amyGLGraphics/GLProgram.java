@@ -15,6 +15,7 @@ import java.nio.FloatBuffer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 public abstract class GLProgram {
@@ -31,9 +32,6 @@ public abstract class GLProgram {
 	protected void createProgram() {
 		GLBound = true;
 		programID = glCreateProgram();
-		//glBindAttribLocation(programID, GLRoomRenderer.VERTEXPOSITION, "in_Position");
-		//glBindAttribLocation(programID, GLRoomRenderer.COLOURPOSITION, "in_Color");
-		//glBindAttribLocation(programID, GLRoomRenderer.TEXTUREPOSITION, "in_TextureCoord");
 		createShaders();
 	}
 	
@@ -42,6 +40,14 @@ public abstract class GLProgram {
 	protected void linkProgram() {
 		glLinkProgram(programID);
 		glValidateProgram(programID);
+		
+		int programStatus = GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS);
+		
+		if (programStatus == GL11.GL_FALSE) {
+			String errorLog = GL20.glGetProgramInfoLog(programID);
+			
+			System.out.println(errorLog);
+		}
 	}
 	
 	private void checkLink() {
@@ -123,6 +129,12 @@ public abstract class GLProgram {
 	protected void updateFloat(float f, int location) {
 		GL20.glUseProgram(programID);
 		GL20.glUniform1f(location, f);
+		GL20.glUseProgram(0);
+	}
+	
+	protected void updateInt(int i, int location) {
+		GL20.glUseProgram(programID);
+		GL20.glUniform1i(location, i);
 		GL20.glUseProgram(0);
 	}
 	
