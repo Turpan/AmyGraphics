@@ -2,8 +2,8 @@ package movement.Shapes;
 
 import java.util.ArrayList;
 
-import movement.Vectors.Vector;
-import movement.Vectors.Vector.MalformedVectorException;
+import movement.mathDS.Vector;
+import movement.mathDS.Vector.MalformedVectorException;
 
 public interface OutlineShape {
 	final static int collisionDetectionGranularity = 10;

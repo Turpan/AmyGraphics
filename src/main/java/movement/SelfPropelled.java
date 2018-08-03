@@ -1,7 +1,7 @@
 package movement;
 
-import movement.Vectors.Force;
-import movement.Vectors.Vector.MalformedVectorException;
+import movement.mathDS.Force;
+import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class SelfPropelled extends Moveable {
 	private double baseMoveForce;
