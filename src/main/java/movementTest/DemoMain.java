@@ -1,4 +1,4 @@
-package movementTest;
+/*package movementTest;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -41,3 +41,4 @@ public class DemoMain {
         demo = new MovementDemo();
 	}
 }
+*/

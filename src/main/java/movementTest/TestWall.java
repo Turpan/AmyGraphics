@@ -1,4 +1,4 @@
-package movementTest;
+/*package movementTest;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -37,3 +37,4 @@ public class TestWall extends Wall{
 		setDimensions(new double[] {600,20,70000});
 	}
 }
+*/

@@ -15,11 +15,7 @@ public class GraphicsTestEnvironment {
 	Timer timer;
 	
 	public GraphicsTestEnvironment() {
-		try {
-			room = new CommunismRoom();
-		} catch (MalformedEntityException e) {
-			System.exit(-1);
-		}
+		room = new TyroneRoom();
 		
 		window = new GraphicsTestWindow(() -> { 
 			//give it the room to render

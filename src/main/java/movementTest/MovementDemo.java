@@ -1,4 +1,4 @@
-package movementTest;
+/*package movementTest;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -220,3 +220,4 @@ public class MovementDemo implements KeyListener, ActionListener, GameListener{
 		
 	}
 }
+*/

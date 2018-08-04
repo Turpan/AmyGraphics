@@ -126,6 +126,12 @@ public class GraphicsTestWindow extends GLWindow {
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
 			ButtonState.setPlayerMoveRightPressed(true);
 		}
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_P) == GLFW.GLFW_PRESS) {
+			ButtonState.setStopPressed(true);
+		}
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
+			ButtonState.setPlayerDashPressed(true);
+		}
 		
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_UP) == GLFW.GLFW_RELEASE) {
 			ButtonState.setPlayerMoveUpPressed(false);
@@ -138,6 +144,12 @@ public class GraphicsTestWindow extends GLWindow {
 		}
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_RELEASE) {
 			ButtonState.setPlayerMoveRightPressed(false);
+		}
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_P) == GLFW.GLFW_RELEASE) {
+			ButtonState.setStopPressed(false);
+		}
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_RELEASE) {
+			ButtonState.setPlayerDashPressed(false);
 		}
 		
 	}

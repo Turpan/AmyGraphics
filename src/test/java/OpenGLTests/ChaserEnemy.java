@@ -1,4 +1,4 @@
-/*package movementTest;
+package OpenGLTests;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,15 +6,16 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import amyGraphics.Texture;
 import movement.Enemy;
 import movement.GameListener;
 import movement.Projectile;
+import movement.Entity.MalformedEntityException;
 import movement.Shapes.Ellipse;
 import movement.Shapes.OutlineShape;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public class ChaserEnemy extends Enemy{
-
+public class ChaserEnemy extends Enemy {
 	static final double MASS = 10;
 	static final double BASEMOVEFORCE = 100;
 	static final double COEFFICIENT_OF_RESTITUTION = 0.1;	
@@ -40,7 +41,10 @@ public class ChaserEnemy extends Enemy{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setSprite(img);
+		Texture texture = new Texture(img);
+		texture.setWidth(img.getWidth());
+		texture.setHeight(img.getHeight());
+		setTexture(texture);
 	}
 	@Override
 	public float[] getDesiredPosition() {
@@ -72,4 +76,3 @@ public class ChaserEnemy extends Enemy{
 		
 	}
 }
-*/

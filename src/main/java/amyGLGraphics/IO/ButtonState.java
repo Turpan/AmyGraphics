@@ -7,6 +7,10 @@ public class ButtonState {
 	private static boolean playerMoveLeftPressed;
 	private static boolean playerMoveRightPressed;
 	
+	private static boolean stopPressed;
+	
+	private static boolean playerDashPressed;
+	
 	public static synchronized void setPlayerMoveUpPressed(boolean pressed) {
 		playerMoveUpPressed = pressed;
 	}
@@ -23,6 +27,14 @@ public class ButtonState {
 		playerMoveRightPressed = pressed;
 	}
 	
+	public static synchronized void setStopPressed(boolean pressed) {
+		stopPressed = pressed;
+	}
+	
+	public static synchronized void setPlayerDashPressed(boolean pressed) {
+		playerDashPressed = pressed;
+	}
+	
 	public static synchronized boolean getPlayerMoveUpPressed() {
 		return playerMoveUpPressed;
 	}
@@ -37,5 +49,13 @@ public class ButtonState {
 	
 	public static synchronized boolean getPlayerMoveRightPressed() {
 		return playerMoveRightPressed;
+	}
+	
+	public static synchronized boolean getStopPressed() {
+		return stopPressed;
+	}
+	
+	public static synchronized boolean getPlayerDashPressed() {
+		return playerDashPressed;
 	}
 }

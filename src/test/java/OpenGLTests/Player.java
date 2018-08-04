@@ -1,4 +1,4 @@
-/*package movementTest;
+package OpenGLTests;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import amyGraphics.Texture;
 import movement.Shapes.*;
 import movement.SelfPropelled;
 import movement.Dashing;
@@ -46,7 +47,12 @@ public class Player extends SelfPropelled implements Dashing {
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setSprite(img);
+		
+		Texture texture = new Texture(img);
+		texture.setWidth(img.getWidth());
+		texture.setHeight(img.getHeight());
+		
+		setTexture(texture);
 	}
 	@Override
 	public void tick() throws MalformedVectorException, MalformedEntityException{
@@ -107,5 +113,9 @@ public class Player extends SelfPropelled implements Dashing {
 		dashForce = new Force(DASHMAGNITUDE, new double[] {0,-1,0});
 		setDashCoolDownCount(getDashCoolDown());
 	}
+	@Override
+	public void collision() {
+		// TODO Auto-generated method stub
+		// you got to fill this in rone
+	}
 }
-*/

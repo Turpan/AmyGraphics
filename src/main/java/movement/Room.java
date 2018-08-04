@@ -6,14 +6,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import movement.mathDS.Vector.MalformedVectorException;
+
 public abstract class Room {
 	protected List<Entity> contents;
 	protected BufferedImage[] background;
 	private List<RoomListener> listeners;
 	
+	private CollisionEngine collisionEngine;
+	
 	public Room() {
 		contents = new ArrayList<Entity>();
 		listeners = new ArrayList<RoomListener>();
+		
+		collisionEngine = new CollisionEngine(contents);
 	}
 	
 	public Room(BufferedImage[] background) {
@@ -75,6 +81,15 @@ public abstract class Room {
 	public void tick() {
 		for (Entity entity : contents) {
 			// TODO where the fuck my easy time advancedment rone
+		}
+	}
+	
+	protected void checkCollision() {
+		try {
+			collisionEngine.checkCollision();
+		} catch (MalformedVectorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
