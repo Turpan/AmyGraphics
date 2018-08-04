@@ -57,10 +57,10 @@ public class TyroneRoom extends Room implements GameListener {
 			chaser.applyConstantForces();
 			chaser2.applyConstantForces();
 //			System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
+			checkCollision();
 			player.tick();
 			chaser.tick();
 			chaser2.tick();
-			checkCollision();
 		} catch (MalformedVectorException | MalformedEntityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,10 +83,10 @@ public class TyroneRoom extends Room implements GameListener {
 		TestWall longWallR = new TestWall(new Vector(1, new double[] {-1,0,0}), false);
 		TestWall wideWallT = new TestWall(new Vector(1, new double[] {0,1,0}), true);
 		TestWall wideWallB = new TestWall(new Vector(1, new double[] {0,-1,0}), true);
-		longWallL.setPosition(new float[] {0,0,-35000});
-		longWallR.setPosition(new float[] {580,0,-35000});
-		wideWallT.setPosition(new float[] {0,300,-35000});
-		wideWallB.setPosition(new float[] {0,580,-35000});
+		longWallL.setPosition(new float[] {0,0,-350});
+		longWallR.setPosition(new float[] {580,0,-350});
+		wideWallT.setPosition(new float[] {0,300,-350});
+		wideWallB.setPosition(new float[] {0,580,-350});
 		
 		TestDirLight dirLight = new TestDirLight();
 		dirLight.setPosition(new float[] {-5000, 10000, 0});
@@ -137,6 +137,7 @@ public class TyroneRoom extends Room implements GameListener {
 				ButtonState.getPlayerMoveLeftPressed() || ButtonState.getPlayerMoveRightPressed()
 				&& calculateDirection() != null) {
 			try {
+				System.out.println("aaa");
 				chaser2.locomote(calculateDirection());
 			} catch (MalformedVectorException e) {
 				// TODO Auto-generated catch block

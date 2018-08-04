@@ -24,6 +24,8 @@ public abstract class Moveable extends Entity implements Collidable{
 																				//yet...
 	public Moveable () throws MalformedVectorException {
 		setVelocity(new Velocity());
+		setActiveForce(new Force());
+		setAttachedEntities(new ArrayList<Entity>());
 	}
 	public Force getActiveForce() {
 		return activeForce;
@@ -96,8 +98,8 @@ public abstract class Moveable extends Entity implements Collidable{
 		}
 	}
 	public void applyConstantForces() throws MalformedVectorException {
-		applyFriction();
-		applyForce(new Force(getMass() * 9.81, new double[] {0,1,0}));
+//		applyFriction();
+//		applyForce(new Force(getMass() * 9.81, new double[] {0,1,0}));
 	}
 	
 	public void stop() throws MalformedVectorException {

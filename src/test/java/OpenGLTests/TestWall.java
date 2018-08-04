@@ -34,7 +34,7 @@ public class TestWall extends Wall{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setDimensions(new double[] {20,600,70000});
+		setDimensions(new double[] {20,600,700});
 		
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
@@ -49,7 +49,7 @@ public class TestWall extends Wall{
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setDimensions(new double[] {600,20,70000});
+		setDimensions(new double[] {600,20,700});
 		
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());

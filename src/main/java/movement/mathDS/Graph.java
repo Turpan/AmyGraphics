@@ -106,6 +106,7 @@ public class Graph<T, U> {	//simple linkedList implementation of a directed grap
 				
 			}
 			for (T leaf : leaves) {removeVertex(leaf);}
+			leaves.clear();
 			
 		}
 		return hasLeaf;
