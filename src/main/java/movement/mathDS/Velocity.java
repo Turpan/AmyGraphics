@@ -1,4 +1,4 @@
-package movement.Vectors;
+package movement.mathDS;
 
 public class Velocity extends Vector{
 	public Velocity(double magnitude, double[] direction) throws MalformedVectorException {

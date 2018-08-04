@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import amyGraphics.Texture;
 import movement.Entity.MalformedEntityException;
-import movement.Vectors.Vector;
+import movement.mathDS.Vector;
 
 public abstract class Entity {
 	private float[] position;
@@ -40,7 +40,7 @@ public abstract class Entity {
 	}
 	abstract public boolean inside(float[] point);
 	
-	public void teleport(Vector movement) {
+	public void move(Vector movement) {
 		float[] newPosition = new float[Vector.DIMENSIONS];
 		float[] currentPosition = getPosition();
 		double[] moveCmpnts = movement.getComponents();

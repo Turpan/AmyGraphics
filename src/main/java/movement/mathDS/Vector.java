@@ -1,4 +1,4 @@
-package movement.Vectors;
+package movement.mathDS;
 
 
 public class Vector {

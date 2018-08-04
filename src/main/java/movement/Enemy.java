@@ -1,7 +1,7 @@
 package movement;
 
-import movement.Vectors.Vector;
-import movement.Vectors.Vector.MalformedVectorException;
+import movement.mathDS.Vector;
+import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Enemy extends Attacker {
 	private GameListener listener;

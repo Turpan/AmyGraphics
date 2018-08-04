@@ -1,6 +1,6 @@
 package movement;
 
-import movement.Vectors.Vector.MalformedVectorException;
+import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Projectile extends Attacker {
 	public Projectile(double damage) throws MalformedVectorException {

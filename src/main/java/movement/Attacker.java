@@ -1,6 +1,6 @@
 package movement;
 
-import movement.Vectors.Vector.MalformedVectorException;
+import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Attacker extends SelfPropelled implements Collidable{
 
