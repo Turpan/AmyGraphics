@@ -3,6 +3,7 @@ package movement;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class Room {
@@ -21,7 +22,7 @@ public abstract class Room {
 	}
 	
 	public List<Entity> getContents() {
-		return contents;
+		return Collections.unmodifiableList(contents);
 	}
 	
 	public void setBackground(BufferedImage[] background) {

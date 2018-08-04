@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import amyGLGraphicsIO.DecodedPNG;
+import amyGLGraphics.IO.DecodedPNG;
 
 public class GLTextureCube extends GLTexture{
 	

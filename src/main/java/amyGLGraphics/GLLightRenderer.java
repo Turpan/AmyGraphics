@@ -11,7 +11,9 @@ public class GLLightRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		lightProgram.updateViewMatrix(camera.getCameraMatrix());
+		if (camera != null) {
+			lightProgram.updateViewMatrix(camera.getCameraMatrix());
+		}
 	}
 
 	@Override

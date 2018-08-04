@@ -1,4 +1,4 @@
-package OpenGLTests;
+/*package OpenGLTests;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
@@ -78,7 +78,7 @@ import org.lwjgl.system.MemoryStack;
 
 import amyGLGraphics.GLGraphicsHandler;
 import amyGLGraphics.GLRoomHandler;
-import amyGLGraphicsIO.ShaderLoader;
+import amyGLGraphics.IO.ShaderLoader;
 import movement.Entity.MalformedEntityException;
 import movement.Room;
 
@@ -118,7 +118,7 @@ public class OpenGLTest2 {
 		}
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
+				glfwSetWindowShouldClose(window, true);
 		});
 		GLFW.glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
 			mouseInput(xpos, ypos);
@@ -181,7 +181,7 @@ public class OpenGLTest2 {
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			 // swap the color buffers
+			 // swap the buffers
 			render();
 			glfwSwapBuffers(window);
 			// Poll for window events. The key callback above will only be
@@ -273,7 +273,7 @@ public class OpenGLTest2 {
 	
 	public void end() {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		renderer.resetState();
+		renderer.unBindOpenGL();
 		glfwFreeCallbacks(window);
 		glfwDestroyWindow(window);
 		glfwTerminate();
@@ -281,3 +281,4 @@ public class OpenGLTest2 {
 		System.exit(0);
 	}
 }
+*/

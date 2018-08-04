@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL20.glShaderSource;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import amyGLGraphicsIO.ShaderLoader;
+import amyGLGraphics.IO.ShaderLoader;
 
 public class GLShader {
 	private int shaderID;

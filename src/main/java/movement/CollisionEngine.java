@@ -8,6 +8,9 @@ import movement.Vectors.Vector;
 import movement.Vectors.Vector.MalformedVectorException;
 
 public class CollisionEngine {
+	
+	//TODO handshake problem
+	
 	public void checkCollision(List<Entity> entityList) throws MalformedVectorException {
 		for (var entity1 : entityList) {
 			if (entity1 instanceof Collidable) {

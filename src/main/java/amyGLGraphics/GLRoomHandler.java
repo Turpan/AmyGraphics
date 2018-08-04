@@ -57,14 +57,8 @@ public class GLRoomHandler extends RoomHandler {
 	private GLDirDepthRenderer dirDepthRenderer = new GLDirDepthRenderer();
 	
 	public boolean renderNormals;
-	public GLCamera camera = new GLCamera();
-	//TODO camera only public temporarily
 	public GLRoomHandler() {
 		//resetState();
-		normalRenderer.setCamera(camera);
-		entityRenderer.setCamera(camera);
-		lightRenderer.setCamera(camera);
-		skyboxRenderer.setCamera(camera);
 	}
 	public GLRoomHandler(Room room) {
 		this();
@@ -141,51 +135,53 @@ public class GLRoomHandler extends RoomHandler {
 	 * Eveything in this class, but this most of all, assumes the openGl context has already been created
 	 */
 	public void renderRoom() {
-		List<GLObject> entitys = new ArrayList<GLObject>();
-		
-		List<GLObject> opaque = new ArrayList<GLObject>();
-		List<GLObject> transparent = new ArrayList<GLObject>();
-		
-		List<GLObject> lights = new ArrayList<GLObject>();
-		for (var entity : room.getContents()) {
-			GLObject object = entityMap.get(entity);
-			object.update();
-			if (isAffectedByLight(entity)) {
-				entitys.add(object);
-				
-				if (object.isTransparent()) {
-					transparent.add(object);
+		if (hasRoom()) {
+			List<GLObject> entitys = new ArrayList<GLObject>();
+			
+			List<GLObject> opaque = new ArrayList<GLObject>();
+			List<GLObject> transparent = new ArrayList<GLObject>();
+			
+			List<GLObject> lights = new ArrayList<GLObject>();
+			for (var entity : room.getContents()) {
+				GLObject object = entityMap.get(entity);
+				object.update();
+				if (isAffectedByLight(entity)) {
+					entitys.add(object);
+					
+					if (object.isTransparent()) {
+						transparent.add(object);
+					} else {
+						opaque.add(object);
+					}
 				} else {
-					opaque.add(object);
+					lights.add(object);
 				}
-			} else {
-				lights.add(object);
 			}
+			
+			dirDepthRenderer.render(entitys);
+			
+			for (Light light : lightDepthMap.keySet()) {
+				GLPointDepthRenderer renderer = lightDepthMap.get(light);
+				renderer.render(entitys);
+			}
+			
+			entityRenderer.render(opaque);
+			
+			lightRenderer.render(lights);
+			
+			
+			
+			if (renderNormals) {
+				normalRenderer.render(entitys);
+			}
+			
+			if (skyBox.isGLBound() && hasBackground()) {
+				skyboxRenderer.render(skyBox);
+			}
+			
+			entityRenderer.render(transparent);
+			
 		}
-		
-		dirDepthRenderer.render(entitys);
-		
-		for (Light light : lightDepthMap.keySet()) {
-			GLPointDepthRenderer renderer = lightDepthMap.get(light);
-			renderer.render(entitys);
-		}
-		
-		entityRenderer.render(opaque);
-		
-		lightRenderer.render(lights);
-		
-		
-		
-		if (renderNormals) {
-			normalRenderer.render(entitys);
-		}
-		
-		if (skyBox.isGLBound() && hasBackground()) {
-			skyboxRenderer.render(skyBox);
-		}
-		
-		entityRenderer.render(transparent);
-		
 	}
 	
 	private GLEntity createBufferedEntity(Entity entity) {
@@ -216,7 +212,7 @@ public class GLRoomHandler extends RoomHandler {
 		lightDepthMap.clear();
 		skyBox = new GLSkyBox();
 	}
-	private void unBindOpenGL() {
+	public void unBindOpenGL() {
 		if (hasRoom()) {
 			removeEntity(room.getContents());
 		}
@@ -295,6 +291,10 @@ public class GLRoomHandler extends RoomHandler {
 	}
 	
 	private boolean hasBackground() {
+		if (!hasRoom()) {
+			return false;
+		}
+		
 		if (room.getBackground() == null) {
 			return false;
 		}
@@ -316,5 +316,12 @@ public class GLRoomHandler extends RoomHandler {
 		blue = blue / 255.0f;
 		
 		return new Vector3f(red, green, blue);
+	}
+	
+	public void setCamera(GLCamera camera) {
+		normalRenderer.setCamera(camera);
+		entityRenderer.setCamera(camera);
+		lightRenderer.setCamera(camera);
+		skyboxRenderer.setCamera(camera);
 	}
 }

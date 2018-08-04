@@ -56,7 +56,7 @@ public class GLDirDepthRenderer extends GLRenderer{
 
 	@Override
 	protected void resetGlobal() {
-		GL11.glViewport(0, 0, GLGraphicsHandler.windowWidth, GLGraphicsHandler.windowHeight);
+		GL11.glViewport(0, 0, GLWindow.getWindowWidth(), GLWindow.getWindowHeight());
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 	

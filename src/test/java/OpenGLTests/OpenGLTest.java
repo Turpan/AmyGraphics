@@ -98,8 +98,8 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
-import amyGLGraphicsIO.DecodedPNG;
-import amyGLGraphicsIO.ShaderLoader;
+import amyGLGraphics.IO.DecodedPNG;
+import amyGLGraphics.IO.ShaderLoader;
 
 public class OpenGLTest {
 	/*static final float g_vertex_buffer_data[] = {

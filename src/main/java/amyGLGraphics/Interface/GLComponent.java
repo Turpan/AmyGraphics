@@ -1,4 +1,4 @@
-package amyGLInterface;
+package amyGLGraphics.Interface;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;

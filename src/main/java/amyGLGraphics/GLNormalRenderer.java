@@ -8,7 +8,9 @@ public class GLNormalRenderer extends GLRenderer{
 
 	@Override
 	protected void updateUniversalUniforms() {
-		normalProgram.updateViewMatrix(camera.getCameraMatrix());
+		if (camera != null) {
+			normalProgram.updateViewMatrix(camera.getCameraMatrix());
+		}
 	}
 
 	@Override

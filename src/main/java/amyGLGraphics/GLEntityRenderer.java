@@ -50,8 +50,10 @@ public class GLEntityRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		entityProgram.updateViewMatrix(camera.getCameraMatrix());
-		entityProgram.updateViewPosition(camera.getPosition());
+		if (camera != null) {
+			entityProgram.updateViewMatrix(camera.getCameraMatrix());
+			entityProgram.updateViewPosition(camera.getPosition());
+		}
 		//TODO this will be setting related, later
 		entityProgram.updateGamma(2.2f);
 	}

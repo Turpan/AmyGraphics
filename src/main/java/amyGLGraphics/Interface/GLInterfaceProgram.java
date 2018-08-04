@@ -1,4 +1,4 @@
-package amyGLInterface;
+package amyGLGraphics.Interface;
 
 import amyGLGraphics.GLProgram;
 

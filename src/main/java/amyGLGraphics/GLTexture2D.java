@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.BufferUtils;
 
-import amyGLGraphicsIO.DecodedPNG;
+import amyGLGraphics.IO.DecodedPNG;
 
 public class GLTexture2D extends GLTexture {
 	private DecodedPNG textureData;

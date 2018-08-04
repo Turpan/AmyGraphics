@@ -18,9 +18,11 @@ public class GLSkyBoxRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		Matrix4f cameraMatrix = new Matrix4f(new Matrix3f(camera.getCameraMatrix()));
-		
-		skyboxProgram.updateViewMatrix(cameraMatrix);
+		if (camera != null) {
+			Matrix4f cameraMatrix = new Matrix4f(new Matrix3f(camera.getCameraMatrix()));
+			
+			skyboxProgram.updateViewMatrix(cameraMatrix);
+		}
 	}
 
 	@Override

@@ -1,12 +1,13 @@
 package amyGLGraphics;
 
-import amyGLInterface.GLInterfaceRenderer;
+import amyGLGraphics.Interface.GLInterfaceRenderer;
 import amyGraphics.GraphicsHandler;
 
 public class GLGraphicsHandler extends GraphicsHandler {
-	//public static final int viewWidth = 3840;
-	//public static final int viewHeight = 2160;
-	//public static final int viewDepth = 2000;
+	
+	//The way this works is its a mapping of object size coordinates to screen space
+	//So with the current values of 4000 that means an object would have to be 4000 wide to fill the screen
+	//You can set this to whatever makes your job easier
 	public static final int viewWidth = 4000;
 	public static final int viewHeight = 4000;
 	public static final int viewDepth = 4000;
@@ -14,21 +15,21 @@ public class GLGraphicsHandler extends GraphicsHandler {
 	public static final int shadowWidth = 1024;
 	public static final int shadowHeight = 1024;
 	
-	public static final int windowWidth = 1600;
-	public static final int windowHeight = 900;
-	
 	public GLGraphicsHandler() {
 		roomHandler = new GLRoomHandler();
-		interfaceRenderer = new GLInterfaceRenderer();
-	}
-	
-	@Override
-	public void render() {
-		roomHandler.renderRoom();
+		//interfaceRenderer = new GLInterfaceRenderer();
 	}
 	
 	public void unbindGL() {
+		GLRoomHandler handler = (GLRoomHandler) roomHandler;
 		
+		handler.unBindOpenGL();
+	}
+	
+	public void setCamera(GLCamera camera) {
+		GLRoomHandler handler = (GLRoomHandler) roomHandler;
+		
+		handler.setCamera(camera);
 	}
 
 }

@@ -1,4 +1,4 @@
-package amyGLGraphicsIO;
+package amyGLGraphics.IO;
 
 import java.awt.image.BufferedImage;
 
