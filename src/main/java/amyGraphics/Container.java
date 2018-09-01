@@ -1,19 +1,25 @@
 package amyGraphics;
 
-import java.awt.Rectangle;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Container extends Component {
+import amyGLGraphics.IO.MouseEvent;
+
+public class Container extends Component {
 	private Layout layout;
 	private Set<Component> children;
 	
 	public Container() {
 		super();
 		layout = null;
-		children = new HashSet<Component>();
+		children = new LinkedHashSet<Component>();
+	}
+	
+	public Container(int x, int y, int width, int height) {
+		this();
+		setBounds(x, y, width, height);
 	}
 	
 	public void addChild(Component component) {
@@ -50,26 +56,28 @@ public abstract class Container extends Component {
 		Set<Component> renderOrder = super.getRenderOrder();
 		if (renderOrder.size() > 0) {
 			for (Component component : children) {
-				if (component.isVisible()) {
-					renderOrder.addAll(component.getRenderOrder());
-				}
+				renderOrder.addAll(component.getRenderOrder());
 			}
 		}
 		return renderOrder;
 	}
 	
 	@Override
-	public Component findMouseClick(int x, int y) {
-		var clickSource = super.findMouseClick(x, y);
-		//click is inside this object if the result is not null
-		if (clickSource != null) {
+	public Component findMouseClick(MouseEvent event) {
+		Component clickSource = null;
+		
+		if (clickInBounds(event.getX(), event.getY())) {
 			for (Component component : children) {
-				clickSource = component.findMouseClick(x, y);
+				var current = component.findMouseClick(event);
+				
+				if (current != null) {
+					clickSource = current;
+				}
 			}
 		}
 		//check if click was on a child component
 		if (clickSource == null) {
-			return super.findMouseClick(x, y);
+			return super.findMouseClick(event);
 		} else {
 			return clickSource;
 		}
@@ -83,17 +91,7 @@ public abstract class Container extends Component {
 		if (layout != null) {
 			layout.layoutComponents(this, children);
 		} else {
-			nullAlign();
-		}
-	}
-	
-	private void nullAlign() {
-		for (Component component : children) {
-			Rectangle bounds = component.getBounds();
-			component.setX(bounds.x);
-			component.setY(bounds.y);
-			component.setWidth(bounds.width);
-			component.setHeight(bounds.height);
+			Layout.nullAlign(this);
 		}
 	}
 	
@@ -103,5 +101,14 @@ public abstract class Container extends Component {
 
 	protected void setLayout(Layout layout) {
 		this.layout = layout;
+	}
+	
+	@Override
+	public void updateAnimation() {
+		super.updateAnimation();
+		
+		for (Component child : children) {
+			child.updateAnimation();
+		}
 	}
 }

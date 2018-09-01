@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.lwjgl.BufferUtils;
 
-import amyGLGraphics.GLObject;
-import amyGLGraphics.GLVertex;
+import amyGLGraphics.base.GLObject;
+import amyGLGraphics.base.GLVertex;
 
 public class GLFrameBufferDisplay extends GLObject {
 	
@@ -23,8 +23,8 @@ public class GLFrameBufferDisplay extends GLObject {
 	}
 
 	@Override
-	protected byte[] createDrawOrder() {
-		return new byte[] {
+	protected int[] createDrawOrder() {
+		return new int[] {
 				0,1,2, 3,2,1
 		};
 	}

@@ -8,30 +8,29 @@ import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
-public class GLInterfaceRenderer extends GLRenderer {
+public class GLTextRenderer extends GLRenderer {
 	
-	private GLInterfaceProgram program;
+	GLTextProgram program;
 
 	@Override
 	protected void createProgram() {
-		program = new GLInterfaceProgram();
+		program = new GLTextProgram();
 	}
 
 	@Override
 	protected void updateUniversalUniforms() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	protected void updateUniforms(GLObject object) {
-		if (!(object instanceof GLComponent)) {
+		if (!(object instanceof GLText)) {
 			return;
 		}
 		
-		GLComponent component = (GLComponent) object;
+		GLText text = (GLText) object;
 		
-		program.useTexture(component.usesTexture());
+		program.setColour(text.getTextColour());
 	}
 
 	@Override

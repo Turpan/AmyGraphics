@@ -21,9 +21,13 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import amyGLGraphics.GLWindow;
 import amyGLGraphics.IO.ButtonState;
 import amyGLGraphics.IO.GraphicsNotifier;
+import amyGLGraphics.IO.MouseEvent;
+import amyGLGraphics.IO.MouseEventAction;
+import amyGLGraphics.base.GLGraphicsHandler;
+import amyGLGraphics.base.GLWindow;
+import amyGraphics.Component;
 
 public class GraphicsTestWindow extends GLWindow {
 	
@@ -36,6 +40,8 @@ public class GraphicsTestWindow extends GLWindow {
 	
 	private float pitch;
 	private float yaw;
+	
+	private boolean displayCursor;
 	
 	//Change these to update window size
 	
@@ -53,6 +59,7 @@ public class GraphicsTestWindow extends GLWindow {
 
 	@Override
 	protected void setupWindowHints() {
+		
 		//these three are done on setup
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -69,6 +76,10 @@ public class GraphicsTestWindow extends GLWindow {
 		});
 		GLFW.glfwSetCursorPosCallback(getWindow(), (window, xpos, ypos) -> {
 			mouseInput(xpos, ypos);
+		});
+		GLFW.glfwSetMouseButtonCallback(getWindow(), (long window, int button, int action, int mods) -> {
+			if (button == GLFW.GLFW_MOUSE_BUTTON_1)
+				mouseClick(action);
 		});
 	}
 
@@ -113,6 +124,16 @@ public class GraphicsTestWindow extends GLWindow {
 		}
 		camera.setPosition(cameraPosition);
 		
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_F) == GLFW.GLFW_PRESS) {
+			if (displayCursor) {
+				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+			} else {
+				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			}
+			
+			displayCursor = !displayCursor;
+		}
+		
 		//This is an example of using glfw input to modify the global input state
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
 			ButtonState.setPlayerMoveUpPressed(true);
@@ -152,6 +173,26 @@ public class GraphicsTestWindow extends GLWindow {
 			ButtonState.setPlayerDashPressed(false);
 		}
 		
+	}
+	
+	private void mouseClick(int action) {
+		float percentx = lastX / width;
+		float percenty = lastY / height;
+		
+		int x = (int) (percentx * GLGraphicsHandler.viewWidth);
+		int y = (int) (percenty * GLGraphicsHandler.viewHeight);
+		
+		MouseEventAction mouseaction;
+		
+		if (action == GLFW.GLFW_RELEASE) {
+			mouseaction = MouseEventAction.RELEASE;
+		} else {
+			mouseaction = MouseEventAction.PRESS;
+		}
+		
+		MouseEvent event = new MouseEvent(x, y, mouseaction);
+		
+		ButtonState.addMouseEvent(event);
 	}
 	
 	private void mouseInput(double xpos, double ypos) {

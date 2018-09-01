@@ -1,40 +1,44 @@
-package amyGLGraphics.depthDebug;
+package amyGLGraphics.entitys;
 
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
-public class GLDepthDisplayRenderer extends GLRenderer {
+public class GLLightRenderer extends GLRenderer {
 
-	private GLDepthDisplayProgram depthProgram;
+	GLWorldProgram lightProgram;
 	
 	@Override
 	protected void createProgram() {
-		depthProgram = new GLDepthDisplayProgram();
+		lightProgram = new GLWorldProgram();
 	}
 
 	@Override
 	protected void updateUniversalUniforms() {
-		
+		if (camera != null) {
+			lightProgram.updateViewMatrix(camera.getCameraMatrix());
+		}
 	}
 
 	@Override
 	protected void updateUniforms(GLObject object) {
-		
+		lightProgram.updateModelMatrix(object.getModelMatrix());
 	}
 
 	@Override
 	protected GLProgram getProgram() {
-		return depthProgram;
+		return lightProgram;
 	}
 
 	@Override
 	protected void globalSetup() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	protected void resetGlobal() {
+		// TODO Auto-generated method stub
 		
 	}
 

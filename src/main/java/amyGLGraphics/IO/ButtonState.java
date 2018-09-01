@@ -1,5 +1,8 @@
 package amyGLGraphics.IO;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ButtonState {
 	
 	private static boolean playerMoveUpPressed;
@@ -10,6 +13,8 @@ public class ButtonState {
 	private static boolean stopPressed;
 	
 	private static boolean playerDashPressed;
+	
+	private static List<MouseEvent> mouseEvents = new ArrayList<MouseEvent>();
 	
 	public static synchronized void setPlayerMoveUpPressed(boolean pressed) {
 		playerMoveUpPressed = pressed;
@@ -57,5 +62,20 @@ public class ButtonState {
 	
 	public static synchronized boolean getPlayerDashPressed() {
 		return playerDashPressed;
+	}
+	
+	public static synchronized void addMouseEvent(MouseEvent event) {
+		mouseEvents.add(event);
+	}
+	
+	public static synchronized MouseEvent getMouseEvent() {
+		if (mouseEvents.size() > 0) {
+			MouseEvent event = mouseEvents.get(0);
+			mouseEvents.remove(0);
+			
+			return event;
+		} else {
+			return null;
+		}
 	}
 }

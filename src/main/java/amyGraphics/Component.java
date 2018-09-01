@@ -1,24 +1,37 @@
 package amyGraphics;
 
+import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Component {
+import amyGLGraphics.IO.MouseEvent;
+
+public class Component {
+	
+	static final Color BASE = Color.GRAY;
+	
 	private int x;
 	private int y;
 	private int width;
 	private int height;
+	
 	private int preferredWidth;
 	private int preferredHeight;
+	
 	private Rectangle bounds;
-	private BufferedImage background;
-	private boolean interactable;
+	
+	private List<Texture> textures = new ArrayList<Texture>();
+	
+	private Texture activeTexture;
+	private Color colour = BASE;
+	
 	private boolean visible;
 	private boolean resizable;
+	private boolean interactable;
+	
 	private Container parent;
 	
 	public Component() {
@@ -27,7 +40,7 @@ public abstract class Component {
 	}
 	
 	public Component(int x, int y, int width, int height) {
-		super();
+		this();
 		setBounds(x, y, width, height);
 	}
 	
@@ -50,14 +63,22 @@ public abstract class Component {
 	public void setPreferredSize(int width, int height) {
 		setPreferredWidth(width);
 		setPreferredHeight(height);
+		
+		callUpdate();
 	}
 	
 	public void setBounds(int x, int y, int width, int height) {
 		setBounds(new Rectangle(x, y, width, height));
+		
+		if (parent == null) {
+			Layout.layoutSelf(this);
+		}
 	}
 	
 	public void setBounds(Rectangle bounds) {
 		this.bounds = bounds;
+		
+		callUpdate();
 	}
 	
 	public Rectangle getBounds() {
@@ -80,17 +101,34 @@ public abstract class Component {
 		this.height = height;
 	}
 	
-	public void setBackground(BufferedImage background) {
-		preferredWidth = background.getWidth();
-		preferredHeight = background.getHeight();
-		this.background = background;
+	public void addTexture(Texture background) {
+		textures.add(background);
+		
+		callUpdate();
+	}
+	
+	public void removeTexture(Texture background) {
+		textures.remove(background);
+		
+		callUpdate();
+	}
+	
+	public void setActiveTexture(Texture texture) {
+		if (!textures.contains(texture)) {
+			activeTexture = null;
+		}
+		
+		activeTexture = texture;
+	}
+	
+	public Texture getActiveTexture() {
+		return activeTexture;
 	}
 	
 	public Set<Component> getRenderOrder() {
 		Set<Component> renderOrder = new LinkedHashSet<Component>();
-		if (isVisible()) {
-			renderOrder.add(this);
-		}
+		renderOrder.add(this);
+		
 		return renderOrder;
 	}
 
@@ -109,17 +147,17 @@ public abstract class Component {
 	public int getHeight() {
 		return height;
 	}
-
-	public BufferedImage getBackground() {
-		return background;
+	
+	public int getRight() {
+		return getX() + getWidth();
 	}
 	
-	public boolean isInteractable() {
-		return interactable;
+	public int getBottom() {
+		return getY() + getHeight();
 	}
 
-	public void setInteractable(boolean interactable) {
-		this.interactable = interactable;
+	public List<Texture> getTextures() {
+		return textures;
 	}
 
 	public boolean isVisible() {
@@ -128,6 +166,8 @@ public abstract class Component {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+		
+		callUpdate();
 	}
 
 	public boolean isResizable() {
@@ -136,11 +176,33 @@ public abstract class Component {
 
 	public void setResizable(boolean resizable) {
 		this.resizable = resizable;
+		
+		callUpdate();
+	}
+	
+	public boolean isInteractable() {
+		return interactable;
+	}
+	
+	public void setInteractable(boolean interactable) {
+		this.interactable = interactable;
 	}
 
-	public Component findMouseClick(int x, int y) {
+	public Color getColour() {
+		return colour;
+	}
+
+	public void setColour(Color colour) {
+		if (colour == null) {
+			colour = BASE;
+		}
+		
+		this.colour = colour;
+	}
+
+	public Component findMouseClick(MouseEvent event) {
 		Component clickSource = null;
-		if (isInteractable() && isVisible() && clickInBounds(x, y)) {
+		if (isVisible() && clickInBounds(event.getX(), event.getY())) {
 			clickSource = this;
 		} else {
 			clickSource = null;
@@ -148,13 +210,13 @@ public abstract class Component {
 		return clickSource;
 	}
 	
-	private void callUpdate() {
+	protected void callUpdate() {
 		if (parent != null) {
 			parent.refreshLayout();
 		}
 	}
 
-	protected Component getParent() {
+	public Component getParent() {
 		return parent;
 	}
 
@@ -168,9 +230,19 @@ public abstract class Component {
 		}
 	}
 	
-	private boolean clickInBounds(int clickX, int clickY) {
+	protected boolean clickInBounds(int clickX, int clickY) {
 		boolean inBounds = (clickX > getX() && clickX < (getX() + getWidth()) &&
 				clickY > getY() && clickY < (getY() + getHeight()));
 		return inBounds;
+	}
+	
+	public void updateAnimation() {
+		for (Texture texture : textures) {
+			if (texture instanceof Animation) {
+				Animation anim = (Animation) texture;
+				
+				anim.nextFrame();
+			}
+		}
 	}
 }

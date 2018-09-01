@@ -57,7 +57,7 @@ public class TyroneRoom extends Room implements GameListener {
 			chaser.applyConstantForces();
 			chaser2.applyConstantForces();
 //			System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
-			checkCollision();
+			//checkCollision();
 			player.tick();
 			chaser.tick();
 			chaser2.tick();
@@ -111,6 +111,10 @@ public class TyroneRoom extends Room implements GameListener {
 		if (ButtonState.getPlayerMoveDownPressed()) y += 1;
 		if (ButtonState.getPlayerMoveLeftPressed()) x -= 1;
 		if (ButtonState.getPlayerMoveRightPressed()) x += 1;
+		
+		System.out.println(x);
+		System.out.println(y);
+		
 		return directionTable[y][x];
 	}
 	
@@ -132,6 +136,8 @@ public class TyroneRoom extends Room implements GameListener {
 				e1.printStackTrace();
 			}
 		}
+		
+		System.out.println(ButtonState.getPlayerMoveUpPressed());
 		
 		if (ButtonState.getPlayerMoveUpPressed() || ButtonState.getPlayerMoveDownPressed() || 
 				ButtonState.getPlayerMoveLeftPressed() || ButtonState.getPlayerMoveRightPressed()

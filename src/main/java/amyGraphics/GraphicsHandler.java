@@ -4,20 +4,20 @@ import movement.Room;
 
 public abstract class GraphicsHandler {
 	protected RoomHandler roomHandler;
-	protected InterfaceRenderer interfaceRenderer;
+	protected InterfaceHandler interfaceHandler;
 	
 	public void render() {
 		if (roomRendererCreated()) {
 			roomHandler.renderRoom();
 		}
 		if (interfaceRendererCreated()) {
-			interfaceRenderer.renderInterface();
+			interfaceHandler.renderInterface();
 		}
 	}
 	
 	public void setScene(Component scene) {
 		if (interfaceRendererCreated()) {
-			interfaceRenderer.setScene(scene);
+			interfaceHandler.setScene(scene);
 		}
 	}
 	
@@ -32,6 +32,6 @@ public abstract class GraphicsHandler {
 	}
 	
 	protected boolean interfaceRendererCreated() {
-		return interfaceRenderer != null;
+		return interfaceHandler != null;
 	}
 }

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import amyGLGraphics.GLEntity;
+import amyGLGraphics.entitys.GLEntity;
 import amyGraphics.Animation;
 import movement.Entity.MalformedEntityException;
 import movement.Room;

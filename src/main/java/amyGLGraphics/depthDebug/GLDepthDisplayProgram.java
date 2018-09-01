@@ -1,6 +1,6 @@
 package amyGLGraphics.depthDebug;
 
-import amyGLGraphics.GLProgram;
+import amyGLGraphics.base.GLProgram;
 
 public class GLDepthDisplayProgram extends GLProgram {
 
