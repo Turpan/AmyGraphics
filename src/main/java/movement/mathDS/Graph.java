@@ -38,6 +38,13 @@ public class Graph<T, U> {	//simple linkedList implementation of a directed grap
 		}
 		getAdjList().remove(LLToRemove);
 	}
+	public ArrayList<T> getUnsortedVerticesList(){
+		ArrayList<T> output = new ArrayList<T>(); 
+		for (LinkedList<T> aL :getAdjList()){
+			output.add(aL.peek());
+		}
+		return output;
+	}	
 	public LinkedList<T> getVertexLinkedList(T vertex) {	//NOTENOTENOTE!!!!: This actually gives you the linked list for the vertex. The head of this /is/ the vertex itself!
 		for (LinkedList<T> LL : getAdjList()) {
 			if (LL.peek() == vertex) {
@@ -198,8 +205,21 @@ public class Graph<T, U> {	//simple linkedList implementation of a directed grap
 			}
     	}
     }
-
-	private class Edge{
+    public String toString() {
+    	var output = "";
+    	String tmp;
+    	for (LinkedList<T> LL : getAdjList()) {
+    		tmp = "";
+    		tmp += LL.peek().toString() + " :  ";
+    		for (T v :getVertexConnections(LL.peek())){
+    			tmp += v.toString() + ", ";
+    		}
+    		output += tmp.substring(0,tmp.length()-2) + "... ";
+    	}
+    	return output;
+   }
+	
+private class Edge{
     	@Override
 		public int hashCode() {
 			final int prime = 31;
