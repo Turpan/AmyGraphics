@@ -14,13 +14,17 @@ import org.lwjgl.opengl.GL13;
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.IO.GraphicsUtils;
+import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
-import amyGraphics.Component;
-import amyGraphics.Label;
 import amyGraphics.Texture;
+import amyInterface.Component;
+import amyInterface.Label;
 
 public class GLText extends GLObject {
+	
+	public static final int viewWidth = GLGraphicsHandler.interfaceWidth;
+	public static final int viewHeight = GLGraphicsHandler.interfaceHeight;
 	
 	private Label label;
 	
@@ -259,6 +263,11 @@ public class GLText extends GLObject {
 	
 	public Vector4f getTextColour() {
 		return GraphicsUtils.colourToVec4(label.getFontColour());
+	}
+
+	@Override
+	public boolean hasTexture() {
+		return true;
 	}
 
 }

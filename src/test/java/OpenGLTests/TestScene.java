@@ -2,15 +2,20 @@ package OpenGLTests;
 
 import java.awt.Color;
 import java.awt.FontFormatException;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import amyGraphics.Animation;
-import amyGraphics.CentreLayout;
-import amyGraphics.Component;
-import amyGraphics.Container;
-import amyGraphics.FontTexture;
-import amyGraphics.Label;
-import amyGraphics.Layout;
+import amyGraphics.Texture;
+import amyInterface.CentreLayout;
+import amyInterface.Component;
+import amyInterface.Container;
+import amyInterface.FontTexture;
+import amyInterface.Label;
+import amyInterface.Layout;
 import lucyAnimation.LucyIO;
 
 public class TestScene extends Container {
@@ -24,6 +29,10 @@ public class TestScene extends Container {
 		Layout layout = new CentreLayout();
 		
 		setLayout(layout);
+		
+		Texture texture = loadTexture();
+		addTexture(texture);
+		setActiveTexture(texture);
 		
 		Component animation = new TestAnimation();
 		
@@ -39,6 +48,20 @@ public class TestScene extends Container {
 		//addChild(animation);
 		
 		addChild(label);
+	}
+	
+	public Texture loadTexture() {
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File("graphics/cart.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Texture texture = new Texture(image);
+		
+		return texture;
 	}
 	
 	public class TestAnimation extends Component {

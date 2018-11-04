@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import amyGraphics.Texture;
 
 public class Label extends Component {
 	public static final int LEFTALIGN = 0;

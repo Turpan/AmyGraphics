@@ -25,7 +25,7 @@ public abstract class GLRenderer {
 	
 	public GLRenderer() {
 		createProgram();
-		resetState();
+		getProgram().createProgram();
 	}
 	
 	public void render(List<GLObject> objects) {
@@ -46,17 +46,12 @@ public abstract class GLRenderer {
 	
 	protected void renderObject(GLObject object) {
 		GLProgram program = getProgram();
-		Map<GLTexture, Integer> textures = object.getTextures();
 		int objectID = object.getObjectID();
 		int objectIndicesID = object.getObjectIndicesBufferID();
 		int programID = program.getProgramID();
 		updateUniforms(object);
 		GL20.glUseProgram(programID);
-		for (GLTexture texture : textures.keySet()) {
-			int target = textures.get(texture);
-			glActiveTexture(target);
-			glBindTexture(texture.getTextureType(), texture.getTextureID());
-		}
+		bindTextures(object);
 		glBindVertexArray(objectID);
 		for (int attrib : object.getAttributePointers()) {
 			glEnableVertexAttribArray(attrib);
@@ -67,11 +62,7 @@ public abstract class GLRenderer {
 		for (int attrib : object.getAttributePointers()) {
 			glDisableVertexAttribArray(attrib);
 		}
-		for (GLTexture texture : textures.keySet()) {
-			int target = textures.get(texture);
-			glActiveTexture(target);
-			glBindTexture(texture.getTextureType(), 0);
-		}
+		unbindTextures(object);
 		glBindVertexArray(0);
 		GL20.glUseProgram(0);
 	}
@@ -84,6 +75,24 @@ public abstract class GLRenderer {
 	public void unbindGL() {
 		if (getProgram() != null && getProgram().isGLBound()) {
 			getProgram().unbindProgram();
+		}
+	}
+	
+	protected void bindTextures(GLObject object) {
+		Map<GLTexture, Integer> textures = object.getTextures();
+		for (GLTexture texture : textures.keySet()) {
+			int target = textures.get(texture);
+			glActiveTexture(target);
+			glBindTexture(texture.getTextureType(), texture.getTextureID());
+		}
+	}
+	
+	protected void unbindTextures(GLObject object) {
+		Map<GLTexture, Integer> textures = object.getTextures();
+		for (GLTexture texture : textures.keySet()) {
+			int target = textures.get(texture);
+			glActiveTexture(target);
+			glBindTexture(texture.getTextureType(), 0);
 		}
 	}
 	

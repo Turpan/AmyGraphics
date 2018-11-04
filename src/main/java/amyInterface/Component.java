@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 import amyGLGraphics.IO.MouseEvent;
+import amyGraphics.Animation;
+import amyGraphics.Texture;
 
 public class Component {
 	
@@ -166,8 +168,6 @@ public class Component {
 
 	public void setVisible(boolean visible) {
 		this.visible = visible;
-		
-		callUpdate();
 	}
 
 	public boolean isResizable() {
@@ -202,6 +202,11 @@ public class Component {
 
 	public Component findMouseClick(MouseEvent event) {
 		Component clickSource = null;
+		
+		if (event == null) {
+			return clickSource;
+		}
+		
 		if (isVisible() && clickInBounds(event.getX(), event.getY())) {
 			clickSource = this;
 		} else {

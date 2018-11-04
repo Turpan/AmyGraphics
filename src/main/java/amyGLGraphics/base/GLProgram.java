@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -35,7 +36,7 @@ public abstract class GLProgram {
 		
 	}
 	
-	protected void createProgram() {
+	public void createProgram() {
 		GLBound = true;
 		programID = glCreateProgram();
 		createShaders();
@@ -124,6 +125,14 @@ public abstract class GLProgram {
 		GL20.glUseProgram(0);
 	}
 	
+	protected void updateVec2(Vector2f vector, int location) {
+		GL20.glUseProgram(programID);
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(2);
+		vector.get(buffer);
+		GL20.glUniform2fv(location, buffer);
+		GL20.glUseProgram(0);
+	}
+	
 	protected void updateVec3(Vector3f vector, int location) {
 		GL20.glUseProgram(programID);
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(3);
@@ -149,6 +158,12 @@ public abstract class GLProgram {
 	protected void updateInt(int i, int location) {
 		GL20.glUseProgram(programID);
 		GL20.glUniform1i(location, i);
+		GL20.glUseProgram(0);
+	}
+	
+	protected void updateBoolean(boolean b, int location) {
+		GL20.glUseProgram(programID);
+		GL20.glUniform1i(location, (b) ? 1 : 0);
 		GL20.glUseProgram(0);
 	}
 	

@@ -1,5 +1,7 @@
 package OpenGLTests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,37 +9,42 @@ import OpenGLTests.TestScene.TestAnimation;
 import amyGLGraphics.IO.ButtonState;
 import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
-import amyGraphics.Component;
+import amyInterface.Component;
 import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class GraphicsTestEnvironment {
+	protected GraphicsTestWindow window;
 	
-	int tick;
+	List<Room> rooms = new ArrayList<Room>();
+	List<Component> scenes = new ArrayList<Component>();
 	
-	GraphicsTestWindow window;
-	
-	Room room;
-	
-	Component scene;
+	protected Component scene;
 	
 	Timer timer;
 	
 	public GraphicsTestEnvironment() {
-		try {
-			room = new CommunismRoom();
-		} catch (MalformedEntityException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		rooms = getRooms();
 		
-		scene = new TestScene();
+		scenes = getScenes();
 		
 		window = new GraphicsTestWindow(() -> { 
 			//give it the room to render
-			window.setRoom(room);
+			for (Room room : rooms) {
+				window.addRoom(room);
+			}
 			
-			window.setScene(scene);
+			if (rooms != null && rooms.size() > 0) {
+				window.setActiveRoom(rooms.get(0));
+			}
+			
+			for (Component scene : scenes) {
+				window.addScene(scene);
+			}
+			
+			if (scenes != null && scenes.size() > 0) {
+				window.setActiveScene(scenes.get(0));
+			}
 		});
 		
 		//start the seperate thread
@@ -52,15 +59,7 @@ public class GraphicsTestEnvironment {
 
 			@Override
 			public void run() {
-				room.tick();
-				
-				tick++;
-				
-				if (tick % 10 == 0) {
-					scene.updateAnimation();
-				}
-				
-				processClick();
+				tick();
 			}
 					
 		}, 10, 10);
@@ -77,25 +76,32 @@ public class GraphicsTestEnvironment {
 		System.exit(0);
 	}
 	
-	private void processClick() {
-		MouseEvent event = ButtonState.getMouseEvent();
+	protected List<Room> getRooms() {
+		Room room = null;
 		
-		if (event == null) {
-			return;
+		try {
+			room = new CommunismRoom();
+		} catch (MalformedEntityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
-		Component clickSource = scene.findMouseClick(event);
+		List<Room> rooms = new ArrayList<Room>();
+		rooms.add(room);
 		
-		if (clickSource == null) {
-			return;
-		}
+		return rooms;
+	}
+	
+	protected List<Component> getScenes() {
+		List<Component> scenes = new ArrayList<Component>();
+		scenes.add(new TestScene());
 		
-		if (clickSource instanceof TestAnimation) {
-			if (event.getMouseAction() == MouseEventAction.PRESS) {
-				System.out.println("button clicked");
-			} else {
-				System.out.println("button released");
-			}
+		return scenes;
+	}
+	
+	protected void tick() {
+		for (Room room : rooms) {
+			room.tick();
 		}
 	}
 

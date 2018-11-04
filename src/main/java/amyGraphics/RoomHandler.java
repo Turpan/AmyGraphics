@@ -1,30 +1,42 @@
 package amyGraphics;
 
-import movement.Room;
-import movement.RoomListener;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class RoomHandler implements RoomListener{
-	protected Room room;
+import movement.Room;
+
+public abstract class RoomHandler {
+	
+	List<Room> rooms = new ArrayList<Room>();
+	
+	Room activeRoom;
 	
 	public RoomHandler() {
 		
 	}
 	
-	public RoomHandler(Room room) {
-		this();
-		setRoom(room);
+	public void addRoom(Room room) {
+		rooms.add(room);
 	}
 	
-	public void setRoom(Room room) {
-		this.room = room;
+	public void removeRoom(Room room) {
+		rooms.remove(room);
 	}
 	
-	public Room getRoom() {
-		return room;
+	public void setActiveRoom(Room room) {
+		if (!rooms.contains(room)) {
+			room = null;
+		}
+		
+		this.activeRoom = room;
 	}
 	
-	public boolean hasRoom() {
-		return room != null;
+	public Room getActiveRoom() {
+		return activeRoom;
+	}
+	
+	public boolean hasActiveRoom() {
+		return activeRoom != null;
 	}
 	
 	public abstract void renderRoom();

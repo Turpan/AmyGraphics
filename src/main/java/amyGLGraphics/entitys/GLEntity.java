@@ -14,6 +14,7 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import amyGLGraphics.GLTexture;
+import amyGLGraphics.GLTextureColour;
 import amyGLGraphics.GLTextureDepth;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
@@ -160,6 +161,10 @@ public class GLEntity extends GLObject{
 	}
 	
 	protected void updateTexture() {
+		if (!hasTexture()) {
+			return;
+		}
+		
 		Texture target = entity.getTexture().getRenderTarget();
 		
 		float s = (float) calculatePercentage(target.getX(), target.getSprite().getWidth());
@@ -301,7 +306,11 @@ public class GLEntity extends GLObject{
 		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.diffuseTextureUnit);
 	}
 	
-	public void setDirShadowMap(GLTextureDepth texture) {
-		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.dirDepthTextureUnit);
+	public void setDirShadowMap(GLTextureColour glTextureColour) {
+		addTexture(glTextureColour, GL_TEXTURE0 + GLEntityProgram.dirDepthTextureUnit);
+	}
+	@Override
+	public boolean hasTexture() {
+		return (entity.getTexture() != null);
 	}
 }

@@ -57,7 +57,7 @@ public abstract class GLObject {
 	
 	protected abstract int[] createDrawOrder();
 	
-	protected void bindBuffer() {
+	public void bindBuffer() {
 		GLBound = true;
 		objectID = glGenVertexArrays();
 		glBindVertexArray(objectID);
@@ -202,4 +202,6 @@ public abstract class GLObject {
 		
 		return diffuseTexture.isTransparent();
 	}
+	
+	public abstract boolean hasTexture();
 }

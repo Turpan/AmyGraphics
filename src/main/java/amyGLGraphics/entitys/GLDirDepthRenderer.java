@@ -21,6 +21,8 @@ public class GLDirDepthRenderer extends GLRenderer{
 	private Light directionalLight;
 	private GLObject dirLightObject;
 	
+	private boolean softShadow;
+	
 	public void setDirectionalLight(Light directionalLight, GLObject dirLightObject) {
 		this.directionalLight = directionalLight;
 		this.dirLightObject = dirLightObject;
@@ -28,6 +30,10 @@ public class GLDirDepthRenderer extends GLRenderer{
 	
 	public GLShadowMap getShadowMap() {
 		return shadowBuffer;
+	}
+	
+	public void setSoftShadow(boolean softShadow) {
+		this.softShadow = softShadow;
 	}
 
 	@Override
@@ -39,6 +45,7 @@ public class GLDirDepthRenderer extends GLRenderer{
 
 	@Override
 	protected void updateUniversalUniforms() {
+		depthProgram.updateSoftShadows(softShadow);
 		depthProgram.updateLightMatrix(getDirLightMatrix(dirLightObject));
 	}
 
@@ -56,7 +63,7 @@ public class GLDirDepthRenderer extends GLRenderer{
 	protected void globalSetup() {
 		GL11.glViewport(0, 0, GLGraphicsHandler.shadowWidth, GLGraphicsHandler.shadowHeight);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, shadowBuffer.getBufferID());
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 	}
 
 	@Override

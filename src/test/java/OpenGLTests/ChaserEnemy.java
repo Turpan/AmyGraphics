@@ -37,7 +37,7 @@ public class ChaserEnemy extends Enemy {
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/evilman.png"));
+		    img = ImageIO.read(new File("graphics/tests/evilman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

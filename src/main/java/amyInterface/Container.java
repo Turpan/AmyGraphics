@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -20,6 +20,34 @@ public class Container extends Component {
 	public Container(int x, int y, int width, int height) {
 		this();
 		setBounds(x, y, width, height);
+	}
+	
+	@Override
+	protected void setX(int x) {
+		super.setX(x);
+		
+		refreshLayout();
+	}
+
+	@Override
+	protected void setY(int y) {
+		super.setY(y);
+		
+		refreshLayout();
+	}
+
+	@Override
+	protected void setWidth(int width) {
+		super.setWidth(width);
+		
+		refreshLayout();
+	}
+
+	@Override
+	protected void setHeight(int height) {
+		super.setHeight(height);
+		
+		refreshLayout();
 	}
 	
 	public void addChild(Component component) {
@@ -66,6 +94,10 @@ public class Container extends Component {
 	public Component findMouseClick(MouseEvent event) {
 		Component clickSource = null;
 		
+		if (event == null) {
+			return clickSource;
+		}
+		
 		if (clickInBounds(event.getX(), event.getY())) {
 			for (Component component : children) {
 				var current = component.findMouseClick(event);
@@ -99,7 +131,7 @@ public class Container extends Component {
 		return layout;
 	}
 
-	protected void setLayout(Layout layout) {
+	public void setLayout(Layout layout) {
 		this.layout = layout;
 	}
 	

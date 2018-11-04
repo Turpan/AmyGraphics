@@ -112,4 +112,9 @@ public class GLSkyBox extends GLObject {
 		return buffer;
 	}
 
+	@Override
+	public boolean hasTexture() {
+		return true;
+	}
+
 }

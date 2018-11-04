@@ -10,6 +10,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import amyGLGraphics.GLTextureColour;
 import amyGLGraphics.GLTextureDepth;
 import amyGLGraphics.IO.GraphicsUtils;
 import amyGLGraphics.base.GLObject;
@@ -28,14 +29,36 @@ public class GLEntityRenderer extends GLRenderer {
 	private GLEntityProgram entityProgram;
 	private List<Light> lightSources;
 	private Map<Light, GLObject> lightMap;
-	private Map<Light, GLTextureDepth> lightDepthMap;
+	private Map<Light, GLTextureColour> lightDepthMap;
 	private Light directionalLight;
 	private GLObject dirLightObject;
 	
-	public void addLight(Light light, GLObject lightObject, GLTextureDepth glTextureDepth) {
+	private boolean softShadow;
+	
+	public GLEntityRenderer() {
+		super();
+		
+		lightSources = new ArrayList<Light>();
+		lightMap = new HashMap<Light, GLObject>();
+		lightDepthMap = new HashMap<Light, GLTextureColour>();
+		directionalLight = null;
+		dirLightObject = null;
+	}
+	
+	public void setSoftShadow(boolean softShadow) {
+		this.softShadow = softShadow;
+	}
+	
+	public void clearLights() {
+		lightSources.clear();
+		lightMap.clear();
+		lightDepthMap.clear();
+	}
+	
+	public void addLight(Light light, GLObject lightObject, GLTextureColour glTextureColour) {
 		lightSources.add(light);
 		lightMap.put(light, lightObject);
-		lightDepthMap.put(light, glTextureDepth);
+		lightDepthMap.put(light, glTextureColour);
 	}
 	
 	public void removeLight(Light light) {
@@ -62,6 +85,8 @@ public class GLEntityRenderer extends GLRenderer {
 		}
 		//TODO this will be setting related, later
 		entityProgram.updateGamma(2.2f);
+		
+		entityProgram.updateSoftShadow(softShadow);
 	}
 
 	@Override
@@ -163,7 +188,7 @@ public class GLEntityRenderer extends GLRenderer {
 	}
 	
 	private void sendPointLightData(Light light, int count) {
-		GLTextureDepth texture = lightDepthMap.get(light);
+		GLTextureColour texture = lightDepthMap.get(light);
 		
 		Vector3f position = getLightPosition(lightMap.get(light));
 		Vector3f ambient = getLightAmbience(light);
@@ -249,7 +274,7 @@ public class GLEntityRenderer extends GLRenderer {
 		super.resetState();
 		lightSources = new ArrayList<Light>();
 		lightMap = new HashMap<Light, GLObject>();
-		lightDepthMap = new HashMap<Light, GLTextureDepth>();
+		lightDepthMap = new HashMap<Light, GLTextureColour>();
 		directionalLight = null;
 		dirLightObject = null;
 	}

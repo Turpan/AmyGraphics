@@ -1,5 +1,7 @@
 package amyGraphics;
 
+import amyInterface.Component;
+import amyInterface.InterfaceHandler;
 import movement.Room;
 
 public abstract class GraphicsHandler {
@@ -15,15 +17,39 @@ public abstract class GraphicsHandler {
 		}
 	}
 	
-	public void setScene(Component scene) {
+	public void setActiveScene(Component scene) {
 		if (interfaceRendererCreated()) {
-			interfaceHandler.setScene(scene);
+			interfaceHandler.setActiveScene(scene);
 		}
 	}
 	
-	public void setRoom(Room room) {
+	public void addScene(Component scene) {
+		if (interfaceRendererCreated()) {
+			interfaceHandler.addScene(scene);
+		}
+	}
+	
+	public void removeScene(Component scene) {
+		if (interfaceRendererCreated()) {
+			interfaceHandler.removeScene(scene);
+		}
+	}
+	
+	public void setActiveRoom(Room room) {
 		if (roomRendererCreated()) {
-			roomHandler.setRoom(room);
+			roomHandler.setActiveRoom(room);
+		}
+	}
+	
+	public void addRoom(Room room) {
+		if (roomRendererCreated()) {
+			roomHandler.addRoom(room);
+		}
+	}
+	
+	public void removeRoom(Room room) {
+		if (roomRendererCreated()) {
+			roomHandler.removeRoom(room);
 		}
 	}
 	

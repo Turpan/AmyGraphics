@@ -11,7 +11,7 @@ public class Texture {
 	private int width;
 	private int height;
 	
-	public Texture(BufferedImage sprite) {
+	public Texture(java.awt.image.BufferedImage sprite) {
 		//setSprite(sprite);
 		this.sprite = sprite;
 		width = sprite.getWidth();

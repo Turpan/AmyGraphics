@@ -1,5 +1,7 @@
 package amyGLGraphics.entitys;
 
+import java.util.List;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -34,36 +36,59 @@ public class GLPointDepthRenderer extends GLRenderer {
 		};
 	
 	private GLPointDepthProgram depthProgram;
-	private GLShadowMapCube shadowBuffer;
+	private GLShadowMapPoint shadowBuffer;
 	
 	private Light light;
 	private GLObject lightObject;
+	
+	private int face;
+	
+	private boolean softShadow;
 	
 	public GLPointDepthRenderer(Light light, GLObject lightObject) {
 		this.light = light;
 		this.lightObject = lightObject;
 	}
 	
-	public GLShadowMapCube getShadowMap() {
+	public GLShadowMapPoint getShadowMap() {
 		return shadowBuffer;
+	}
+	
+	public void setSoftShadow(boolean softShadow) {
+		if (softShadow == this.softShadow) {
+			return;
+		}
+		
+		this.softShadow = softShadow;
+		shadowBuffer.setSoftShadows(softShadow);
+	}
+	
+	@Override
+	public void render(List<GLObject> objects) {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, shadowBuffer.getBufferID());
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
+		for (int i=0; i<6; i++) {
+			face = i;
+			super.render(objects);
+		}
 	}
 
 	@Override
 	protected void createProgram() {
 		depthProgram = new GLPointDepthProgram();
 		
-		shadowBuffer = new GLShadowMapCube(GLGraphicsHandler.shadowWidth, GLGraphicsHandler.shadowHeight);
+		shadowBuffer = new GLShadowMapPoint(GLGraphicsHandler.shadowWidth*6, GLGraphicsHandler.shadowHeight);
 	}
 
 	@Override
 	protected void updateUniversalUniforms() {
 		depthProgram.updateLightPosition(getLightPosition(lightObject));
 		
-		Matrix4f[] matrices = getLightMatrices(lightObject);
+		Matrix4f matrix = getLightMatrix(lightObject, face);
 		
-		for (int i=0; i<6; i++) {
-			depthProgram.updateLightMatrix(matrices[i], i);
-		}
+		depthProgram.updateLightMatrix(matrix);
+		
+		depthProgram.updateSoftShadow(softShadow);
 	}
 
 	@Override
@@ -78,9 +103,8 @@ public class GLPointDepthRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
-		GL11.glViewport(0, 0, GLGraphicsHandler.shadowWidth, GLGraphicsHandler.shadowHeight);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, shadowBuffer.getBufferID());
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glViewport(GLGraphicsHandler.shadowWidth * face, 0, GLGraphicsHandler.shadowWidth, GLGraphicsHandler.shadowHeight);
 	}
 
 	@Override
@@ -116,34 +140,25 @@ public class GLPointDepthRenderer extends GLRenderer {
 		return lightPosition;
 	}
 	
-	public static Matrix4f[] getLightMatrices(GLObject lightObject) {
-		Matrix4f[] matrices = new Matrix4f[6];
-		
+	public static Matrix4f getLightMatrix(GLObject lightObject, int i) {
 		if (lightObject != null) {
+			Vector3f centre = new Vector3f();
 			
-			for (int i=0; i<6; i++) {
-				Vector3f centre = new Vector3f();
-				
-				Vector3f lightPosition = getLightPosition(lightObject);
-				
-				centre = lightPosition.add(directions[i], centre);
-				
-				Matrix4f cameraMatrix = new Matrix4f().lookAt
-						(lightPosition, centre, up[i]);
-				
-				Matrix4f result = new Matrix4f();
-				
-				result = GLPointDepthProgram.perspective.mul(cameraMatrix, result);
-				
-				matrices[i] = result;
-			}
+			Vector3f lightPosition = getLightPosition(lightObject);
+			
+			centre = lightPosition.add(directions[i], centre);
+			
+			Matrix4f cameraMatrix = new Matrix4f().lookAt
+					(lightPosition, centre, up[i]);
+			
+			Matrix4f result = new Matrix4f();
+			
+			result = GLPointDepthProgram.perspective.mul(cameraMatrix, result);
+			
+			return result;
 		} else {
-			for (int i=0; i<6; i++) {
-				matrices[i] = new Matrix4f();
-			}
+			return new Matrix4f();
 		}
-		
-		return matrices;
 	}
 
 }

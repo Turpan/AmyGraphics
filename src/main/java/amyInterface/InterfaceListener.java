@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 public interface InterfaceListener {
 	public void componentAdded(Component component);

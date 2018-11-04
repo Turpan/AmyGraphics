@@ -30,7 +30,7 @@ public class TestWall extends Wall{
 	public Texture longTexture() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/wall-long.png"));
+		    img = ImageIO.read(new File("graphics/tests/wall-long.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -45,7 +45,7 @@ public class TestWall extends Wall{
 	public Texture wideTexture() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/wall-wide.png"));
+		    img = ImageIO.read(new File("graphics/tests/wall-wide.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

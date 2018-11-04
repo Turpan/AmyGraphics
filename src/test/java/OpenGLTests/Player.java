@@ -43,7 +43,7 @@ public class Player extends SelfPropelled implements Dashing {
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/funnyman.png"));
+		    img = ImageIO.read(new File("graphics/tests/funnyman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

@@ -1,4 +1,6 @@
-package amyGraphics;
+package amyInterface;
+
+import amyGraphics.Texture;
 
 public class Button extends Container {
 	

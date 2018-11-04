@@ -18,8 +18,8 @@ import amyGLGraphics.GLTextureDepth;
 public abstract class GLFrameBuffer {
 	protected int bufferID;
 	
-	protected int width;
-	protected int height;
+	private int width;
+	private int height;
 	
 	protected GLTextureColour colourTexture;
 	protected GLTextureDepth depthTexture;
@@ -30,15 +30,23 @@ public abstract class GLFrameBuffer {
 		createFrameBuffer();
 	}
 	
-	protected abstract void setupFrameBuffer();
+	public void setSize(int width, int height) {
+		this.width = width;
+		this.height = height;
+		
+		unbindBuffer();
+		createFrameBuffer();
+	}
 	
-	protected void createFrameBuffer() {
-		setupFrameBuffer();
+	protected abstract void setupFrameBuffer(int width, int height);
+	
+	public void createFrameBuffer() {
+		setupFrameBuffer(width, height);
 		bufferID = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bufferID);
 		if (colourTexture != null) {
-			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
-					GL11.GL_TEXTURE_2D, colourTexture.getTextureID(), 0);
+			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
+					colourTexture.getTextureID(), 0);
 		} else {
 			GL11.glDrawBuffer(GL11.GL_NONE);
 			GL11.glReadBuffer(GL11.GL_NONE);
@@ -56,8 +64,8 @@ public abstract class GLFrameBuffer {
 	public void unbindBuffer() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bufferID);
 		if (colourTexture != null) {
-			GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
-					colourTexture.getTextureType(), 0, 0);
+			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
+					0, 0);
 			colourTexture.unbindTexture();
 		}
 		
@@ -68,6 +76,8 @@ public abstract class GLFrameBuffer {
 			depthTexture.unbindTexture();
 		}
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		GL30.glDeleteFramebuffers(bufferID);
+		bufferID = 0;
 	}
 	
 	public void resetState() {
@@ -118,7 +128,7 @@ public abstract class GLFrameBuffer {
 		return getTextureID(depthTexture);
 	}
 	
-	public GLTexture getColourTexture() {
+	public GLTextureColour getColourTexture() {
 		return colourTexture;
 	}
 	

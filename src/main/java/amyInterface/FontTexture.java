@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import amyGraphics.Texture;
 
 public class FontTexture extends Texture {
 	
@@ -80,15 +82,20 @@ public class FontTexture extends Texture {
 		return image;
 	}
 	
-	private static Font loadFont(String fileLocation) throws FontFormatException, IOException {
+	private static Font loadFont(String fileLocation) {
 		File file = new File(fileLocation);
 		
-		Font font = Font.createFont(Font.TRUETYPE_FONT, file);
+		Font font;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, file);
+		} catch (FontFormatException | IOException e) {
+			font = new Font(Font.SERIF, Font.PLAIN, 20);
+		}
 		
 		return font.deriveFont(100f);
 	}
 	
-	public static FontTexture createFontTexture(String fontFile, boolean antiAlias) throws FontFormatException, IOException {
+	public static FontTexture createFontTexture(String fontFile, boolean antiAlias) {
 		Font font = loadFont(fontFile);
 		
 		return createFontTexture(font, antiAlias);

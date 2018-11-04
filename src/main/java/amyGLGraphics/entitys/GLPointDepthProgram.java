@@ -22,12 +22,13 @@ public class GLPointDepthProgram extends GLWorldProgram{
 	
 	private int farPlaneLocation;
 	
-	private int[] lightMatrixLocation = new int[6];
+	private int lightMatrixLocation;
+	
+	private int softShadowLocation;
 
 	@Override
 	protected void createShaders() {
 		createVertexShader("shaders/pointlightdepthvertex.glsl");
-		createGeometryShader("shaders/pointlightdepthgeom.glsl");
 		createFragmentShader("shaders/pointlightdepthfragment.glsl");
 	}
 	
@@ -39,16 +40,16 @@ public class GLPointDepthProgram extends GLWorldProgram{
 		
 		farPlaneLocation = queryVariable("farPlane");
 		
-		for (int i=0; i<6; i++) {
-			lightMatrixLocation[i] = queryVariable("lightMatrices[" + i + "]");
-		}
+		lightMatrixLocation = queryVariable("lightMatrix");
+		
+		softShadowLocation = queryVariable("softshadow");
 		
 		updateFarPlane(far);
 		updatePersMatrix(perspective);
 	}
 
-	public void updateLightMatrix(Matrix4f pointLightMatrix, int count) {
-		updateMat4(pointLightMatrix, lightMatrixLocation[count]);
+	public void updateLightMatrix(Matrix4f pointLightMatrix) {
+		updateMat4(pointLightMatrix, lightMatrixLocation);
 	}
 	
 	public void updateLightPosition(Vector3f lightLocation) {
@@ -57,6 +58,10 @@ public class GLPointDepthProgram extends GLWorldProgram{
 	
 	public void updateFarPlane(float farPlane) {
 		updateFloat(farPlane, farPlaneLocation);
+	}
+	
+	public void updateSoftShadow(boolean softShadow) {
+		updateBoolean(softShadow, softShadowLocation);
 	}
 
 }

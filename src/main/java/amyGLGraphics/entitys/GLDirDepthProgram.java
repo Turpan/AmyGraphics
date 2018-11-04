@@ -8,6 +8,8 @@ public class GLDirDepthProgram extends GLWorldProgram{
 	= new Matrix4f().ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 15.0f);
 	
 	private int lightMatrixLocation;
+	
+	private int softShadowLocation;
 
 	@Override
 	protected void createShaders() {
@@ -19,11 +21,16 @@ public class GLDirDepthProgram extends GLWorldProgram{
 	protected void setUpVars() {
 		super.setUpVars();
 		lightMatrixLocation = queryVariable("lightMatrix");
+		softShadowLocation = queryVariable("softshadows");
 		updatePersMatrix(perspective);
 	}
 
 	public void updateLightMatrix(Matrix4f dirLightMatrix) {
 		updateMat4(dirLightMatrix, lightMatrixLocation);
+	}
+	
+	public void updateSoftShadows(boolean softShadows) {
+		updateBoolean(softShadows, softShadowLocation);
 	}
 
 }

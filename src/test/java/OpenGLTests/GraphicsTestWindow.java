@@ -27,7 +27,7 @@ import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
 import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLWindow;
-import amyGraphics.Component;
+import amyInterface.Component;
 
 public class GraphicsTestWindow extends GLWindow {
 	
@@ -49,9 +49,6 @@ public class GraphicsTestWindow extends GLWindow {
 	//Change the values in GLGraphicsHandler to do that
 	private static final int width = 1600;
 	private static final int height = 900;
-	
-	//this is the room that will be rendered
-	//Change this to the room you are working on
 
 	public GraphicsTestWindow(GraphicsNotifier handler) {
 		super(width, height, handler);
@@ -179,8 +176,8 @@ public class GraphicsTestWindow extends GLWindow {
 		float percentx = lastX / width;
 		float percenty = lastY / height;
 		
-		int x = (int) (percentx * GLGraphicsHandler.viewWidth);
-		int y = (int) (percenty * GLGraphicsHandler.viewHeight);
+		int x = (int) (percentx * GLGraphicsHandler.interfaceWidth);
+		int y = (int) (percenty * GLGraphicsHandler.interfaceHeight);
 		
 		MouseEventAction mouseaction;
 		

@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import amyGLGraphics.IO.GraphicsNotifier;
-import amyGraphics.Component;
+import amyInterface.Component;
 import movement.Room;
 
 public abstract class GLWindow implements Runnable {
@@ -70,8 +70,8 @@ public abstract class GLWindow implements Runnable {
 	
 	private void init() {
 		//Uncomment this if you want error reporting
-		GLFWErrorCallback.createPrint(System.err).set();
-		errorCallbackCreated = true;
+		//GLFWErrorCallback.createPrint(System.err).set();
+		//errorCallbackCreated = true;
 		
 		if (!glfwInit()) {
 			throw new IllegalStateException("Unable to initialize GLFW");
@@ -162,12 +162,28 @@ public abstract class GLWindow implements Runnable {
 		return window;
 	}
 	
-	public void setRoom(Room room) {
-		graphicsContext.setRoom(room);
+	public void setActiveRoom(Room room) {
+		graphicsContext.setActiveRoom(room);
 	}
 	
-	public void setScene(Component scene) {
-		graphicsContext.setScene(scene);
+	public void addRoom(Room room) {
+		graphicsContext.addRoom(room);
+	}
+	
+	public void removeRoom(Room room) {
+		graphicsContext.removeRoom(room);
+	}
+	
+	public void setActiveScene(Component scene) {
+		graphicsContext.setActiveScene(scene);
+	}
+	
+	public void addScene(Component scene) {
+		graphicsContext.addScene(scene);
+	}
+	
+	public void removeScene(Component scene) {
+		graphicsContext.removeScene(scene);
 	}
 	
 	public void setWindowWidth(int width) {

@@ -1,4 +1,4 @@
-package amyGraphics;
+package amyInterface;
 
 import java.awt.Rectangle;
 import java.util.Set;

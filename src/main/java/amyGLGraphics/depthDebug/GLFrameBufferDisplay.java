@@ -70,4 +70,9 @@ public class GLFrameBufferDisplay extends GLObject {
 		vertices.get(3).setXY(1.0f, -1.0f);
 	}
 
+	@Override
+	public boolean hasTexture() {
+		return true;
+	}
+
 }

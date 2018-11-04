@@ -31,7 +31,7 @@ public class GLInterfaceRenderer extends GLRenderer {
 		
 		GLComponent component = (GLComponent) object;
 		
-		program.useTexture(component.usesTexture());
+		program.useTexture(component.hasTexture());
 	}
 
 	@Override

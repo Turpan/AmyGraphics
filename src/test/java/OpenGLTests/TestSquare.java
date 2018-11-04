@@ -27,7 +27,7 @@ public class TestSquare extends Entity implements Illimunates{
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/testsquare.png"));
+		    img = ImageIO.read(new File("graphics/tests/testsquare.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

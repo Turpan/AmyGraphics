@@ -20,10 +20,13 @@ import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
 import amyGraphics.Animation;
-import amyGraphics.Component;
 import amyGraphics.Texture;
+import amyInterface.Component;
 
 public class GLComponent extends GLObject{
+	
+	public static final int viewWidth = GLGraphicsHandler.interfaceWidth;
+	public static final int viewHeight = GLGraphicsHandler.interfaceHeight;
 	
 	public static final int positionByteOffset = 0;
     public static final int colorByteOffset = positionByteOffset + GLVertex.positionBytesCount;
@@ -41,6 +44,7 @@ public class GLComponent extends GLObject{
 		super.setDrawOrder();
 		createVertices();
 		calculateVertices();
+		updateTexture();
 		colourVertices();
 		bindBuffer();
 		createTexture();
@@ -132,6 +136,10 @@ public class GLComponent extends GLObject{
 	}
 	
 	protected void updateTexture() {
+		if (!hasTexture()) {
+			return;
+		}
+		
 		if (shouldSnip()) {
 			snipTexture();
 			
@@ -168,7 +176,7 @@ public class GLComponent extends GLObject{
 	}
 	
 	protected boolean textureChanged() {
-		if (!usesTexture()) {
+		if (!hasTexture()) {
 			return false;
 		}
 		
@@ -184,14 +192,11 @@ public class GLComponent extends GLObject{
 		
 		addInterfaceTexture(gltexture);
 		
-		for (int i=0; i<4; i++) {
-			var vertex = vertices.get(i);
-			
-			vertex.setST(texturecoords[i*2], texturecoords[(i*2) + 1]);
-		}
+		updateTexture();
 	}
 	
-	public boolean usesTexture() {
+	@Override
+	public boolean hasTexture() {
 		return (component.getActiveTexture() != null);
 	}
 	
@@ -200,7 +205,7 @@ public class GLComponent extends GLObject{
 	}
 	
 	protected void createTexture() {
-		if (!usesTexture()) {
+		if (!hasTexture()) {
 			return;
 		}
 		
