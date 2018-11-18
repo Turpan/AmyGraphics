@@ -3,7 +3,6 @@ package amyGLGraphics.Interface;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL13;
 
-import amyGLGraphics.GLTexture;
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.IO.GraphicsUtils;

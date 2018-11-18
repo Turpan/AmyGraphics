@@ -221,17 +221,25 @@ public class GLRoomHandler extends RoomHandler {
 	}
 	
 	private void sortTransparent(List<GLObject> transparent) {
-		/*Collections.sort(transparent, (GLObject ob1, GLObject ob2) -> {
+		Collections.sort(transparent, (GLObject ob1, GLObject ob2) -> {
 			Vector4f vec1 = ob1.getVertices().get(0).xyzwVector().mul(ob1.getModelMatrix());
 			Vector4f vec2 = ob2.getVertices().get(0).xyzwVector().mul(ob2.getModelMatrix());
 			Vector3f pos = camera.getPosition();
 			Vector4f camvec = new Vector4f(pos.x, pos.y, pos.z, 1);
 			
-			var distance1 = camvec.distance(vec1);
-			var distance2 = camvec.distance(vec2);
+			float distance1 = camvec.distance(vec1);
+			float distance2 = camvec.distance(vec2);
 			
-			return (int) (distance2 - distance1);
-		});*/
+			int result = 0;
+			
+			if (distance1 < distance2) {
+				result = 1;
+			} else if (distance2 < distance1) {
+				result = -1;
+			}
+			
+			return result;
+		});
 	}
 	
 	public void setCamera(GLCamera camera) {

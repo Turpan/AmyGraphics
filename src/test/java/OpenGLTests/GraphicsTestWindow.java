@@ -19,9 +19,11 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL11;
 
-import amyGLGraphics.IO.ButtonState;
+import amyGLGraphics.IO.EventManager;
+import amyGLGraphics.IO.EventManager.KeyState;
 import amyGLGraphics.IO.GraphicsNotifier;
 import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
@@ -67,16 +69,26 @@ public class GraphicsTestWindow extends GLWindow {
 
 	@Override
 	protected void setupInputCallback() {
-		glfwSetKeyCallback(getWindow(), (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-				glfwSetWindowShouldClose(window, true);
-		});
 		GLFW.glfwSetCursorPosCallback(getWindow(), (window, xpos, ypos) -> {
 			mouseInput(xpos, ypos);
 		});
 		GLFW.glfwSetMouseButtonCallback(getWindow(), (long window, int button, int action, int mods) -> {
 			if (button == GLFW.GLFW_MOUSE_BUTTON_1)
 				mouseClick(action);
+		});
+		GLFW.glfwSetKeyCallback(getWindow(), (long window, int key, int scancode, int action, int mods) -> {
+			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+				glfwSetWindowShouldClose(window, true);
+			
+			for (KeyState keyState : EventManager.getManagerInstance().getKeyStates()) {
+				if (keyState.getKeyCode() == key) {
+					if (action == GLFW.GLFW_PRESS) {
+						keyState.setPressed(true);
+					} else if (action == GLFW.GLFW_RELEASE) {
+						keyState.setPressed(false);
+					}
+				}
+			}
 		});
 	}
 
@@ -131,45 +143,6 @@ public class GraphicsTestWindow extends GLWindow {
 			displayCursor = !displayCursor;
 		}
 		
-		//This is an example of using glfw input to modify the global input state
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS) {
-			ButtonState.setPlayerMoveUpPressed(true);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_PRESS) {
-			ButtonState.setPlayerMoveDownPressed(true);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_PRESS) {
-			ButtonState.setPlayerMoveLeftPressed(true);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_PRESS) {
-			ButtonState.setPlayerMoveRightPressed(true);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_P) == GLFW.GLFW_PRESS) {
-			ButtonState.setStopPressed(true);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
-			ButtonState.setPlayerDashPressed(true);
-		}
-		
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_UP) == GLFW.GLFW_RELEASE) {
-			ButtonState.setPlayerMoveUpPressed(false);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_DOWN) == GLFW.GLFW_RELEASE) {
-			ButtonState.setPlayerMoveDownPressed(false);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_LEFT) == GLFW.GLFW_RELEASE) {
-			ButtonState.setPlayerMoveLeftPressed(false);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_RIGHT) == GLFW.GLFW_RELEASE) {
-			ButtonState.setPlayerMoveRightPressed(false);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_P) == GLFW.GLFW_RELEASE) {
-			ButtonState.setStopPressed(false);
-		}
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_RELEASE) {
-			ButtonState.setPlayerDashPressed(false);
-		}
-		
 	}
 	
 	private void mouseClick(int action) {
@@ -189,7 +162,7 @@ public class GraphicsTestWindow extends GLWindow {
 		
 		MouseEvent event = new MouseEvent(x, y, mouseaction);
 		
-		ButtonState.addMouseEvent(event);
+		EventManager.getManagerInstance().addMouseEvent(event);
 	}
 	
 	private void mouseInput(double xpos, double ypos) {

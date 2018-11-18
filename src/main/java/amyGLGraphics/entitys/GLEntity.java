@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,9 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import amyGLGraphics.GLTexture;
+import amyGLGraphics.GLTexture2D;
+import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.GLTextureColour;
-import amyGLGraphics.GLTextureDepth;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
 import amyGraphics.Animation;
@@ -87,7 +87,6 @@ public class GLEntity extends GLObject{
 		vertices.get(21).setXYZ(fx, ft, fba);
 		vertices.get(22).setXYZ(fr, fy, fba);
 		vertices.get(23).setXYZ(fx, fy, fba);
-		update();
 	}
 	
 	private void colourVertices() {
@@ -165,7 +164,7 @@ public class GLEntity extends GLObject{
 			return;
 		}
 		
-		Texture target = entity.getTexture().getRenderTarget();
+		Texture target = entity.getActiveTexture().getRenderTarget();
 		
 		float s = (float) calculatePercentage(target.getX(), target.getSprite().getWidth());
 		float t = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
@@ -176,8 +175,16 @@ public class GLEntity extends GLObject{
 		vertices.get(1).setST(right, t);
 		vertices.get(2).setST(s, bottom);
 		vertices.get(3).setST(right, bottom);
+	}
+	
+	protected boolean textureChanged() {
+		if (!hasTexture()) {
+			return false;
+		}
 		
-		updateBuffer();
+		GLTexture2D gltexture = GLTextureCache.getTexture(entity.getActiveTexture().getSprite());
+		
+		return !getTextures().containsKey(gltexture);
 	}
 	
 	private void create3DVertices() {
@@ -235,10 +242,30 @@ public class GLEntity extends GLObject{
 	}
 	@Override
 	public void update() {
+		boolean shouldUpdate = false;
+		
 		updateModelMatrix();
 		if (isAnimated()) {
 			updateTexture();
+			shouldUpdate = true;
 		}
+		
+		if (textureChanged()) {
+			changeTexture();
+			shouldUpdate = true;
+		}
+		
+		if (shouldUpdate) {
+			updateBuffer();
+		}
+	}
+	
+	protected void changeTexture() {
+		GLTexture2D gltexture = GLTextureCache.getTexture(entity.getActiveTexture().getSprite());
+		
+		setDiffuseTexture(gltexture);
+		
+		updateTexture();
 	}
 	
 	private void updateModelMatrix() {
@@ -268,7 +295,7 @@ public class GLEntity extends GLObject{
 	}
 	
 	protected boolean isAnimated() {
-		return (entity.getTexture() instanceof Animation);
+		return (entity.getActiveTexture() instanceof Animation);
 	}
 	
 	@Override
@@ -303,6 +330,12 @@ public class GLEntity extends GLObject{
 	@Override
 	public void setDiffuseTexture(GLTexture texture) {
 		super.setDiffuseTexture(texture);
+		for (GLTexture diffuse : textures.keySet()) {
+			int value = textures.get(diffuse);
+			if (value == GL_TEXTURE0) {
+				textures.remove(diffuse);
+			}
+		}
 		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.diffuseTextureUnit);
 	}
 	
@@ -311,6 +344,6 @@ public class GLEntity extends GLObject{
 	}
 	@Override
 	public boolean hasTexture() {
-		return (entity.getTexture() != null);
+		return (entity.getTextures().size() > 0);
 	}
 }

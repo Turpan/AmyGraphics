@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.opengl.GL13;
-
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.GLTextureCube;
 import amyGLGraphics.IO.GraphicsUtils;
+import amyGraphics.Texture;
 import movement.Entity;
 import movement.Light;
 import movement.LightType;
@@ -78,9 +77,7 @@ public class GLRoom implements RoomListener {
 			GLEntity object = createBufferedEntity(entity);
 			
 			if (object.hasTexture()) {
-				GLTexture2D texture = createDiffuseTexture(entity);
-				
-		        object.setDiffuseTexture(texture);
+				createDiffuseTextures(entity);
 			}
 			
 	        object.setDirShadowMap(shadowBuffer.getColourTexture());
@@ -97,11 +94,12 @@ public class GLRoom implements RoomListener {
 	}
 	
 	private void removeEntity(Entity entity) {
-		boolean textureUnbound = unbindEntity(entity);
+		unbindEntityBuffer(entity);
 		entityMap.remove(entity);
-		if (textureUnbound) {
-			var sprite = entity.getTexture().getSprite();
-			GLTextureCache.removeTexture(sprite);
+		for (var texture : entity.getTextures()) {
+			if (!textureRemains(entity, texture)) {
+				unbindTexture(texture);
+			}
 		}
 		
 		if (entity instanceof Light) {
@@ -153,29 +151,14 @@ public class GLRoom implements RoomListener {
 		return bufferedEntity;
 	}
 	
-	private GLTexture2D createDiffuseTexture(Entity entity) {
-		GLTexture2D texture;
-		if (!GLTextureCache.hasTexture(entity.getTexture().getSprite())) {
-			texture = new GLTexture2D(entity.getTexture().getSprite());
-	        GLTextureCache.addTexture(entity.getTexture().getSprite(), texture);
-		} else {
-			texture = GLTextureCache.getTexture(entity.getTexture().getSprite());
+	private void createDiffuseTextures(Entity entity) {
+		for (Texture texture : entity.getTextures()) {
+			if (!GLTextureCache.hasTexture(texture.getSprite())) {
+				GLTexture2D gltexture = new GLTexture2D(texture.getSprite());
+				
+				GLTextureCache.addTexture(texture.getSprite(), gltexture);
+			}
 		}
-		
-		return texture;
-	}
-	
-	/*
-	 * returns true if texture was unbound
-	 */
-	private boolean unbindEntity(Entity entity) {
-		boolean textureUnbound = false;
-		unbindEntityBuffer(entity);
-		if (!textureRemains(entity)) {
-			unbindTexture(entity);
-			textureUnbound = true;
-		}
-		return textureUnbound;
 	}
 	
 	private void unbindEntityBuffer(Entity entity) {
@@ -183,24 +166,19 @@ public class GLRoom implements RoomListener {
 		bufferedentity.unbindObject();
 	}
 	
-	private void unbindTexture(Entity entity) {
-		var texture = GLTextureCache.getTexture(entity.getTexture().getSprite());
-		texture.unbindTexture();
+	private void unbindTexture(Texture texture) {
+		GLTextureCache.getTexture(texture.getSprite()).unbindTexture();
+
+		GLTextureCache.removeTexture(texture.getSprite());
 	}
 	
-	private boolean textureRemains(Entity entity) {
-		if (entity.getTexture() == null) {
-			return true;
-		}
-		
+	private boolean textureRemains(Entity entity, Texture texture) {
 		for (var testedentity : room.getContents()) {
 			if (testedentity != entity) {
-				if (testedentity.getTexture() == null) {
-					continue;
-				}
-				
-				if (entity.getTexture().getSprite().equals(testedentity.getTexture().getSprite())) {
-					return true;
+				for (var testedtexture : testedentity.getTextures()) {
+					if (testedtexture.getSprite() == texture.getSprite()) {
+						return true;
+					}
 				}
 			}
 		}

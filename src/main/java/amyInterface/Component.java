@@ -30,6 +30,7 @@ public class Component {
 	private Texture activeTexture;
 	private Color colour = BASE;
 	
+	private boolean enabled;
 	private boolean visible;
 	private boolean resizable;
 	private boolean interactable;
@@ -162,6 +163,14 @@ public class Component {
 		return textures;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public boolean isVisible() {
 		return visible;
 	}
@@ -207,7 +216,7 @@ public class Component {
 			return clickSource;
 		}
 		
-		if (isVisible() && clickInBounds(event.getX(), event.getY())) {
+		if (isEnabled() && isVisible() && clickInBounds(event.getX(), event.getY())) {
 			clickSource = this;
 		} else {
 			clickSource = null;

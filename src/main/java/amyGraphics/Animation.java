@@ -86,6 +86,16 @@ public class Animation extends Texture {
 		}
 	}
 	
+	public void setFramePosition(int frameCounter) {
+		if (frameCounter >= frameOrder.length) {
+			frameCounter = frameOrder.length - 1;
+		} else if (frameCounter < 0) {
+			frameCounter = 0;
+		}
+		
+		this.frameCounter = frameCounter;
+	}
+	
 	@Override
 	public Texture getRenderTarget() {
 		return frames[frameOrder[frameCounter]];
@@ -133,5 +143,16 @@ public class Animation extends Texture {
 	
 	public int getFrameCounter() {
 		return frameCounter;
+	}
+	
+	@Override
+	public Animation clone() {
+		try {
+			return new Animation(getSprite(), getFrameWidth(), getFrameHeight(), getFrameOrder().clone());
+		} catch (MalformedAnimationException e) {
+			//This should never occur, as if cloning throws an exception then an exception should already
+			//have been thrown for this one.
+			return null;
+		}
 	}
 }
