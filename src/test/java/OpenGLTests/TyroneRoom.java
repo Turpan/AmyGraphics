@@ -18,9 +18,9 @@ import movement.mathDS.Vector.MalformedVectorException;
 public class TyroneRoom extends Room implements GameListener {
 	
 	static final double[][][] directionTable = new double[][][]
-			{{{-0.7071,-0.7071,0}, {0,-1,0}, {0.7071,-0.7071,0}},
-			{{-1,0,0},null, {1,0,0}},
-			{{-0.7071,0.7071,0}, {0,1,0}, {0.7071,0.7071,0}}};
+			{{{0.7071,0.7071,0}, {0,1,0}, {-0.7071,0.7071,0}},
+			{{1,0,0},null, {-1,0,0}},
+			{{0.7071,-0.7071,0}, {0,-1,0}, {-0.7071,-0.7071,0}}};
 	
 	private Player player;
 	
@@ -34,7 +34,7 @@ public class TyroneRoom extends Room implements GameListener {
 		BufferedImage[] background = new BufferedImage[6];
 		for (int i=0; i<6; i++) {
 			try {
-				background[i] = ImageIO.read(new File("graphics/tests/skybox/skybox" + i + ".png"));
+				background[i] = ImageIO.read(new File("graphics/skybox/skybox" + i + ".png"));
 			} catch (IOException e) {
 				System.out.println("where is picture?");
 				System.exit(1);
@@ -57,7 +57,7 @@ public class TyroneRoom extends Room implements GameListener {
 			chaser.applyConstantForces();
 			chaser2.applyConstantForces();
 //			System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
-			//checkCollision();
+			checkCollision();
 			player.tick();
 			chaser.tick();
 			chaser2.tick();
@@ -74,15 +74,18 @@ public class TyroneRoom extends Room implements GameListener {
 		player.setPosition(new float[] {100,125,50});
 		
 		chaser = new ChaserEnemy(this);
-		chaser.setPosition(new float[] {200,325,50});
+//		chaser.setMass(22.5);
+//		chaser.setBaseMoveForce(1000000);
+		chaser.setPosition(new float[] {200,361,50});
 		
 		chaser2 = new ChaserEnemy(this);
-		chaser2.setPosition(new float[] {300,325,50});
+//		chaser2.setBaseMoveForce(1000);
+		chaser2.setPosition(new float[] {200,409,50});
 		
-		TestWall longWallL = new TestWall(new Vector(1, new double[] {1,0,0}), false);
-		TestWall longWallR = new TestWall(new Vector(1, new double[] {-1,0,0}), false);
-		TestWall wideWallT = new TestWall(new Vector(1, new double[] {0,1,0}), true);
-		TestWall wideWallB = new TestWall(new Vector(1, new double[] {0,-1,0}), true);
+		TestWall longWallL = new TestWall(false);
+		TestWall longWallR = new TestWall(false);
+		TestWall wideWallT = new TestWall(true);
+		TestWall wideWallB = new TestWall(true);
 		longWallL.setPosition(new float[] {0,0,-350});
 		longWallR.setPosition(new float[] {580,0,-350});
 		wideWallT.setPosition(new float[] {0,300,-350});
@@ -111,10 +114,6 @@ public class TyroneRoom extends Room implements GameListener {
 		if (ButtonState.getPlayerMoveDownPressed()) y += 1;
 		if (ButtonState.getPlayerMoveLeftPressed()) x -= 1;
 		if (ButtonState.getPlayerMoveRightPressed()) x += 1;
-		
-		System.out.println(x);
-		System.out.println(y);
-		
 		return directionTable[y][x];
 	}
 	
@@ -129,6 +128,9 @@ public class TyroneRoom extends Room implements GameListener {
 		
 		if (ButtonState.getStopPressed()) {
 			try {
+				System.out.print(chaser2.getPosition()[0]);
+				System.out.print(chaser2.getPosition()[1]);
+				System.out.println(chaser2.getPosition()[2]);
 				player.stop();
 				chaser.stop();
 				chaser2.stop();
@@ -137,14 +139,15 @@ public class TyroneRoom extends Room implements GameListener {
 			}
 		}
 		
-		System.out.println(ButtonState.getPlayerMoveUpPressed());
-		
 		if (ButtonState.getPlayerMoveUpPressed() || ButtonState.getPlayerMoveDownPressed() || 
-				ButtonState.getPlayerMoveLeftPressed() || ButtonState.getPlayerMoveRightPressed()
-				&& calculateDirection() != null) {
+				ButtonState.getPlayerMoveLeftPressed() || ButtonState.getPlayerMoveRightPressed()) {
 			try {
-				System.out.println("aaa");
-				chaser2.locomote(calculateDirection());
+				var direction = calculateDirection();
+				if (direction != null) { 
+					var reverseDir = new double[] {-direction[0], -direction[1],-direction[2]};
+					chaser2.locomote(direction);
+					chaser.locomote(reverseDir);
+				}
 			} catch (MalformedVectorException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
