@@ -7,14 +7,14 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import amyGraphics.Texture;
-import movement.Wall;
+import movement.Obstacle;
+import movement.Shapes.BigRectangle;
 import movement.mathDS.Vector;
 
-public class TestWall extends Wall{
+public class TestWall extends Obstacle{
 	
-	public TestWall(Vector angle, boolean wide) throws MalformedEntityException {
-		setNormal (angle);
-		setBounciness(1);
+	public TestWall(boolean wide) throws MalformedEntityException {
+		setCoR(1);
 		
 		Texture texture;
 		
@@ -30,11 +30,12 @@ public class TestWall extends Wall{
 	public Texture longTexture() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/wall-long.png"));
+		    img = ImageIO.read(new File("graphics/wall-long.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setDimensions(new double[] {20,600,700});
+		setDimensions(new double[] {50,600,700});
+		setOutline(new BigRectangle(getDimensions()));
 		
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
@@ -45,16 +46,22 @@ public class TestWall extends Wall{
 	public Texture wideTexture() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/wall-wide.png"));
+		    img = ImageIO.read(new File("graphics/wall-wide.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		setDimensions(new double[] {600,20,700});
+		setDimensions(new double[] {600,50,700});
+		setOutline(new BigRectangle(getDimensions()));
 		
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
 		
 		return texture;
+	}
+	@Override
+	public void collision() {
+		// TODO Auto-generated method stub
+		
 	}
 }

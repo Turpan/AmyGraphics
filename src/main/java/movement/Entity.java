@@ -38,8 +38,6 @@ public abstract class Entity {
 	public float[] getPosition() {
 		return position;
 	}
-	abstract public boolean inside(float[] point);
-	
 	public void move(Vector movement) {
 		float[] newPosition = new float[Vector.DIMENSIONS];
 		float[] currentPosition = getPosition();
