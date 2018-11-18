@@ -21,25 +21,25 @@ public class Triangle implements OutlineShape {
 		return new Vector();
 	}
 	@Override
-	public ArrayList<float[]> getCollisionNet() {
-		return null;
-	}
-	@Override
 	public boolean inside(float[] position) {
 		return false;
 	}
-	@Override
 	public void initialiseCollisionNet() {
 		
 	}
 	@Override
-	public float[] getPointOnEdge(float[] position) {
+	public float[] pointOnEdge(float[] position) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public double getDistanceIn(float[] position) {
+	public double distanceIn(float[] position) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	@Override
+	public float[] exactCollisionPosition(OutlineShape collider, float[] relativePosition) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
