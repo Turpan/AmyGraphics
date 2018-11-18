@@ -11,6 +11,7 @@ import movement.mathDS.Vector.MalformedVectorException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -86,11 +87,7 @@ public class CollisionEngine {
 		for (var object1 : getMovableList()) {
 			collisionDetection(object1);
 		}
-//		System.out.println("start");
-//		System.out.println(getMovableList());
 		organiseCollisionOrder();
-//		System.out.println("break");
-//		System.out.println(getMovableList());
 		applyNormalForces();
 		applyVelocityCollisions();
 	}
@@ -162,19 +159,18 @@ public class CollisionEngine {
 			distance = object2.getOutline().distanceIn(relativeEdgeLocation1);
 			if (distance > teleportOutBuffer) {
 				object1.move(new Vector(distance - teleportOutBuffer, normal2.getDirection()));
-				
-				for (Obstacle obs : getObstacleList()) {
-					if (checkBoundsCollision(object1, obs)) {
-						var exactObstacleCollisionLocation = object1.getOutline().exactCollisionPosition(obs.getOutline(), relativeLocation(new float[Vector.DIMENSIONS], object1, obs));
-						if (exactObstacleCollisionLocation != null) {
-							double distanceInObs = obs.getOutline().distanceIn(relativeLocation(object1.getOutline().pointOnEdge(exactObstacleCollisionLocation), object1, obs));
-							if (distanceInObs > teleportOutBuffer) {
-								var revertVector = new Vector(distanceInObs - teleportOutBuffer, Vector.directionOfReverse(normal2));
-								object1.move(revertVector);
-								object2.move(revertVector);
-							
-							}
-						}
+			}
+		}
+		for (Obstacle obs : getObstacleList()) {
+			if (checkBoundsCollision(object1, obs)) {
+				var exactObstacleCollisionLocation = object1.getOutline().exactCollisionPosition(obs.getOutline(), relativeLocation(new float[Vector.DIMENSIONS], object1, obs));
+				if (exactObstacleCollisionLocation != null) {
+					double distanceInObs = obs.getOutline().distanceIn(relativeLocation(object1.getOutline().pointOnEdge(exactObstacleCollisionLocation), object1, obs));
+					if (distanceInObs > teleportOutBuffer) {
+						var revertVector = new Vector(distanceInObs - teleportOutBuffer, Vector.directionOfReverse(normal2));
+						object1.move(revertVector);
+						object2.move(revertVector);
+					
 					}
 				}
 			}
@@ -192,26 +188,23 @@ public class CollisionEngine {
 				}		
 			}
 		}
-//		System.out.println("Normal1: " + normal1.getDirection()[0] + ", " +normal1.getDirection()[1] + ", "+normal1.getDirection()[2]);
-//		System.out.println("Normal2: " + normal2.getDirection()[0] + ", " +normal2.getDirection()[1] + ", "+normal2.getDirection()[2]);
 		object1.applyForce(outputForce1);
 		object2.applyForce(outputForce2);
 	}
 	private void obstacleCollision(Obstacle o, Movable m, float[][] collisionLocations) throws MalformedVectorException {
+		System.out.println("is this really happening?");
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ? 
 							new Force() :
 							new Force((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
 									  ,normalObstacle.getDirection());
-		
+		System.out.println(outputForce.getMagnitude());
+		System.out.println(m.getVelocity().getMagnitude());
+		System.out.println(m.getCoR());
+		System.out.println(Vector.getComponentParallel(m.getVelocity(), normalObstacle));
 		//assures that if the object gets in, it gets teleported immediately out
 		var edgeCollisionLocation = m.getOutline().pointOnEdge(collisionLocations[1]);
-//		System.out.println(" ecl: ["+ edgeCollisionLocation[0] + ", " +edgeCollisionLocation[1] + ", " +edgeCollisionLocation[2] + "]");
-		float[] relativeEdgeCollisionLocation = relativeLocation(edgeCollisionLocation, m, o);
-//		System.out.println("recl: [ " + relativeEdgeCollisionLocation[0] + ", " +relativeEdgeCollisionLocation[1] + ", " +relativeEdgeCollisionLocation[2] + "]");
-		double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);
-//		System.out.println("wallPos: [" + o.getPosition()[0] + ", " + o.getPosition()[1] + ", " + o.getPosition()[2] + "]");
-//		System.out.println("moveablePos: [" + m.getPosition()[0] + ", " + m.getPosition()[1] + ", " + m.getPosition()[2] + "]");
+		float[] relativeEdgeCollisionLocation = relativeLocation(edgeCollisionLocation, m, o);double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);
 		if (distanceEdgeIn>teleportOutBuffer ) {
 			m.move(new Vector(distanceEdgeIn-teleportOutBuffer, normalObstacle.getDirection()));
 		}			
@@ -261,7 +254,7 @@ public class CollisionEngine {
 	
 	private void applyNormalForces() throws MalformedVectorException {	//should only be run after movable list is organised. Requires that the object that is furthest from a wall has it's velocity collision done first
 		var collisionOrder = getMovableList();							//this is because the result of one normal force being applied has an effect on the results of others. Turns out the order of calculation for doing
-		Vector collideeNormal;													//this in one pass is to do the objects with the highest "wall abstraction" first.
+		Vector collideeNormal;											//this in one pass is to do the objects with the highest "wall abstraction" first.
 		Vector colliderNormal;
 		for (Movable collider: collisionOrder) {
 			for (Collidable collidee : getPoC().getVerticesConnectedTo(collider)) {
@@ -273,7 +266,7 @@ public class CollisionEngine {
 				}else if (collisionOrder.indexOf(collider)< collisionOrder.indexOf(collidee)) {
 					if (Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
 						collider.applyForce( new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));
-						((Movable) collidee).applyForce( new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), Vector.directionOfReverse(collideeNormal)));
+						((Movable) collidee).applyForce(new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), Vector.directionOfReverse(collideeNormal)));
 					}
 					colliderNormal = collider.getOutline().getNormal(getPoC().getEdgeValue(collidee, collider)[1]);
 					if (Vector.vectorMovingWith(((Movable)collidee).getActiveForce()  ,colliderNormal)){
@@ -292,7 +285,7 @@ public class CollisionEngine {
 				if (getObstacleList().contains(collidee)) {
 					obstacleCollision((Obstacle)collidee, collider, getPoC().getEdgeValue(collidee, collider));
 				} else if (collisionOrder.indexOf(collider) < collisionOrder.indexOf(collidee)){
-					moveableCollision(collider, (Movable)collidee, getPoC().getEdgeValue(collidee, collider));
+					moveableCollision(collider, (Movable)collidee, getPoC().getEdgeValue(collider, collidee));
 				}
 			}		
 		}

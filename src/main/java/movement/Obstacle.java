@@ -11,7 +11,7 @@ public abstract class Obstacle extends Collidable{
 		return CoR;
 	}
 	public void setCoR(double CoR) {
-		CoR = this.CoR;
+		this.CoR = CoR;
 	}
 	public void setOutline(OutlineShape outline) {
 		this.outline = outline;
