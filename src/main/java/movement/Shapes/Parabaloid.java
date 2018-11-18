@@ -1,28 +1,23 @@
 package movement.Shapes;
 
-import java.util.ArrayList;
-
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public class Parabaloid implements OutlineShape{
+public class Parabaloid extends NormalShape{
 	//creates a parabolic cylinder of a certain thickness. 
 	//this can, naturally, run along any one of the axis, so this has to be defined in the constructor.
 
-	private double[] dimensions;
-	private ArrayList<float[]> collisionNet;
 	private int longDimension;
 	private int curvedDimension;
 	private double thickness;
 	private boolean parity;
 	
 	public Parabaloid(double[] dimensions, int longDimension, int curvedDimension, double thickness, boolean parity) {
-		setDimensions(dimensions);
+		super(dimensions);
 		setLongDimension(longDimension);
 		setCurvedDimension(curvedDimension);
 		setThickness(thickness);
 		setParity(parity);	//Flips the bit, reverses the parabaloid;
-		initialiseCollisionNet();
 	}
 	@Override
 	public Vector getNormal(float[] position) throws MalformedVectorException {
@@ -36,22 +31,6 @@ public class Parabaloid implements OutlineShape{
 			output = Vector.getReverse(output);
 		}
 		return output;
-	}
-
-	@Override
-	public double[] getDimensions() {
-		return dimensions;
-	}
-
-	@Override
-	public void setDimensions(double[] dimensions) {
-		this.dimensions = dimensions;
-		
-	}
-
-	@Override
-	public ArrayList<float[]> getCollisionNet() {
-		return collisionNet;
 	}
 	private int getLongDimension() {
 		return longDimension;
@@ -99,43 +78,7 @@ public class Parabaloid implements OutlineShape{
 	}
 
 	@Override
-	public void initialiseCollisionNet() {
-		collisionNet = new ArrayList<float[]>();
-		float [][] possibleCoords = new float[Vector.DIMENSIONS][];
-
-		for (int i = 0; i<Vector.DIMENSIONS;i++) {
-			float grainSize = (float) (getDimensions()[i]/OutlineShape.collisionDetectionGranularity);
-			possibleCoords[i] = new float[OutlineShape.collisionDetectionGranularity + 1];
-			for (int j = 0; j<=OutlineShape.collisionDetectionGranularity ; j++) {
-				possibleCoords[i][j] = grainSize * j;
-			}
-		}
-		float[][] points = new float[(int) Math.pow(OutlineShape.collisionDetectionGranularity+1,Vector.DIMENSIONS)][Vector.DIMENSIONS] ;
-		int chunkSize;
-		int chunkCounter;
-		int chunkLocation;
-		for (int i = 0; i<Vector.DIMENSIONS;i++) {
-			chunkSize = (int) Math.pow(OutlineShape.collisionDetectionGranularity+1,Vector.DIMENSIONS-i-1);
-			chunkCounter = 0;
-			chunkLocation = 0;
-			for (int j = 0; j < Math.pow(OutlineShape.collisionDetectionGranularity+1,Vector.DIMENSIONS);j++) {
-				points[j][i] = possibleCoords[i][chunkCounter%(OutlineShape.collisionDetectionGranularity+1)];
-				chunkLocation++;
-				if (chunkLocation == chunkSize) {
-					chunkLocation = 0;
-					chunkCounter++;
-				}				
-			}
-		}
-		for (float[] point : points) {
-				if (inside(point)) {
-					collisionNet.add(point);
-				}
-		}
-	}
-
-	@Override
-	public float[] getPointOnEdge(float[] position) {
+	public float[] pointOnEdge(float[] position) {
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {
 			if (!(position[i] >= 0 && position[i] <=  getDimensions()[i])) {
 				position[i] = (float) (position[i] >= getDimensions()[i] ? getDimensions()[i] : 0);
@@ -152,13 +95,17 @@ public class Parabaloid implements OutlineShape{
 	}
 
 	@Override
-	public double getDistanceIn(float[] position) {
-		var tmp = getPointOnEdge(position);
+	public double distanceIn(float[] position) {
+		var tmp = pointOnEdge(position);
 		double sum = 0; 
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {
 			sum += Math.pow(position[i] - tmp[i] , 2);
 		}
-		return Math.sqrt(sum);
+		var distance = Math.sqrt(sum);
+		if (!inside(position)) {
+			distance *= -1;
+		}
+		return Math.sqrt(distance);
 	}
 	public boolean isConcave(float[] position) {	//true == concave, false == convex
 		double k = getDimensions()[getLongDimension()];
@@ -170,5 +117,9 @@ public class Parabaloid implements OutlineShape{
 			tmp = -1* (position[getLongDimension()] - k*Math.pow(position[getCurvedDimension()]/h, 2) + 2*k*position[getCurvedDimension()]/h + k);
 		}
 		return tmp> getThickness()/2;
+	}
+	@Override
+	protected boolean inCollisionNet(float[] point) {
+		return inside(point);
 	}
 }

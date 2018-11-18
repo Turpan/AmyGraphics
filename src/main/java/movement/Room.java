@@ -18,8 +18,7 @@ public abstract class Room {
 	public Room() {
 		contents = new ArrayList<Entity>();
 		listeners = new ArrayList<RoomListener>();
-		
-		collisionEngine = new CollisionEngine(contents);
+		collisionEngine = new CollisionEngine();
 	}
 	
 	public Room(BufferedImage[] background) {
@@ -47,6 +46,7 @@ public abstract class Room {
 	public void addEntity(Entity entity) {
 		contents.add(entity);
 		for (RoomListener listener : listeners) listener.entityAdded(entity);
+		collisionEngine.add(entity);
 	}
 	
 	public void addEntity(List<Entity> entitys) {
@@ -57,6 +57,7 @@ public abstract class Room {
 	
 	public void removeEntity(Entity entity) {
 		contents.remove(entity);
+		collisionEngine.remove(entity);
 		for (RoomListener listener : listeners) listener.entityRemoved(entity);
 	}
 	
@@ -86,7 +87,7 @@ public abstract class Room {
 	
 	protected void checkCollision() {
 		try {
-			collisionEngine.checkCollision();
+			collisionEngine.checkCollisions();
 		} catch (MalformedVectorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

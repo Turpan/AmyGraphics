@@ -1,19 +1,14 @@
 package movement.Shapes;
 
-import java.util.ArrayList;
-
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
 public interface OutlineShape {
-	final static int collisionDetectionGranularity = 10;
-	
 	public Vector getNormal(float[] position) throws MalformedVectorException; //normal of the shape at a point.
 	public double[] getDimensions();
 	public void setDimensions(double[] dimensions);
-	public ArrayList<float[]> getCollisionNet();
 	public boolean inside(float[] position);
-	public void initialiseCollisionNet();
-	public float[] getPointOnEdge(float[] position);
-	public double getDistanceIn(float[] position);
+	public float[] exactCollisionPosition(OutlineShape collider, float[] relativePosition);
+	public float[] pointOnEdge(float[] position);
+	public double distanceIn(float[] position);	//returns a negative value for values outside of the shape
 }
