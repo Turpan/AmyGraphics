@@ -16,7 +16,7 @@ public class Communism extends Entity {
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/communism.png"));
+		    img = ImageIO.read(new File("graphics/communism.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -24,10 +24,5 @@ public class Communism extends Entity {
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
 		setTexture(texture);
-	}
-	@Override
-	public boolean inside(float[] point) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }

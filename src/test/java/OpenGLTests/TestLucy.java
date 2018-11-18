@@ -13,9 +13,4 @@ public class TestLucy extends Entity {
 		Animation lucy = LucyIO.readLucyFile("lcy test/test.lcy");
 		setTexture(lucy);
 	}
-	@Override
-	public boolean inside(float[] point) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
