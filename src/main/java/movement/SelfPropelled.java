@@ -3,7 +3,7 @@ package movement;
 import movement.mathDS.Force;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public abstract class SelfPropelled extends Moveable {
+public abstract class SelfPropelled extends Movable {
 	private double baseMoveForce;
 
 	public SelfPropelled() throws MalformedVectorException {

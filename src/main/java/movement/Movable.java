@@ -1,7 +1,7 @@
 package movement;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 
 import movement.Shapes.OutlineShape;
 import movement.mathDS.Force;
@@ -9,10 +9,11 @@ import movement.mathDS.Vector;
 import movement.mathDS.Velocity;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public abstract class Moveable extends Entity implements Collidable{
+public abstract class Movable extends Collidable{
 
 	private Velocity velocity;
 	final public static double  TIMESCALE = 0.1;
+	final public static double GRAVITY = 9.81;
 	private Force activeForce;
 	private double mass; 						// don't let this one equal 0.... If you want a default value, go with 1.
 	private OutlineShape outline;
@@ -22,7 +23,7 @@ public abstract class Moveable extends Entity implements Collidable{
 	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies
 										//because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
 																				//yet...
-	public Moveable () throws MalformedVectorException {
+	public Movable () throws MalformedVectorException {
 		setVelocity(new Velocity());
 		setActiveForce(new Force());
 		setAttachedEntities(new ArrayList<Entity>());
@@ -70,15 +71,12 @@ public abstract class Moveable extends Entity implements Collidable{
 	public boolean isStopped() {
 		return (getVelocity().getMagnitude() == 0);
 	}
-	
+
 	public void setOutline(OutlineShape outline) {
 		this.outline = outline;
 	}
 	public OutlineShape getOutline() {
 		return outline;
-	}
-	public boolean inside(float[] point) {
-		return getOutline().inside(point);
 	}
 	public ArrayList<Entity> getAttachedEntities() {
 		return attachedEntities;
@@ -98,8 +96,8 @@ public abstract class Moveable extends Entity implements Collidable{
 		}
 	}
 	public void applyConstantForces() throws MalformedVectorException {
-//		applyFriction();
-//		applyForce(new Force(getMass() * 9.81, new double[] {0,1,0}));
+		applyFriction();
+		applyForce(new Force(getMass() * GRAVITY, new double[] {0,-1,0}));
 	}
 	
 	public void stop() throws MalformedVectorException {
@@ -109,6 +107,7 @@ public abstract class Moveable extends Entity implements Collidable{
 	public void applyForce(Force force) throws MalformedVectorException {
 		getActiveForce().addVector(force);
 	}
+	
 	@Override
 	public void move(Vector movement) {
 		super.move(movement);

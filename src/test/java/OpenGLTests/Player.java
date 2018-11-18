@@ -6,17 +6,17 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import Attackers.Dashing;
 import amyGraphics.Texture;
-import movement.Shapes.*;
 import movement.SelfPropelled;
-import movement.Dashing;
+import movement.Shapes.*;
 import movement.mathDS.Force;
 import movement.mathDS.Vector.MalformedVectorException;
 
 public class Player extends SelfPropelled implements Dashing {
 
 	static final double MASS =5;
-	static final double BASEMOVEFORCE =100;
+	static final double BASEMOVEFORCE = 100;
 	static final double COEFFICIENT_OF_RESTITUTION = 1;	//'bounciness' Used for collisions. See Controllable. Not the whole story, as I've attempted to disallow objects enterring other objects, regardless of CoR
 	static final double COEFFICIENT_OF_DRAG = 0.00;			//coefficient of proportionality between quadratic drag and speed
 	static final double  COEFFICIENT_OF_FRICTION = 0.; 	//the coefficient of proportionality between the constant drag and mass
@@ -43,7 +43,7 @@ public class Player extends SelfPropelled implements Dashing {
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/funnyman.png"));
+		    img = ImageIO.read(new File("graphics/funnyman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -110,7 +110,7 @@ public class Player extends SelfPropelled implements Dashing {
 			return;
 		}
 		setDashCounter(DASHLENGTH);
-		dashForce = new Force(DASHMAGNITUDE, new double[] {0,-1,0});
+		dashForce = new Force(DASHMAGNITUDE, new double[] {0,1,0});
 		setDashCoolDownCount(getDashCoolDown());
 	}
 	@Override

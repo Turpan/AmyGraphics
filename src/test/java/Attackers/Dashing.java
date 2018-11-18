@@ -1,4 +1,4 @@
-package movement;
+package Attackers;
 
 import movement.mathDS.Vector.MalformedVectorException;
 

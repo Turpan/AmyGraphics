@@ -1,8 +1,12 @@
-package movement;
+package Attackers;
 
+import movement.Entity;
+import movement.Movable;
+import movement.SelfPropelled;
+import movement.Entity.MalformedEntityException;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public abstract class Attacker extends SelfPropelled implements Collidable{
+public abstract class Attacker extends SelfPropelled{
 
 	private double maxHealth;
 	private double currentHealth;
@@ -36,7 +40,7 @@ public abstract class Attacker extends SelfPropelled implements Collidable{
 		setInvincibilityCounter(getInvincibilityTime());
 	}
 	protected void invincibilityTick() {
-		setInvincibilityCounter(getInvincibilityCounter() - Moveable.TIMESCALE);
+		setInvincibilityCounter(getInvincibilityCounter() - Movable.TIMESCALE);
 	}
 	@Override
 	public void tick() throws MalformedVectorException, MalformedEntityException {

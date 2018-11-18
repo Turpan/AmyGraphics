@@ -1,5 +1,7 @@
-package movement;
+package Attackers;
 
+import movement.GameListener;
+import movement.Movable;
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
@@ -68,7 +70,7 @@ public abstract class Enemy extends Attacker {
 		setAttackCounter(getAttackCooldown());
 	}
 	protected void attackCoolDownTick() {
-		setAttackCounter(getAttackCounter() - Moveable.TIMESCALE);
+		setAttackCounter(getAttackCounter() - Movable.TIMESCALE);
 		if (getAttackCounter() < 0) {
 			setAttackCounter(0);
 		}

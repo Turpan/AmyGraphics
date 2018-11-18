@@ -1,4 +1,4 @@
-package movement;
+package Attackers;
 
 public interface Shooter {
 

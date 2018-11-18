@@ -17,7 +17,7 @@ public class Neutral extends Entity {
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/trueneutral.png"));
+		    img = ImageIO.read(new File("graphics/trueneutral.png"));
 			//img = ImageIO.read(new File("graphics/triangle.png"));
 		} catch (IOException e) {
 			System.exit(1);
@@ -27,11 +27,4 @@ public class Neutral extends Entity {
 		texture.setHeight(img.getHeight());
 		setTexture(texture);
 	}
-
-	@Override
-	public boolean inside(float[] point) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

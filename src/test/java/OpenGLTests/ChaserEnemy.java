@@ -6,10 +6,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import Attackers.Enemy;
+import Attackers.Projectile;
 import amyGraphics.Texture;
-import movement.Enemy;
 import movement.GameListener;
-import movement.Projectile;
 import movement.Entity.MalformedEntityException;
 import movement.Shapes.Ellipse;
 import movement.Shapes.OutlineShape;
@@ -17,8 +17,8 @@ import movement.mathDS.Vector.MalformedVectorException;
 
 public class ChaserEnemy extends Enemy {
 	static final double MASS = 10;
-	static final double BASEMOVEFORCE = 100;
-	static final double COEFFICIENT_OF_RESTITUTION = 0.1;	
+	static final double BASEMOVEFORCE = 500;
+	static final double COEFFICIENT_OF_RESTITUTION = .0;	
 	static final double COEFFICIENT_OF_DRAG = 0.005;			
 	static final double  COEFFICIENT_OF_FRICTION = 0.5; 
 	
@@ -32,12 +32,11 @@ public class ChaserEnemy extends Enemy {
 		loadImage();
 		setDimensions(new double[] {50,50,50});
 		setOutline((OutlineShape)(new Ellipse(getDimensions())));
-		getOutline().initialiseCollisionNet();
 	}
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/evilman.png"));
+		    img = ImageIO.read(new File("graphics/evilman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

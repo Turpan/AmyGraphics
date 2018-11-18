@@ -26,17 +26,11 @@ public class TestDirLight extends Light{
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/tests/testsquare.png"));
+		    img = ImageIO.read(new File("graphics/testsquare.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
 		Texture texture = new Texture(img);
 		setTexture(texture);
-	}
-
-	@Override
-	public boolean inside(float[] point) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 }
