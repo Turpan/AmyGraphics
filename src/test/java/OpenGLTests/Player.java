@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import Attackers.Dashing;
 import amyGraphics.Texture;
+import movement.Obstacle;
 import movement.SelfPropelled;
 import movement.Shapes.*;
 import movement.mathDS.Force;
@@ -118,5 +119,10 @@ public class Player extends SelfPropelled implements Dashing {
 	public void collision() {
 		// TODO Auto-generated method stub
 		// you got to fill this in rone
+	}
+	@Override
+	public void collision(Obstacle o) {
+		// TODO Auto-generated method stub
+		
 	}
 }
