@@ -31,6 +31,7 @@ public class TestLight extends Light{
 			System.exit(1);
 		}
 		Texture texture = new Texture(img);
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 }

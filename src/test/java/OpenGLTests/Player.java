@@ -52,7 +52,8 @@ public class Player extends SelfPropelled implements Dashing {
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
 		
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 	@Override
 	public void tick() throws MalformedVectorException, MalformedEntityException{

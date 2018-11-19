@@ -1,6 +1,6 @@
 package amyInterface;
 
-import amyGLGraphics.IO.ButtonState;
+import amyGLGraphics.IO.EventManager;
 import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
 
@@ -22,7 +22,10 @@ public class InterfaceController {
 		
 		tickCount++;
 		
-		processInput();
+		MouseEvent event;
+		while ((event = EventManager.getManagerInstance().getMouseEvent()) != null) {
+			processInput(event);
+		}
 		updateAnimations();
 	}
 	
@@ -46,9 +49,7 @@ public class InterfaceController {
 		return tickThreshold;
 	}
 	
-	protected Component processInput() {
-		MouseEvent event = ButtonState.getMouseEvent();
-		
+	protected Component processInput(MouseEvent event) {
 		Component clickSource = root.findMouseClick(event);
 		
 		if (clickSource == null) {

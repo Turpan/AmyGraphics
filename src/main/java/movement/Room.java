@@ -6,14 +6,20 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import amyGraphics.Animation;
+import movement.Entity.MalformedEntityException;
 import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Room {
+	private static final int ANIMTHRESHOLD = 20;
+	
 	protected List<Entity> contents;
 	protected BufferedImage[] background;
 	private List<RoomListener> listeners;
 	
 	private CollisionEngine collisionEngine;
+	
+	private int tickCount;
 	
 	public Room() {
 		contents = new ArrayList<Entity>();
@@ -80,8 +86,36 @@ public abstract class Room {
 	}
 	
 	public void tick() {
-		for (Entity entity : contents) {
-			// TODO where the fuck my easy time advancedment rone
+		tickCount ++;
+		
+		if (tickCount % ANIMTHRESHOLD == 0) {
+			for (Entity entity : getContents()) {
+				if (entity.getActiveTexture() instanceof Animation) {
+					Animation anim = (Animation) entity.getActiveTexture();
+					anim.nextFrame();
+				}
+			}
+		}
+		
+		try {
+			for (Entity entity : getContents()) {
+				if (entity instanceof Movable) {
+					Movable movable = (Movable) entity;
+					movable.applyConstantForces();
+				}
+			}
+			
+			collisionEngine.checkCollisions();
+			
+			for (Entity entity : getContents()) {
+				if (entity instanceof Movable) {
+					Movable movable = (Movable) entity;
+					movable.tick();
+				}
+			}
+		} catch (MalformedVectorException | MalformedEntityException e) {
+			// TODO deal with exceptions later
+			System.out.println("Dunno how to deal with this");
 		}
 	}
 	

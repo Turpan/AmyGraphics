@@ -11,6 +11,7 @@ public class TestLucy extends Entity {
 	public void loadImage() {
 		//Animation lucy = LucyIO.readLucyFile("lcy test/bepneutral.lcy");
 		Animation lucy = LucyIO.readLucyFile("lcy test/test.lcy");
-		setTexture(lucy);
+		addTexture(lucy);
+		setActiveTexture(lucy);
 	}
 }

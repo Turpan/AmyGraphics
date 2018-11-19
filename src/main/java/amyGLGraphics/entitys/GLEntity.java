@@ -6,7 +6,9 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -330,11 +332,15 @@ public class GLEntity extends GLObject{
 	@Override
 	public void setDiffuseTexture(GLTexture texture) {
 		super.setDiffuseTexture(texture);
+		List<GLTexture> toRemove = new ArrayList<GLTexture>();
 		for (GLTexture diffuse : textures.keySet()) {
 			int value = textures.get(diffuse);
 			if (value == GL_TEXTURE0) {
-				textures.remove(diffuse);
+				toRemove.add(diffuse);
 			}
+		}
+		for (GLTexture diffuse : toRemove) {
+			textures.remove(diffuse);
 		}
 		addTexture(texture, GL_TEXTURE0 + GLEntityProgram.diffuseTextureUnit);
 	}
@@ -344,6 +350,6 @@ public class GLEntity extends GLObject{
 	}
 	@Override
 	public boolean hasTexture() {
-		return (entity.getTextures().size() > 0);
+		return (entity.getTextures().size() > 0 && entity.getActiveTexture() != null);
 	}
 }

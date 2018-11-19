@@ -23,6 +23,7 @@ public class Communism extends Entity {
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 }

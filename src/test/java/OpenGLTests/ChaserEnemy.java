@@ -43,7 +43,8 @@ public class ChaserEnemy extends Enemy {
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 	@Override
 	public float[] getDesiredPosition() {

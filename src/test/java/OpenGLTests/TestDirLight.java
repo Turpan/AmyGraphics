@@ -24,13 +24,14 @@ public class TestDirLight extends Light{
 	}
 	
 	public void loadImage() {
-		BufferedImage img = null;
+		/*BufferedImage img = null;
 		try {
 		    img = ImageIO.read(new File("graphics/testsquare.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
 		Texture texture = new Texture(img);
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);*/
 	}
 }

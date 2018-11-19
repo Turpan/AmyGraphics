@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import amyGLGraphics.IO.ButtonState;
+import amyGLGraphics.IO.EventManager;
 import movement.Entity;
 import movement.Entity.MalformedEntityException;
 import movement.GameListener;
@@ -110,15 +110,15 @@ public class TyroneRoom extends Room implements GameListener {
 	private double[] calculateDirection() {
 		int x = 1;
 		int y = 1;
-		if (ButtonState.getPlayerMoveUpPressed()) y -= 1;
-		if (ButtonState.getPlayerMoveDownPressed()) y += 1;
-		if (ButtonState.getPlayerMoveLeftPressed()) x -= 1;
-		if (ButtonState.getPlayerMoveRightPressed()) x += 1;
+		if (EventManager.getManagerInstance().getMoveUp().isPressed()) y -= 1;
+		if (EventManager.getManagerInstance().getMoveDown().isPressed()) y += 1;
+		if (EventManager.getManagerInstance().getMoveLeft().isPressed()) x -= 1;
+		if (EventManager.getManagerInstance().getMoveRight().isPressed()) x += 1;
 		return directionTable[y][x];
 	}
 	
 	private void processInput() {
-		if (ButtonState.getPlayerDashPressed()) {
+		/*if (ButtonState.getPlayerDashPressed()) {
 			try {
 				player.dash(calculateDirection());
 			} catch (MalformedVectorException e1) {
@@ -137,10 +137,12 @@ public class TyroneRoom extends Room implements GameListener {
 			} catch (MalformedVectorException e1) {
 				e1.printStackTrace();
 			}
-		}
+		}*/
 		
-		if (ButtonState.getPlayerMoveUpPressed() || ButtonState.getPlayerMoveDownPressed() || 
-				ButtonState.getPlayerMoveLeftPressed() || ButtonState.getPlayerMoveRightPressed()) {
+		if (EventManager.getManagerInstance().getMoveUp().isPressed() ||
+				EventManager.getManagerInstance().getMoveDown().isPressed() || 
+				EventManager.getManagerInstance().getMoveLeft().isPressed() ||
+				EventManager.getManagerInstance().getMoveRight().isPressed()) {
 			try {
 				var direction = calculateDirection();
 				if (direction != null) { 

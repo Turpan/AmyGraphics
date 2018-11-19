@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import amyGLGraphics.GLEntity;
+import amyGLGraphics.base.GLGraphicsHandler;
 import amyGraphics.Animation;
 import movement.Entity.MalformedEntityException;
 import movement.Room;
@@ -33,14 +33,14 @@ public class CommunismRoom extends Room {
 		neutral.setPosition(new float[] {-1000, 0, 2600});
 		neutral.setDimensions(new double[] {10000, 4000, 100});
 		comm = new Communism();
-		comm.setPosition(new float[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 1000});
-		comm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+		comm.setPosition(new float[] {GLGraphicsHandler.viewWidth / 2, GLGraphicsHandler.viewHeight / 2, 1000});
+		comm.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
 		farComm = new Communism();
-		farComm.setPosition(new float[] {GLEntity.viewWidth / 2, GLEntity.viewHeight / 2, 10000});
-		farComm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+		farComm.setPosition(new float[] {GLGraphicsHandler.viewWidth / 2, GLGraphicsHandler.viewHeight / 2, 10000});
+		farComm.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
 		highComm = new Communism();
-		highComm.setPosition(new float[] {GLEntity.viewWidth / 2, 3000, 2000});
-		highComm.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+		highComm.setPosition(new float[] {GLGraphicsHandler.viewWidth / 2, 3000, 2000});
+		highComm.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
 		square = new TestSquare();
 		square.setPosition(new float[] {0, 0, 500});
 		square.setDimensions(new double[] {500, 500, 500});
@@ -86,8 +86,8 @@ public class CommunismRoom extends Room {
 			}
 		} else {
 			comm.getPosition()[0] += 10;
-			if (comm.getPosition()[0] >= GLEntity.viewWidth) {
-				comm.getPosition()[0] = GLEntity.viewWidth;
+			if (comm.getPosition()[0] >= GLGraphicsHandler.viewWidth) {
+				comm.getPosition()[0] = GLGraphicsHandler.viewWidth;
 				movingLeft = true;
 			}
 		}
@@ -103,7 +103,7 @@ public class CommunismRoom extends Room {
 		}
 		
 		if (tickCount % 5 == 0) {
-			Animation anim = (Animation) lucy.getTexture();
+			Animation anim = (Animation) lucy.getActiveTexture();
 			anim.nextFrame();
 		}
 	}
@@ -112,7 +112,7 @@ public class CommunismRoom extends Room {
 		Communism square = new Communism();
 		try {
 			square.setPosition(new float[] {x, y, z});
-			square.setDimensions(new double[] {comm.getTexture().getSprite().getWidth(), comm.getTexture().getSprite().getHeight(), 500});
+			square.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
 		} catch (MalformedEntityException e) {
 			System.exit(-1);
 		}

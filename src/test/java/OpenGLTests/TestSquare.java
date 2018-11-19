@@ -34,7 +34,8 @@ public class TestSquare extends Entity implements Illimunates{
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 	@Override
 	public Light getLight() {

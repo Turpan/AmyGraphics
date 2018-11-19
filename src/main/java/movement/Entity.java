@@ -1,6 +1,8 @@
 package movement;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import amyGraphics.Texture;
 import movement.Entity.MalformedEntityException;
@@ -9,7 +11,8 @@ import movement.mathDS.Vector;
 public abstract class Entity {
 	private float[] position;
 	private double[]dimensions;
-	private Texture texture;
+	private Texture activeTexture;
+	private List<Texture> textures = new ArrayList<Texture>();
 
 	public void setDimensions(double[] dimensions) throws MalformedEntityException {
 		if (dimensions.length != Vector.DIMENSIONS) {
@@ -23,11 +26,23 @@ public abstract class Entity {
 	public double[] getDimensions() {
 		return dimensions;
 	}
-	public Texture getTexture() {
-		return texture;
+	public List<Texture> getTextures() {
+		return textures;
 	}
-	public void setTexture(Texture texture) {
-		this.texture = texture;
+	public void addTexture(Texture texture) {
+		textures.add(texture);
+	}
+	public void removeTexture(Texture texture) {
+		textures.remove(texture);
+	}
+	public Texture getActiveTexture() {
+		return activeTexture;
+	}
+	public void setActiveTexture(Texture activeTexture) {
+		if (!textures.contains(activeTexture)) {
+			activeTexture = null;
+		}
+		this.activeTexture = activeTexture;
 	}
 	public void setPosition(float[] position) throws MalformedEntityException {
 		if (position.length != Vector.DIMENSIONS) {

@@ -1,25 +1,47 @@
 package OpenGLTests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import amyInterface.Component;
 import movement.Entity.MalformedEntityException;
 import movement.Room;
 
 public class GraphicsTestEnvironment {
 	
-	GraphicsTestWindow window;
+	protected GraphicsTestWindow window;
 	
-	Room room;
+	protected List<Room> rooms;
+	protected List<Component> scenes;
 	
-	Timer timer;
+	protected Timer timer;
 	
 	public GraphicsTestEnvironment() {
-		room = new TyroneRoom();
+		rooms = getRooms();
+		scenes = getScenes();
 		
-		window = new GraphicsTestWindow(() -> { 
-			//give it the room to render
-			window.setRoom(room);
+		window = new GraphicsTestWindow(() -> {
+			if (rooms != null) {
+				for (Room room : rooms) {
+					window.addRoom(room);
+				}
+				
+				if (rooms.size() > 0) {
+					window.setActiveRoom(rooms.get(0));
+				}
+			}
+			
+			if (scenes != null) {
+				for (Component scene : scenes) {
+					window.addScene(scene);
+				}
+				
+				if (scenes.size() > 0) {
+					window.setActiveScene(scenes.get(0));
+				}
+			}
 		});
 		
 		//start the seperate thread
@@ -34,7 +56,7 @@ public class GraphicsTestEnvironment {
 
 			@Override
 			public void run() {
-				room.tick();
+				tick();
 			}
 					
 		}, 10, 10);
@@ -49,6 +71,25 @@ public class GraphicsTestEnvironment {
 		//Remove the timer and close the program
 		timer.cancel();
 		System.exit(0);
+	}
+	
+	public void tick() {
+		for (Room room : rooms) {
+			room.tick();
+		}
+	}
+	
+	protected List<Room> getRooms() {
+		List<Room> rooms = new ArrayList<Room>();
+		Room room = new TyroneRoom();
+		
+		rooms.add(room);
+		return rooms;
+	}
+	
+	protected List<Component> getScenes() {
+		List<Component> components = new ArrayList<Component>();
+		return components;
 	}
 
 	public static void main(String[] args) {

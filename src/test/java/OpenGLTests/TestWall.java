@@ -24,7 +24,8 @@ public class TestWall extends Obstacle{
 			texture = longTexture();
 		}
 		
-		setTexture(texture);
+		addTexture(texture);
+		setActiveTexture(texture);
 	}
 	
 	public Texture longTexture() throws MalformedEntityException {
