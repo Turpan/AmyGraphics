@@ -192,16 +192,12 @@ public class CollisionEngine {
 		object2.applyForce(outputForce2);
 	}
 	private void obstacleCollision(Obstacle o, Movable m, float[][] collisionLocations) throws MalformedVectorException {
-		System.out.println("is this really happening?");
+
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ? 
 							new Force() :
 							new Force((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
 									  ,normalObstacle.getDirection());
-		System.out.println(outputForce.getMagnitude());
-		System.out.println(m.getVelocity().getMagnitude());
-		System.out.println(m.getCoR());
-		System.out.println(Vector.getComponentParallel(m.getVelocity(), normalObstacle));
 		//assures that if the object gets in, it gets teleported immediately out
 		var edgeCollisionLocation = m.getOutline().pointOnEdge(collisionLocations[1]);
 		float[] relativeEdgeCollisionLocation = relativeLocation(edgeCollisionLocation, m, o);double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);

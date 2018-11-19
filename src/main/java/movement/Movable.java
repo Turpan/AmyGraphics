@@ -14,15 +14,16 @@ public abstract class Movable extends Collidable{
 	private Velocity velocity;
 	final public static double  TIMESCALE = 0.1;
 	final public static double GRAVITY = 9.81;
+	final public static int FLOORWINDOW = 5;
 	private Force activeForce;
 	private double mass; 						// don't let this one equal 0.... If you want a default value, go with 1.
 	private OutlineShape outline;
 	private double coefficientOfDrag;		
 	private double coefficientOfFriction; 	
-	private ArrayList<Entity> attachedEntities;		//move when this one moves!
-	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies
-										//because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
-																				//yet...
+	private ArrayList<Entity> attachedEntities;	//move when this one moves!
+	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
+	private int onFloorTimer;					//Represents an object being on the floor. Or rather, having recently collided with a Floor object. 
+	
 	public Movable () throws MalformedVectorException {
 		setVelocity(new Velocity());
 		setActiveForce(new Force());
@@ -84,6 +85,17 @@ public abstract class Movable extends Collidable{
 	public void setAttachedEntities(ArrayList<Entity> Es) {
 		attachedEntities = Es;
 	}
+	public int getOnFloorTimer() {
+		return onFloorTimer;
+	}
+	public void decrementFloorTimer() {
+		onFloorTimer -= 1;
+	}
+	public void touchFloor() {
+		onFloorTimer = FLOORWINDOW;
+	}
+
+	public abstract void collision(Obstacle o);			//analagous to the similar method for Movables in Collidable. Only movables can collide with obstacles, see.
 	//////////////////////////////////////////////////////////////////////////////////
 	protected void moveTick() throws MalformedVectorException {
 		move(new Vector(getVelocity().getMagnitude() * TIMESCALE, getVelocity().getDirection()));
@@ -132,5 +144,6 @@ public abstract class Movable extends Collidable{
 	public void tick() throws MalformedVectorException, MalformedEntityException {  //move object/ add forces to velocity. 
 		accelerationTick();															//ORDER OF USE : Apply all your forces -> CollisionEngine -> tick();
 		moveTick();
+		decrementFloorTimer();
 	}
 }
