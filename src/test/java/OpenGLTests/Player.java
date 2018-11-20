@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import Attackers.Dashing;
 import amyGraphics.Texture;
+import movement.Movable;
 import movement.Obstacle;
 import movement.SelfPropelled;
 import movement.Shapes.*;
@@ -116,12 +117,12 @@ public class Player extends SelfPropelled implements Dashing {
 		setDashCoolDownCount(getDashCoolDown());
 	}
 	@Override
-	public void collision() {
+	public void collision(Obstacle o) {
 		// TODO Auto-generated method stub
-		// you got to fill this in rone
+		
 	}
 	@Override
-	public void collision(Obstacle o) {
+	public void collision(Movable m) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -10,6 +10,7 @@ import Attackers.Enemy;
 import Attackers.Projectile;
 import amyGraphics.Texture;
 import movement.GameListener;
+import movement.Movable;
 import movement.Obstacle;
 import movement.Entity.MalformedEntityException;
 import movement.Shapes.Ellipse;
@@ -72,12 +73,12 @@ public class ChaserEnemy extends Enemy {
 		
 	}
 	@Override
-	public void collision() {
+	public void collision(Obstacle o) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void collision(Obstacle o) {
+	public void collision(Movable m) {
 		// TODO Auto-generated method stub
 		
 	}

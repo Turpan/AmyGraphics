@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import amyGraphics.Texture;
+import movement.Movable;
 import movement.Obstacle;
 import movement.Shapes.BigRectangle;
 import movement.mathDS.Vector;
@@ -60,8 +61,9 @@ public class TestWall extends Obstacle{
 		
 		return texture;
 	}
+
 	@Override
-	public void collision() {
+	public void collision(Movable m) {
 		// TODO Auto-generated method stub
 		
 	}
