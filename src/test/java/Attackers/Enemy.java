@@ -16,7 +16,7 @@ public abstract class Enemy extends Attacker {
 		}
 		setListener(listener);
 	}
-	
+
 	public double getAttackCooldown() {
 		return attackCooldown;
 	}
@@ -41,14 +41,15 @@ public abstract class Enemy extends Attacker {
 	}
 	protected double[] calculateDirection() {
 		float[] target = getDesiredPosition();
-		float[] location = getPosition();
+		double[] location = getPosition();
 		double[] output = new double[Vector.DIMENSIONS];
 		for (int i=0;i<Vector.DIMENSIONS;i++) {
 			output[i] = target[i] - location[i];
 		}
 		return output;
-		
+
 	}
+	@Override
 	public void tick() throws MalformedVectorException, MalformedEntityException {
 		if (isActive()) {
 			super.tick();

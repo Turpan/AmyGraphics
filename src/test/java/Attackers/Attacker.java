@@ -1,9 +1,7 @@
 package Attackers;
 
-import movement.Entity;
 import movement.Movable;
 import movement.SelfPropelled;
-import movement.Entity.MalformedEntityException;
 import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Attacker extends SelfPropelled{
@@ -14,7 +12,7 @@ public abstract class Attacker extends SelfPropelled{
 	private int force;
 	private double invincibilityTime;
 	private double invincibilityCounter;
-	
+
 	public Attacker() throws MalformedVectorException {
 		super();
 	}

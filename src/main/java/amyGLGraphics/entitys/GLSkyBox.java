@@ -2,7 +2,6 @@ package amyGLGraphics.entitys;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.nio.FloatBuffer;
@@ -16,7 +15,7 @@ import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
 
 public class GLSkyBox extends GLObject {
-	
+
 	public GLSkyBox() {
 		super();
 		super.setDrawOrder();
@@ -29,18 +28,18 @@ public class GLSkyBox extends GLObject {
 	protected int[] createDrawOrder() {
 		return new int[] {
 				0,1,2, 3,2,1,           //Face front
-                4,5,6, 7,6,5,           //Face right
-                8,9,10, 11,10,9,        //Face left
-                12,13,14, 15,14,13,     //Face bottom
-                16,17,18, 19,18,17,     //Face top
-                20,21,22, 23,22,21,	    //Face back
+				4,5,6, 7,6,5,           //Face right
+				8,9,10, 11,10,9,        //Face left
+				12,13,14, 15,14,13,     //Face bottom
+				16,17,18, 19,18,17,     //Face top
+				20,21,22, 23,22,21,	    //Face back
 		};
 	}
 
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -53,9 +52,9 @@ public class GLSkyBox extends GLObject {
 
 	@Override
 	protected void calculateVertices() {
-		int right = (int) (viewWidth);
-		int bottom = (int) (viewHeight);
-		int back = (int) (viewDepth);
+		int right = (viewWidth);
+		int bottom = (viewHeight);
+		int back = (viewDepth);
 		float fx = calculateRelativePosition(0, viewWidth);
 		float fy = calculateRelativePosition(0, viewHeight);
 		float fz = flip(calculateRelativePosition(0, viewDepth));
@@ -87,16 +86,16 @@ public class GLSkyBox extends GLObject {
 		vertices.get(22).setXYZ(fr, fy, fba);
 		vertices.get(23).setXYZ(fx, fy, fba);
 	}
-	
+
 	public void setSkyBox(GLTextureCube texture) {
 		addTexture(texture, GL_TEXTURE0);
 	}
 
 	@Override
 	protected List<Integer> createAttributePointers() {
-		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
-                false, GLVertex.positionBytesCount, GLVertex.positionByteOffset);
-		
+		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT,
+				false, GLVertex.positionBytesCount, GLVertex.positionByteOffset);
+
 		List<Integer> attribPointers = new ArrayList<Integer>();
 		attribPointers.add(VERTEXPOSITION);
 		return attribPointers;

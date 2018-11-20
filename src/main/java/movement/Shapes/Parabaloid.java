@@ -3,15 +3,15 @@ package movement.Shapes;
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public class Parabaloid extends NormalShape{
-	//creates a parabolic cylinder of a certain thickness. 
+public class Parabaloid extends StandardShape{
+	//creates a parabolic cylinder of a certain thickness.
 	//this can, naturally, run along any one of the axis, so this has to be defined in the constructor.
 
 	private int longDimension;
 	private int curvedDimension;
 	private double thickness;
 	private boolean parity;
-	
+
 	public Parabaloid(double[] dimensions, int longDimension, int curvedDimension, double thickness, boolean parity) {
 		super(dimensions);
 		setLongDimension(longDimension);
@@ -20,9 +20,9 @@ public class Parabaloid extends NormalShape{
 		setParity(parity);	//Flips the bit, reverses the parabaloid;
 	}
 	@Override
-	public Vector getNormal(float[] position) throws MalformedVectorException {
+	public Vector getNormal(double[] position) throws MalformedVectorException {
 		var dir = new double[Vector.DIMENSIONS];
-		dir[getCurvedDimension()] = getDimensions()[getCurvedDimension()] * (position[getCurvedDimension()]/ Math.pow(getDimensions()[getLongDimension()],2) - 1); 
+		dir[getCurvedDimension()] = getDimensions()[getCurvedDimension()] * (position[getCurvedDimension()]/ Math.pow(getDimensions()[getLongDimension()],2) - 1);
 		double magnitude = Math.sqrt(Math.pow(dir[getCurvedDimension()], 2) + 1);
 		dir[getCurvedDimension()] *= getParity() ? 1/magnitude:-1/magnitude;
 		dir[getLongDimension()] = 1/magnitude;
@@ -56,10 +56,10 @@ public class Parabaloid extends NormalShape{
 	private void setParity(boolean parity) {
 		this.parity = parity;
 	}
-	
+
 
 	@Override
-	public boolean inside(float[] position) {
+	public boolean inside(double[] position) {
 		boolean output = true;
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {
 			output = output && position[i] >= 0 && position[i] <=  getDimensions()[i];
@@ -78,26 +78,26 @@ public class Parabaloid extends NormalShape{
 	}
 
 	@Override
-	public float[] pointOnEdge(float[] position) {
+	public double[] pointOnEdge(double[] position) {
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {
 			if (!(position[i] >= 0 && position[i] <=  getDimensions()[i])) {
-				position[i] = (float) (position[i] >= getDimensions()[i] ? getDimensions()[i] : 0);
+				position[i] =(position[i] >= getDimensions()[i] ? getDimensions()[i] : 0);
 			}
 		}
 		double k = getDimensions()[getLongDimension()];
 		double h = getDimensions()[getCurvedDimension()]/2;
-		position[getLongDimension()] = (float) (getParity() ?
+		position[getLongDimension()] = getParity() ?
 				isConcave(position) ? -k*Math.pow(position[getCurvedDimension()]/h, 2) + 2*k*position[getCurvedDimension()]/h + getThickness()
-									: -k*Math.pow(position[getCurvedDimension()]/h, 2) + 2*k*position[getCurvedDimension()]/h:
-				isConcave(position) ? k*Math.pow(position[getCurvedDimension()]/h, 2) - 2*k*position[getCurvedDimension()]/h + k + getThickness()
-									: k*Math.pow(position[getCurvedDimension()]/h, 2) - 2*k*position[getCurvedDimension()]/h + k );
-		return position;
+				: -k*Math.pow(position[getCurvedDimension()]/h, 2) + 2*k*position[getCurvedDimension()]/h:
+					isConcave(position) ? k*Math.pow(position[getCurvedDimension()]/h, 2) - 2*k*position[getCurvedDimension()]/h + k + getThickness()
+					: k*Math.pow(position[getCurvedDimension()]/h, 2) - 2*k*position[getCurvedDimension()]/h + k ;
+					return position;
 	}
 
 	@Override
-	public double distanceIn(float[] position) {
+	public double distanceIn(double[] position) {
 		var tmp = pointOnEdge(position);
-		double sum = 0; 
+		double sum = 0;
 		for (int i = 0; i<Vector.DIMENSIONS; i++) {
 			sum += Math.pow(position[i] - tmp[i] , 2);
 		}
@@ -107,7 +107,7 @@ public class Parabaloid extends NormalShape{
 		}
 		return Math.sqrt(distance);
 	}
-	public boolean isConcave(float[] position) {	//true == concave, false == convex
+	public boolean isConcave(double[] position) {	//true == concave, false == convex
 		double k = getDimensions()[getLongDimension()];
 		double h = getDimensions()[getCurvedDimension()]/2;
 		double tmp;
@@ -119,7 +119,7 @@ public class Parabaloid extends NormalShape{
 		return tmp> getThickness()/2;
 	}
 	@Override
-	protected boolean inCollisionNet(float[] point) {
+	protected boolean inCollisionNet(double[] point) {
 		return inside(point);
 	}
 }

@@ -21,7 +21,7 @@ public class GLShadowMapPoint extends GLFrameBuffer {
 		colourTexture = new GLTextureColour(width, height, GL_RG32F, GL_RG, GL_FLOAT, GL_NEAREST);
 		depthTexture = new GLTextureDepth(width, height);
 	}
-	
+
 	public void setSoftShadows(boolean soft) {
 		if (soft) {
 			colourTexture.changeFiltering(GL_LINEAR);

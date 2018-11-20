@@ -12,9 +12,9 @@ import movement.Light;
 import movement.LightType;
 
 public class TestLight extends Light{
-	
+
 	static final Color color = Color.WHITE;
-	
+
 	public TestLight() {
 		super(LightType.POINT, color);
 		loadImage();
@@ -22,11 +22,11 @@ public class TestLight extends Light{
 		setDiffuse(1);
 		setSpecular(1);
 	}
-	
+
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/testsquare.png"));
+			img = ImageIO.read(new File("graphics/testsquare.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

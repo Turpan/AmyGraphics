@@ -6,7 +6,7 @@ import java.util.Set;
 public abstract class Layout {
 
 	protected abstract void layoutComponents(Component parent, Set<Component> children);
-	
+
 	public static void nullAlign(Container container) {
 		for (Component component : container.getChildren()) {
 			Rectangle bounds = component.getBounds();
@@ -16,7 +16,7 @@ public abstract class Layout {
 			component.setHeight(bounds.height);
 		}
 	}
-	
+
 	public static void layoutSelf(Component root) {
 		Rectangle bounds = root.getBounds();
 		root.setX(bounds.x);

@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class ShaderLoader {
 	private ShaderLoader() {
-		
+
 	}
 	public static String loadFile(String fileName) {
 		StringBuilder sb = new StringBuilder();

@@ -9,7 +9,7 @@ import movement.Entity.MalformedEntityException;
 import movement.mathDS.Vector;
 
 public abstract class Entity {
-	private float[] position;
+	private double[] position;
 	private double[]dimensions;
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
@@ -44,18 +44,18 @@ public abstract class Entity {
 		}
 		this.activeTexture = activeTexture;
 	}
-	public void setPosition(float[] position) throws MalformedEntityException {
+	public void setPosition(double[] position) throws MalformedEntityException {
 		if (position.length != Vector.DIMENSIONS) {
 			throw new MalformedEntityException("attempt to set position to wrong number of dimensions");
 		}
 		this.position = position;
 	}
-	public float[] getPosition() {
+	public double[] getPosition() {
 		return position;
 	}
 	public void move(Vector movement) {
-		float[] newPosition = new float[Vector.DIMENSIONS];
-		float[] currentPosition = getPosition();
+		double[] newPosition = new double[Vector.DIMENSIONS];
+		double[] currentPosition = getPosition();
 		double[] moveCmpnts = movement.getComponents();
 		for (int i=0;i<Vector.DIMENSIONS;i++) {
 			newPosition[i] = (float) (currentPosition[i] + moveCmpnts[i]);

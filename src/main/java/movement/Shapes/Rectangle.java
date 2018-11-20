@@ -3,13 +3,14 @@ package movement.Shapes;
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public class Rectangle extends NormalShape{
+public class Rectangle extends StandardShape{
 
-	
+
 	public Rectangle (double[] dimensions) {
 		super(dimensions);
 	}
-	public Vector getNormal(float[] position) throws MalformedVectorException {
+	@Override
+	public Vector getNormal(double[] position) throws MalformedVectorException {
 		double minimumDist = Double.MAX_VALUE;	//trivial upperbound
 		double tmpDist = 0;
 		int smallestDimension = 0;
@@ -33,17 +34,17 @@ public class Rectangle extends NormalShape{
 		return new Vector(1, direction);
 	}
 	@Override
-	public boolean inside(float[] position) {
+	public boolean inside(double[] position) {
 		boolean output = true;
 		int i = 0;
 		while (output && i<Vector.DIMENSIONS) {
-			output = (position[i] >= 0 && position[i] <= getDimensions()[i]); 
+			output = (position[i] >= 0 && position[i] <= getDimensions()[i]);
 			i++;
 		}
 		return output;
 	}
 	@Override
-	public float[] pointOnEdge(float[] position) {
+	public double[] pointOnEdge(double[] position) {
 		double minimumDist = Double.MAX_VALUE;	//trivial upperbound
 		double tmpDist = 0;
 		int smallestDimension = 0;
@@ -62,13 +63,13 @@ public class Rectangle extends NormalShape{
 				farside = false;
 			}
 		}
-		position[smallestDimension] = (float)(farside ? getDimensions()[smallestDimension]: 0);
+		position[smallestDimension] =farside ? getDimensions()[smallestDimension]: 0;
 		return position;
 	}
 	@Override
-	public double distanceIn(float[] position) {
+	public double distanceIn(double[] position) {
 		boolean[] outside = new boolean[Vector.DIMENSIONS];
-		double[] distance = new double[Vector.DIMENSIONS]; 
+		double[] distance = new double[Vector.DIMENSIONS];
 		double minimumDist = Double.MAX_VALUE;	//trivial upperbound
 		double tmpDist = 0;
 		double tmpDistII = 0;
@@ -94,11 +95,11 @@ public class Rectangle extends NormalShape{
 		}
 	}
 	@Override
-	protected boolean inCollisionNet(float[] point) {
+	protected boolean inCollisionNet(double[] point) {
 		int i = 0;
 		boolean acccccceptable = false;
 		while (acccccceptable && i<Vector.DIMENSIONS) {
-			acccccceptable = (point[i] >= 0 && point[i] < 0.25 * getDimensions()[i] ) || (point[i] > 0.75 * getDimensions()[i] && point[i] <= getDimensions()[i]); 
+			acccccceptable = (point[i] >= 0 && point[i] < 0.25 * getDimensions()[i] ) || (point[i] > 0.75 * getDimensions()[i] && point[i] <= getDimensions()[i]);
 			i++;
 		}
 		return acccccceptable;

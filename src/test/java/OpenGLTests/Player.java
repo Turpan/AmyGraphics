@@ -25,7 +25,7 @@ public class Player extends SelfPropelled implements Dashing {
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 3;
 	static final int DASHMAGNITUDE = 2000;
-	
+
 	int dashCoolDown;
 	double dashDirection;
 	int dashCounter; //this will be used for checking i frames
@@ -45,15 +45,15 @@ public class Player extends SelfPropelled implements Dashing {
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/funnyman.png"));
+			img = ImageIO.read(new File("graphics/funnyman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		
+
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
-		
+
 		addTexture(texture);
 		setActiveTexture(texture);
 	}
@@ -63,8 +63,8 @@ public class Player extends SelfPropelled implements Dashing {
 		dashTick();
 		if (isDashing()) {
 			applyForce(dashForce);
-			
-		}		
+
+		}
 		super.tick();
 	}
 	@Override
@@ -119,11 +119,11 @@ public class Player extends SelfPropelled implements Dashing {
 	@Override
 	public void collision(Obstacle o) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void collision(Movable m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

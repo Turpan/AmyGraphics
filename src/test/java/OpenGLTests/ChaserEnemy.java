@@ -12,7 +12,6 @@ import amyGraphics.Texture;
 import movement.GameListener;
 import movement.Movable;
 import movement.Obstacle;
-import movement.Entity.MalformedEntityException;
 import movement.Shapes.Ellipse;
 import movement.Shapes.OutlineShape;
 import movement.mathDS.Vector.MalformedVectorException;
@@ -20,10 +19,10 @@ import movement.mathDS.Vector.MalformedVectorException;
 public class ChaserEnemy extends Enemy {
 	static final double MASS = 10;
 	static final double BASEMOVEFORCE = 500;
-	static final double COEFFICIENT_OF_RESTITUTION = .0;	
-	static final double COEFFICIENT_OF_DRAG = 0.005;			
-	static final double  COEFFICIENT_OF_FRICTION = 0.5; 
-	
+	static final double COEFFICIENT_OF_RESTITUTION = .0;
+	static final double COEFFICIENT_OF_DRAG = 0.005;
+	static final double  COEFFICIENT_OF_FRICTION = 0.5;
+
 	public ChaserEnemy(GameListener listener) throws MalformedEntityException, MalformedVectorException {
 		super(listener);
 		setMass(MASS);
@@ -33,12 +32,12 @@ public class ChaserEnemy extends Enemy {
 		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
 		setDimensions(new double[] {50,50,50});
-		setOutline((OutlineShape)(new Ellipse(getDimensions())));
+		setOutline((new Ellipse(getDimensions())));
 	}
 	private void loadImage() throws MalformedEntityException {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/evilman.png"));
+			img = ImageIO.read(new File("graphics/evilman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -70,16 +69,16 @@ public class ChaserEnemy extends Enemy {
 	@Override
 	public void die() {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void collision(Obstacle o) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public void collision(Movable m) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

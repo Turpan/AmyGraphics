@@ -17,15 +17,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class LucyMain extends Application{
-	
+
 	//TODO only for test
 	private static String[] args;
 	private static boolean unsaved;
 	private static String currentFile = "";
-	
+
 	private LucyGUI gui;
 	private LucyMenu menu;
-	
+
 	private static Stage stage;
 
 	public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class LucyMain extends Application{
 		gui = new LucyGUI();
 		menu = new LucyMenu();
 		stage.setTitle("LCY File Packer");
-		
+
 		VBox main = new VBox();
 		main.getChildren().addAll(menu, gui);
 		VBox.setVgrow(gui, Priority.ALWAYS);
@@ -46,10 +46,10 @@ public class LucyMain extends Application{
 		stage.setScene(scene);
 		stage.show();
 		createMenuListeners();
-		
+
 		setUnsaved(false);
 	}
-	
+
 	private void newDialogue() {
 		if (unsaved) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -61,10 +61,10 @@ public class LucyMain extends Application{
 				return;
 			}
 		}
-		
+
 		gui.newAnimation();
 	}
-	
+
 	private void saveDialogue() {
 		File file = new File(currentFile);
 		if (file.exists()) {
@@ -73,7 +73,7 @@ public class LucyMain extends Application{
 			saveAsDialogue();
 		}
 	}
-	
+
 	private void saveAsDialogue() {
 		FileChooser fc  = new FileChooser();
 		fc.setTitle("Save Animation");
@@ -82,7 +82,7 @@ public class LucyMain extends Application{
 			gui.saveAnimation(file.getAbsolutePath());
 		}
 	}
-	
+
 	private void loadDialogue() {
 		if (unsaved) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -94,7 +94,7 @@ public class LucyMain extends Application{
 				return;
 			}
 		}
-		
+
 		FileChooser fc = new FileChooser();
 		fc.setTitle("Load Animation");
 		fc.getExtensionFilters().add(
@@ -104,28 +104,28 @@ public class LucyMain extends Application{
 			gui.loadAnimation(file.getAbsolutePath());
 		}
 	}
-	
+
 	private void createMenuListeners() {
 		menu.setNewHandler((ActionEvent e) -> {
 			newDialogue();
 		});
-		
+
 		menu.setSaveHandler((ActionEvent e) -> {
 			saveDialogue();
 		});
-		
+
 		menu.setSaveAsHandler((ActionEvent e) -> {
 			saveAsDialogue();
 		});
-		
+
 		menu.setLoadHandler((ActionEvent e) -> {
 			loadDialogue();
 		});
-		
+
 		menu.setExitHandler((ActionEvent e) -> {
 			exitCall();
 		});
-		
+
 		menu.setAddHandler((ActionEvent e) -> {
 			FileChooser fc = new FileChooser();
 			fc.setTitle("Select Image To Add");
@@ -143,14 +143,14 @@ public class LucyMain extends Application{
 				displayFailure(succ);
 			}
 		});
-		
+
 		menu.setWidthHandler((ActionEvent e) -> {
 			TextInputDialog input = new TextInputDialog();
-			
+
 			input.setTitle("Edit Width");
 			input.setHeaderText("Enter New Width");
 			input.setContentText("Width: ");
-			
+
 			Optional<String> result = input.showAndWait();
 			if (result.isPresent()) {
 				int width;
@@ -165,12 +165,12 @@ public class LucyMain extends Application{
 				}
 			}
 		});
-		
+
 		menu.setOrderHandler((ActionEvent e) -> {
 			gui.editOrder();
 		});
 	}
-	
+
 	private void displayFailure(boolean[] succ) {
 		int count = 0;
 		for (boolean bool : succ) {
@@ -178,7 +178,7 @@ public class LucyMain extends Application{
 				count += 1;
 			}
 		}
-		
+
 		if (count > 0) {
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Add Failed");
@@ -187,7 +187,7 @@ public class LucyMain extends Application{
 			alert.showAndWait();
 		}
 	}
-	
+
 	private void exitCall() {
 		if (unsaved) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -199,19 +199,19 @@ public class LucyMain extends Application{
 				return;
 			}
 		}
-		
+
 		stage.close();
 	}
-	
+
 	public static void resizeCall() {
 		stage.sizeToScene();
 	}
-	
+
 	public static void setUnsaved(boolean unsaved) {
 		LucyMain.unsaved = unsaved;
 	}
-	
-	
+
+
 	public static void createErrorMessage(String title, String message) {
 		Alert error = new Alert(AlertType.ERROR);
 		error.setTitle(title);
@@ -219,7 +219,7 @@ public class LucyMain extends Application{
 		error.setContentText(message);
 		error.showAndWait();
 	}
-	
+
 	public static void setCurrentFile(String file) {
 		LucyMain.currentFile = file;
 	}

@@ -3,14 +3,15 @@ package movement.Shapes;
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
-public class Ellipse extends NormalShape{
-	
+public class Ellipse extends StandardShape{
+
 	public Ellipse (double[] dimensions) {
 		super(dimensions);
-		
+
 	}
-	public Vector getNormal(float[] position) throws MalformedVectorException {	
-		//takes the multivariate derivative, which gives a linear function equivalent at the point, 
+	@Override
+	public Vector getNormal(double[] position) throws MalformedVectorException {
+		//takes the multivariate derivative, which gives a linear function equivalent at the point,
 		//generating a plane (or dimensional equiv), and outputting the coefficient vector. Which /is/ the normal. Wild.
 		Vector output = new Vector();
 		double[] cmpnts = new double[Vector.DIMENSIONS];
@@ -21,27 +22,30 @@ public class Ellipse extends NormalShape{
 		output.setComponents(cmpnts);
 		return output;
 	}
-	public boolean inside(float[] position) {
+	@Override
+	public boolean inside(double[] position) {
 		double alteredMagnitude = 0;
 		for (int i = 0;i<Vector.DIMENSIONS;i++) {
 			alteredMagnitude += Math.pow((position[i] - getDimensions()[i]/2) / (getDimensions()[i]/2),2);
 		}
 		return alteredMagnitude<=1;
 	}
-	public float[] pointOnEdge(float[] position) {	//returns the point on the outer edge of the shape inline with this point & the centre
+	@Override
+	public double[] pointOnEdge(double[] position) {	//returns the point on the outer edge of the shape inline with this point & the centre
 		double alteredMagnitude = 0;
 		for (int i = 0 ; i<Vector.DIMENSIONS;i++) {
 			alteredMagnitude += Math.pow((position[i] - getDimensions()[i]/2) / (getDimensions()[i]/2),2);
 		}
 		alteredMagnitude = Math.sqrt(alteredMagnitude);
-		var output = new float[Vector.DIMENSIONS];
+		var output = new double[Vector.DIMENSIONS];
 		for (int i = 0 ; i<Vector.DIMENSIONS;i++) {
-			output[i] = (float) ((position[i] - getDimensions()[i]/2) / alteredMagnitude + getDimensions()[i]/2) ;
+			output[i] =(position[i] - getDimensions()[i]/2) / alteredMagnitude + getDimensions()[i]/2 ;
 		}
 		return output;
-		
+
 	}
-	public double distanceIn(float[] position) {
+	@Override
+	public double distanceIn(double[] position) {
 		var edgePosition = pointOnEdge(position);
 		var sum = 0;
 		for (int i = 0 ; i<Vector.DIMENSIONS;i++) {
@@ -54,7 +58,7 @@ public class Ellipse extends NormalShape{
 		return distance;
 	}
 	@Override
-	protected boolean inCollisionNet(float[] point) {
+	protected boolean inCollisionNet(double[] point) {
 		double sum = 0;
 		for (int i = 0;i<Vector.DIMENSIONS;i++) {
 			sum += Math.pow(point[i] - getDimensions()[i]/2,2) / Math.pow((getDimensions()[i]/2),2);

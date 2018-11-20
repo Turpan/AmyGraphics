@@ -7,7 +7,7 @@ import amyGLGraphics.base.GLRenderer;
 public class GLDepthDisplayRenderer extends GLRenderer {
 
 	private GLDepthDisplayProgram depthProgram;
-	
+
 	@Override
 	protected void createProgram() {
 		depthProgram = new GLDepthDisplayProgram();
@@ -15,12 +15,12 @@ public class GLDepthDisplayRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		
+
 	}
 
 	@Override
 	protected void updateUniforms(GLObject object) {
-		
+
 	}
 
 	@Override
@@ -30,12 +30,12 @@ public class GLDepthDisplayRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
-		
+
 	}
 
 	@Override
 	protected void resetGlobal() {
-		
+
 	}
 
 }

@@ -8,7 +8,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
@@ -19,7 +18,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL11;
 
 import amyGLGraphics.IO.EventManager;
@@ -29,24 +27,23 @@ import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
 import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLWindow;
-import amyInterface.Component;
 
 public class GraphicsTestWindow extends GLWindow {
-	
+
 	//Change this to determine how fast the camera moves
 	//Note that this is in screen space coordinates, not model space
 	private static final float CAMERASPEED = 0.1f;
-	
+
 	private float lastX = width / 2;
 	private float lastY = height / 2;
-	
+
 	private float pitch;
 	private float yaw;
-	
+
 	private boolean displayCursor;
-	
+
 	//Change these to update window size
-	
+
 	//Note that window size does not at all change the mapping of object size to screen space
 	//Change the values in GLGraphicsHandler to do that
 	private static final int width = 1600;
@@ -58,7 +55,7 @@ public class GraphicsTestWindow extends GLWindow {
 
 	@Override
 	protected void setupWindowHints() {
-		
+
 		//these three are done on setup
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -79,7 +76,7 @@ public class GraphicsTestWindow extends GLWindow {
 		GLFW.glfwSetKeyCallback(getWindow(), (long window, int key, int scancode, int action, int mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
-			
+
 			for (KeyState keyState : EventManager.getManagerInstance().getKeyStates()) {
 				if (keyState.getKeyCode() == key) {
 					if (action == GLFW.GLFW_PRESS) {
@@ -102,7 +99,7 @@ public class GraphicsTestWindow extends GLWindow {
 	@Override
 	protected void processInput() {
 		//This is done in the rendering loop
-		
+
 		//Comment this out to remove wasd camera movement
 		Vector3f cameraPosition = camera.getPosition();
 		Vector3f cameraFront = camera.getCentre();
@@ -132,41 +129,41 @@ public class GraphicsTestWindow extends GLWindow {
 			cameraPosition.add(result);
 		}
 		camera.setPosition(cameraPosition);
-		
+
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_F) == GLFW.GLFW_PRESS) {
 			if (displayCursor) {
 				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 			} else {
 				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
 			}
-			
+
 			displayCursor = !displayCursor;
 		}
-		
+
 	}
-	
+
 	private void mouseClick(int action) {
 		float percentx = lastX / width;
 		float percenty = lastY / height;
-		
+
 		int x = (int) (percentx * GLGraphicsHandler.interfaceWidth);
 		int y = (int) (percenty * GLGraphicsHandler.interfaceHeight);
-		
+
 		MouseEventAction mouseaction;
-		
+
 		if (action == GLFW.GLFW_RELEASE) {
 			mouseaction = MouseEventAction.RELEASE;
 		} else {
 			mouseaction = MouseEventAction.PRESS;
 		}
-		
+
 		MouseEvent event = new MouseEvent(x, y, mouseaction);
-		
+
 		EventManager.getManagerInstance().addMouseEvent(event);
 	}
-	
+
 	private void mouseInput(double xpos, double ypos) {
-		
+
 		//Comment this out to remove mouse camera control
 		float xoffset = (float) (xpos - lastX);
 		float yoffset = (float) (lastY - ypos);
@@ -176,25 +173,25 @@ public class GraphicsTestWindow extends GLWindow {
 		float sensitivity = 0.05f;
 		xoffset *= sensitivity;
 		yoffset *= sensitivity;
-		
+
 		yaw   += xoffset;
-		pitch += yoffset; 
-		
+		pitch += yoffset;
+
 		if (pitch > 89.0f) {
 			pitch = 89.0f;
 		} else if (pitch < -89.0f) {
 			pitch = -89.0f;
 		}
-		
+
 		float rpitch = (float) Math.toRadians(pitch);
 		float ryaw = (float) Math.toRadians(yaw);
-		
+
 		Vector3f cameraFront = new Vector3f();
 		cameraFront.x = (float) (Math.cos(rpitch) * Math.cos(ryaw));
 		cameraFront.y = (float) (Math.sin(rpitch));
 		cameraFront.z = (float) (Math.cos(rpitch) * Math.sin(ryaw));
 		cameraFront = cameraFront.normalize();
-		
+
 		camera.setCentre(cameraFront);
 	}
 

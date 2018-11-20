@@ -12,7 +12,7 @@ import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
 public class GLSkyBoxRenderer extends GLRenderer {
-	
+
 	private GLSkyBoxProgram skyboxProgram;
 
 	@Override
@@ -24,14 +24,14 @@ public class GLSkyBoxRenderer extends GLRenderer {
 	protected void updateUniversalUniforms() {
 		if (camera != null) {
 			Matrix4f cameraMatrix = new Matrix4f(new Matrix3f(camera.getCameraMatrix()));
-			
+
 			skyboxProgram.updateViewMatrix(cameraMatrix);
 		}
 	}
 
 	@Override
 	protected void updateUniforms(GLObject object) {
-		
+
 	}
 
 	@Override

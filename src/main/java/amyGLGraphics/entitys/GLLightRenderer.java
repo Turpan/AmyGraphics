@@ -7,7 +7,7 @@ import amyGLGraphics.base.GLRenderer;
 public class GLLightRenderer extends GLRenderer {
 
 	GLWorldProgram lightProgram;
-	
+
 	@Override
 	protected void createProgram() {
 		lightProgram = new GLWorldProgram();
@@ -33,13 +33,13 @@ public class GLLightRenderer extends GLRenderer {
 	@Override
 	protected void globalSetup() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void resetGlobal() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

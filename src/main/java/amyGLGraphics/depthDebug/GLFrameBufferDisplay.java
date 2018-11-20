@@ -13,7 +13,7 @@ import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
 
 public class GLFrameBufferDisplay extends GLObject {
-	
+
 	public GLFrameBufferDisplay() {
 		super();
 		super.setDrawOrder();
@@ -31,14 +31,14 @@ public class GLFrameBufferDisplay extends GLObject {
 
 	@Override
 	public void update() {
-		
+
 	}
 
 	@Override
 	protected List<Integer> createAttributePointers() {
-		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT, 
-                false, GLVertex.positionBytesCount, GLVertex.positionByteOffset);
-		
+		glVertexAttribPointer(VERTEXPOSITION, GLVertex.positionElementCount, GL_FLOAT,
+				false, GLVertex.positionBytesCount, GLVertex.positionByteOffset);
+
 		List<Integer> attribPointers = new ArrayList<Integer>();
 		attribPointers.add(VERTEXPOSITION);
 		return attribPointers;
