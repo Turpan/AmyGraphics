@@ -84,14 +84,10 @@ public class Vector {
 	}
 	
 	public static double[] directionOfReverse(Vector v) throws MalformedVectorException {
-		double[] direction = v.getDirection();
-		for (int i = 0;i<DIMENSIONS; i++) {
-			direction[i] *= -1;
-		}
-		return direction;
+		return Vector.getReverse(v).getDirection();
 	}
 	public static Vector getReverse(Vector v) throws MalformedVectorException {
-		return new Vector(v.getMagnitude(),directionOfReverse(v));
+		return Vector.scalarProduct(v,-1);
 	}
 	public static double dotProduct(Vector v1, Vector v2) { //standard vector operation, gives cos(angle)*|v1|*|v2| 
 		double[] cmpnts1 = v1.getComponents();
@@ -124,7 +120,16 @@ public class Vector {
 		if (tmp == 0) {return 0;}
 		return tmp/comparator.getMagnitude();
 	}
-	
+	public static Vector scalarProduct(Vector v, double scalar) throws MalformedVectorException {
+		var inCmpnts = v.getComponents();
+		var outCmpnts = new double[Vector.DIMENSIONS];
+		for (int i = 0; i<Vector.DIMENSIONS;i++){
+			outCmpnts[i] =inCmpnts[i] * scalar;
+		}
+		var output = new Vector();
+		output.setComponents(outCmpnts);
+		return output;
+	}
 	
 	public class MalformedVectorException extends Exception {
 		private static final long serialVersionUID = 1L;

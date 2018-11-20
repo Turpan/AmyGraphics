@@ -12,7 +12,7 @@ import movement.Movable;
 import movement.Obstacle;
 import movement.SelfPropelled;
 import movement.Shapes.*;
-import movement.mathDS.Force;
+import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
 
 public class Player extends SelfPropelled implements Dashing {
@@ -30,7 +30,7 @@ public class Player extends SelfPropelled implements Dashing {
 	double dashDirection;
 	int dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
-	Force dashForce;
+	Vector dashForce;
 	public Player() throws MalformedEntityException, MalformedVectorException {
 		setBaseMoveForce(BASEMOVEFORCE);
 		setMass(MASS);
@@ -113,7 +113,7 @@ public class Player extends SelfPropelled implements Dashing {
 			return;
 		}
 		setDashCounter(DASHLENGTH);
-		dashForce = new Force(DASHMAGNITUDE, new double[] {0,1,0});
+		dashForce = new Vector(DASHMAGNITUDE, new double[] {0,1,0});
 		setDashCoolDownCount(getDashCoolDown());
 	}
 	@Override

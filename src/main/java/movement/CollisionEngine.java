@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import movement.mathDS.Force;
 import movement.mathDS.Graph;
 import movement.mathDS.Vector;
 import movement.mathDS.Vector.MalformedVectorException;
@@ -131,8 +130,8 @@ public class CollisionEngine {
 	}
 	
 	private void moveableCollision(Movable object1, Movable object2, float[][] collisionLocations) throws MalformedVectorException {
-		var outputForce1 = new Force();
-		var outputForce2 = new Force();
+		var outputForce1 = new Vector();
+		var outputForce2 = new Vector();
 		
 		var normal1 = object1.getOutline().getNormal(collisionLocations[0]);
 		var normal2 = object2.getOutline().getNormal(collisionLocations[1]);
@@ -143,9 +142,9 @@ public class CollisionEngine {
 		
 		double massRatio = object1.getMass()/object2.getMass();
 		
-		var collisionForce1 = new Force(CoR_Effect *timeScaleInverse * Vector.getComponentParallel(object1.getVelocity(),normal2)* object1.getMass() * (1+((1-massRatio)/(1+massRatio))),
+		var collisionForce1 = new Vector(CoR_Effect *timeScaleInverse * Vector.getComponentParallel(object1.getVelocity(),normal2)* object1.getMass() * (1+((1-massRatio)/(1+massRatio))),
 										Vector.vectorMovingWith(object1.getVelocity() , normal2) ? Vector.directionOfReverse(normal2) : normal2.getDirection());
-		var collisionForce2 = new Force(CoR_Effect * timeScaleInverse* Vector.getComponentParallel(object2.getVelocity(),normal1)* object2.getMass() * (1-((1-massRatio)/(1+massRatio))),
+		var collisionForce2 = new Vector(CoR_Effect * timeScaleInverse* Vector.getComponentParallel(object2.getVelocity(),normal1)* object2.getMass() * (1-((1-massRatio)/(1+massRatio))),
 										Vector.vectorMovingWith(object2.getVelocity() , normal1) ? Vector.directionOfReverse(normal1) : normal1.getDirection());
 
 		outputForce1.addVector(collisionForce1);
@@ -195,8 +194,8 @@ public class CollisionEngine {
 
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ? 
-							new Force() :
-							new Force((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
+							new Vector() :
+							new Vector((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
 									  ,normalObstacle.getDirection());
 		//assures that if the object gets in, it gets teleported immediately out
 		var edgeCollisionLocation = m.getOutline().pointOnEdge(collisionLocations[1]);
@@ -257,17 +256,17 @@ public class CollisionEngine {
 				collideeNormal = collidee.getOutline().getNormal(getPoC().getEdgeValue(collidee, collider)[0]);
 				if (getObstacleList().contains(collidee)){
 					if (Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
-						collider.applyForce(new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));						
+						collider.applyForce(new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));						
 					}	
 				}else if (collisionOrder.indexOf(collider)< collisionOrder.indexOf(collidee)) {
 					if (Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
-						collider.applyForce( new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));
-						((Movable) collidee).applyForce(new Force(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), Vector.directionOfReverse(collideeNormal)));
+						collider.applyForce( new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));
+						((Movable) collidee).applyForce(new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), Vector.directionOfReverse(collideeNormal)));
 					}
 					colliderNormal = collider.getOutline().getNormal(getPoC().getEdgeValue(collidee, collider)[1]);
 					if (Vector.vectorMovingWith(((Movable)collidee).getActiveForce()  ,colliderNormal)){
-						((Movable) collidee).applyForce( new Force(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), colliderNormal.getDirection()));
-						collider.applyForce( new Force(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), Vector.directionOfReverse(colliderNormal)));
+						((Movable) collidee).applyForce( new Vector(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), colliderNormal.getDirection()));
+						collider.applyForce( new Vector(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), Vector.directionOfReverse(colliderNormal)));
 					}
 				}
 			}
