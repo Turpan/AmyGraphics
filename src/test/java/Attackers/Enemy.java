@@ -3,13 +3,12 @@ package Attackers;
 import movement.GameListener;
 import movement.Movable;
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Enemy extends Attacker {
 	private GameListener listener;
 	private double attackCooldown;
 	private double attackCounter;
-	public Enemy(GameListener listener) throws MalformedVectorException {
+	public Enemy(GameListener listener){
 		super();
 		if (listener == null) {
 			throw new NullPointerException();
@@ -50,7 +49,7 @@ public abstract class Enemy extends Attacker {
 
 	}
 	@Override
-	public void tick() throws MalformedVectorException, MalformedEntityException {
+	public void tick(){
 		if (isActive()) {
 			super.tick();
 			if (canAttack() && attackReady()) {

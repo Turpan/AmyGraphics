@@ -13,7 +13,6 @@ import movement.Obstacle;
 import movement.SelfPropelled;
 import movement.Shapes.*;
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class Player extends SelfPropelled implements Dashing {
 
@@ -31,7 +30,7 @@ public class Player extends SelfPropelled implements Dashing {
 	int dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
 	Vector dashForce;
-	public Player() throws MalformedEntityException, MalformedVectorException {
+	public Player() {
 		setBaseMoveForce(BASEMOVEFORCE);
 		setMass(MASS);
 		setDashCoolDown(DASHCOOLDOWN);
@@ -42,7 +41,7 @@ public class Player extends SelfPropelled implements Dashing {
 		setDimensions(new double[] {50,50,50});
 		setOutline(new Ellipse(getDimensions()));
 	}
-	private void loadImage() throws MalformedEntityException {
+	private void loadImage() {
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File("graphics/funnyman.png"));
@@ -58,7 +57,7 @@ public class Player extends SelfPropelled implements Dashing {
 		setActiveTexture(texture);
 	}
 	@Override
-	public void tick() throws MalformedVectorException, MalformedEntityException{
+	public void tick() {
 		dashCoolDownTick();
 		dashTick();
 		if (isDashing()) {
@@ -108,7 +107,7 @@ public class Player extends SelfPropelled implements Dashing {
 		setDashCounter(getDashCounter() - 1);
 	}
 	@Override
-	public void dash(double[] direction) throws MalformedVectorException {
+	public void dash(double[] direction) {
 		if (!canDash()) {
 			return;
 		}

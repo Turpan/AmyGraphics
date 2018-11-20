@@ -1,12 +1,11 @@
 package movement;
 
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class SelfPropelled extends Movable {
 	private double baseMoveForce;
 
-	public SelfPropelled() throws MalformedVectorException {
+	public SelfPropelled() {
 		super();
 	}
 	public double getBaseMoveForce() {
@@ -18,7 +17,7 @@ public abstract class SelfPropelled extends Movable {
 		}
 		this.baseMoveForce = baseMoveForce;
 	}
-	public void locomote(double[] direction) throws MalformedVectorException {
+	public void locomote(double[] direction) {
 		applyForce(new Vector(baseMoveForce, direction));
 	}
 

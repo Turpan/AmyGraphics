@@ -14,7 +14,6 @@ import movement.Movable;
 import movement.Obstacle;
 import movement.Shapes.Ellipse;
 import movement.Shapes.OutlineShape;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class ChaserEnemy extends Enemy {
 	static final double MASS = 10;
@@ -23,7 +22,7 @@ public class ChaserEnemy extends Enemy {
 	static final double COEFFICIENT_OF_DRAG = 0.005;
 	static final double  COEFFICIENT_OF_FRICTION = 0.5;
 
-	public ChaserEnemy(GameListener listener) throws MalformedEntityException, MalformedVectorException {
+	public ChaserEnemy(GameListener listener) {
 		super(listener);
 		setMass(MASS);
 		setBaseMoveForce(BASEMOVEFORCE);
@@ -34,7 +33,7 @@ public class ChaserEnemy extends Enemy {
 		setDimensions(new double[] {50,50,50});
 		setOutline((new Ellipse(getDimensions())));
 	}
-	private void loadImage() throws MalformedEntityException {
+	private void loadImage() {
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File("graphics/evilman.png"));

@@ -7,8 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import amyGLGraphics.base.GLGraphicsHandler;
-import amyGraphics.Animation;
-import movement.Entity.MalformedEntityException;
+import amyGraphics.Animation; 
 import movement.Room;
 
 public class CommunismRoom extends Room {
@@ -24,7 +23,7 @@ public class CommunismRoom extends Room {
 	int tickCount;
 
 	private boolean movingLeft;
-	public CommunismRoom() throws MalformedEntityException {
+	public CommunismRoom() {
 		super();
 		floor = new Communism();
 		floor.setPosition(new double[] {-2000, -1000, -5000});
@@ -96,11 +95,7 @@ public class CommunismRoom extends Room {
 		double y = (comm.getPosition()[1] + (1000 * Math.sin(Math.toRadians(tickCount))));
 		double z = (comm.getPosition()[2] + (1000 * Math.sin(Math.toRadians(tickCount))));
 		double[] pos = light.getPosition();
-		try {
-			light.setPosition(new double[] {x, pos[1], z});
-		} catch (MalformedEntityException e) {
-			System.exit(-1);
-		}
+		light.setPosition(new double[] {x, pos[1], z});
 
 		if (tickCount % 5 == 0) {
 			Animation anim = (Animation) lucy.getActiveTexture();
@@ -110,12 +105,9 @@ public class CommunismRoom extends Room {
 
 	public void addSquare(double x, double y, double z) {
 		Communism square = new Communism();
-		try {
-			square.setPosition(new double[] {x, y, z});
-			square.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
-		} catch (MalformedEntityException e) {
-			System.exit(-1);
-		}
+		square.setPosition(new double[] {x, y, z});
+		square.setDimensions(new double[] {comm.getActiveTexture().getSprite().getWidth(), comm.getActiveTexture().getSprite().getHeight(), 500});
+
 		addEntity(square);
 	}
 }

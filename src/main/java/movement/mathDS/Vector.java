@@ -2,27 +2,31 @@ package movement.mathDS;
 
 
 public class Vector {
-	/** Creates a generic, 2 dimensional vector, expressed in x and y components. Has commands for getting speed/direction and adding**/
+	// Creates a generic, n (see DIMENSIONS) dimensional vector, expressed internally in components, for ease of operations. 
 	public static final int DIMENSIONS = 3;		// NOTE: WHEN CHANGING THIS MAKE SURE TO MAKE THE BELOW VECTORS OF APPROPRIATE LENGTH!
-	private static final double[] SIMPLEVECTOR = new double[] {1,0,0};	//This is just called everytime a vector is called using the mag/dir constructor, and constructing it everytime takes a for loop and junk.
-
+	private static final double[] SIMPLEVECTOR = new double[] {1,0,0};	//This is just called everytime a vector is called using the emptyconstructor, and constructing it everytime takes a for loop and junk.
+	
 	private double[] components;
 
-	public Vector(double magnitude, double[] direction) throws MalformedVectorException {
+	public Vector(double magnitude, double[] direction) {
 		double[] cmpnts = new double[DIMENSIONS];
 		for (int i = 0; i < DIMENSIONS; i++) {
 			cmpnts[i] = Math.abs(magnitude) * direction[i];
 		}
 		setComponents(cmpnts);
 	}
-	public Vector() throws MalformedVectorException {
+	public Vector(){
 		this(0, SIMPLEVECTOR);
 	}
-	public void setComponents(double[] components) throws MalformedVectorException {
+	public void setComponents(double[] components){
 		if (components.length != DIMENSIONS) {
-			throw new MalformedVectorException("Vector created with wrong dimensions");
+			this.components = new double[DIMENSIONS];
+			for (int i = 0; i<components.length && i<DIMENSIONS; i++) {
+				this.components[i] = components[i];
+			}
+		}else {
+			this.components = components;
 		}
-		this.components = components;
 	}
 	public double[] getComponents() {
 		return components;
@@ -43,16 +47,28 @@ public class Vector {
 		}
 		return output;
 	}
-	public void setDirection(double[] direction) throws MalformedVectorException {
+	public void setDirection(double[] direction){
+		var tmp = direction.clone();		//don't want to be destructive of direction...
+		if (tmp.length < DIMENSIONS) {	//don't need to check for tmp>DIM, as, due to the implementation, this doesn't actually matter.
+			var tmp2 = new double[DIMENSIONS];
+			for(int i = 0; i< tmp.length; i++) {
+				tmp2[i] = tmp[i];
+			}
+			tmp = tmp2;
+		}
 		double check = 0;
 		double magnitude = getMagnitude();
 		double[] output = new double[DIMENSIONS];
 		for (int i = 0; i<DIMENSIONS;i++) {
-			check += direction[i]*direction[i];
-			output[i] = magnitude * direction[i];
+			check += tmp[i]*tmp[i];
+			output[i] = magnitude * tmp[i];
 		}
-		if (check<0.98||check>1.02) {//technically, should equal 1, but slight rounding errors, working with irrational numbers.
-			throw new MalformedVectorException("attempt to set direction to non-unit vector");
+		if (check<0.98||check>1.02) {//technically, should equal 1, but slight rounding errors, working with irrational numbers converted to decimal.
+			
+			for (int i = 0; i<DIMENSIONS;i++) {
+				tmp[i] = tmp[i]/check;
+			}
+			setDirection(tmp);
 		}
 		setComponents(output);
 	}
@@ -63,18 +79,19 @@ public class Vector {
 		}
 		return Math.sqrt(sum);
 	}
-	public void setMagnitude(double magnitude) throws MalformedVectorException { //WARNING: If you lower speed to 0, then start moving again in terms of speed you /MUST/ set direction anew. Direction can't be stored when still.
-		double[] direction = getDirection();
+	public void setMagnitude(double magnitude) { //WARNING: If you lower magnitude to 0, then increase it you /MUST/ set direction anew. Direction can't be stored when mag = 0.
+		double oldMagnitude = getMagnitude();
+		var oldCmpnts = getComponents();
 		double[] cmpnts = new double[DIMENSIONS];
 		for (int i = 0; i < DIMENSIONS; i++) {
-			cmpnts[i] = Math.abs(magnitude) * direction[i];
+			cmpnts[i] = Math.abs(magnitude/oldMagnitude) * oldCmpnts[i];
 		}
 		setComponents(cmpnts);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 
-	public void addVector (Vector vToAdd) throws MalformedVectorException {
+	public void addVector (Vector vToAdd) {
 		double[] cmpnts = getComponents();
 		double[] toAdd = vToAdd.getComponents();
 		for (int i = 0; i<DIMENSIONS;i++) {
@@ -83,10 +100,10 @@ public class Vector {
 		setComponents(cmpnts);
 	}
 
-	public static double[] directionOfReverse(Vector v) throws MalformedVectorException {
+	public static double[] directionOfReverse(Vector v){
 		return Vector.getReverse(v).getDirection();
 	}
-	public static Vector getReverse(Vector v) throws MalformedVectorException {
+	public static Vector getReverse(Vector v){
 		return Vector.scalarProduct(v,-1);
 	}
 	public static double dotProduct(Vector v1, Vector v2) { //standard vector operation, gives cos(angle)*|v1|*|v2|
@@ -105,7 +122,7 @@ public class Vector {
 		return Math.acos(dotProduct(v1,v2)/(mag1*mag2));
 	}
 
-	public static boolean vectorMovingWith(Vector v, Vector comparator) throws MalformedVectorException {
+	public static boolean vectorMovingWith(Vector v, Vector comparator){
 		//If Comparator is a norm /out/ of a surface -> checks if a vector is pushing away
 		//Checks if v is moving in the same general direction as comparator
 
@@ -120,7 +137,7 @@ public class Vector {
 		if (tmp == 0) {return 0;}
 		return tmp/comparator.getMagnitude();
 	}
-	public static Vector scalarProduct(Vector v, double scalar) throws MalformedVectorException {
+	public static Vector scalarProduct(Vector v, double scalar) {
 		var inCmpnts = v.getComponents();
 		var outCmpnts = new double[Vector.DIMENSIONS];
 		for (int i = 0; i<Vector.DIMENSIONS;i++){
@@ -130,13 +147,4 @@ public class Vector {
 		output.setComponents(outCmpnts);
 		return output;
 	}
-
-	public class MalformedVectorException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public MalformedVectorException (String message) {
-			super (message);
-		}
-	}
-
 }

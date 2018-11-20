@@ -1,7 +1,6 @@
 package movement.Shapes;
 
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class Triangle implements OutlineShape {
 	double[] dimensions;
@@ -18,7 +17,7 @@ public class Triangle implements OutlineShape {
 		return dimensions;
 	}
 	@Override
-	public Vector getNormal(double[] position) throws MalformedVectorException {
+	public Vector getNormal(double[] position) {
 		return new Vector();
 	}
 	@Override

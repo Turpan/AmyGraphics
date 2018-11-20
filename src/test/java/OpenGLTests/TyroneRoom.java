@@ -9,10 +9,8 @@ import javax.imageio.ImageIO;
 
 import amyGLGraphics.IO.EventManager;
 import movement.Entity;
-import movement.Entity.MalformedEntityException;
 import movement.GameListener;
 import movement.Room;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class TyroneRoom extends Room implements GameListener {
 
@@ -41,34 +39,24 @@ public class TyroneRoom extends Room implements GameListener {
 			}
 
 			setBackground(background);
-
-			try {
-				createEntitys();
-			} catch (MalformedEntityException | MalformedVectorException e) {
-				System.exit(-1);
-			}
+			createEntitys();
 		}
 
 		@Override
 		public void tick() {
-			try {
-				player.applyConstantForces();
-				chaser.applyConstantForces();
-				chaser2.applyConstantForces();
-				//			System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
-				checkCollision();
-				player.tick();
-				chaser.tick();
-				chaser2.tick();
-			} catch (MalformedVectorException | MalformedEntityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			player.applyConstantForces();
+			chaser.applyConstantForces();
+			chaser2.applyConstantForces();
+			//System.out.println(player.getMass() *Math.pow(player.getVelocity().getMagnitude(),2) + chaser.getMass() * Math.pow(chaser.getVelocity().getMagnitude(),2) + chaser2.getMass() * Math.pow(chaser2.getVelocity().getMagnitude(),2));
+			checkCollision();
+			player.tick();
+			chaser.tick();
+			chaser2.tick();
 
 			processInput();
 		}
 
-		private void createEntitys() throws MalformedEntityException, MalformedVectorException {
+		private void createEntitys() {
 			player = new Player();
 			player.setPosition(new double[] {100,125,50});
 
@@ -142,16 +130,11 @@ public class TyroneRoom extends Room implements GameListener {
 					EventManager.getManagerInstance().getMoveDown().isPressed() ||
 					EventManager.getManagerInstance().getMoveLeft().isPressed() ||
 					EventManager.getManagerInstance().getMoveRight().isPressed()) {
-				try {
 					var direction = calculateDirection();
 					if (direction != null) {
 						var reverseDir = new double[] {-direction[0], -direction[1],-direction[2]};
 						chaser2.locomote(direction);
 						chaser.locomote(reverseDir);
-					}
-				} catch (MalformedVectorException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}

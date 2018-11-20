@@ -44,11 +44,7 @@ public class TestSquare extends Entity implements Illimunates{
 
 	@Override
 	public void setPosition(double[] position) {
-		try {
-			super.setPosition(position);
-			lamp.setPosition(position);
-		} catch (MalformedEntityException e) {
-			System.exit(-1);
-		}
+		super.setPosition(position);
+		lamp.setPosition(position);
 	}
 }

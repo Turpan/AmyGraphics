@@ -1,6 +1,5 @@
 package Attackers;
 
-import movement.mathDS.Vector.MalformedVectorException;
 
 public interface Dashing {
 	boolean canDash();
@@ -13,5 +12,5 @@ public interface Dashing {
 	double getDashCoolDownCount();
 	void dashCoolDownTick();
 	void dashTick();
-	void dash(double[] direction) throws MalformedVectorException;
+	void dash(double[] direction);
 }

@@ -5,8 +5,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import movement.mathDS.Graph;
-import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
+import movement.mathDS.Vector; 
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public class CollisionEngine {
 		return pointsOfContact;
 	}
 
-	public void checkCollisions() throws MalformedVectorException {
+	public void checkCollisions() {
 		setPoC(new Graph<Collidable, double[][]>());
 		getPoC().addVertices(getTotalList());
 		for (var object1 : getMovableList()) {
@@ -89,7 +88,7 @@ public class CollisionEngine {
 		applyNormalForces();
 		applyVelocityCollisions();
 	}
-	private void collisionDetection(Movable object1) throws MalformedVectorException {
+	private void collisionDetection(Movable object1) {
 		var eL = getTotalList();
 		int start = eL.indexOf(object1) + 1;
 		for (int i = start; i<eL.size(); i++) {
@@ -117,7 +116,7 @@ public class CollisionEngine {
 		}
 		return output;
 	}
-	private void addToCollisionGraph(Movable object1, Collidable object2) throws MalformedVectorException {
+	private void addToCollisionGraph(Movable object1, Collidable object2) {
 		var collisionLocation2in1 = object1.getOutline().exactCollisionPosition(object2.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
 		var collisionLocation1in2 = object2.getOutline().exactCollisionPosition(object1.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object2, object1));
 		if (collisionLocation1in2 != null && collisionLocation2in1 != null) {
@@ -128,7 +127,7 @@ public class CollisionEngine {
 		}
 	}
 
-	private void moveableCollision(Movable object1, Movable object2, double[][] collisionLocations) throws MalformedVectorException {
+	private void moveableCollision(Movable object1, Movable object2, double[][] collisionLocations) {
 		var outputForce1 = new Vector();
 		var outputForce2 = new Vector();
 
@@ -189,7 +188,7 @@ public class CollisionEngine {
 		object1.applyForce(outputForce1);
 		object2.applyForce(outputForce2);
 	}
-	private void obstacleCollision(Obstacle o, Movable m, double[][] collisionLocations) throws MalformedVectorException {
+	private void obstacleCollision(Obstacle o, Movable m, double[][] collisionLocations) {
 
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ?
@@ -246,7 +245,7 @@ public class CollisionEngine {
 		}
 	}
 
-	private void applyNormalForces() throws MalformedVectorException {	//should only be run after movable list is organised. Requires that the object that is furthest from a wall has it's velocity collision done first
+	private void applyNormalForces() {	//should only be run after movable list is organised. Requires that the object that is furthest from a wall has it's velocity collision done first
 		var collisionOrder = getMovableList();							//this is because the result of one normal force being applied has an effect on the results of others. Turns out the order of calculation for doing
 		Vector collideeNormal;											//this in one pass is to do the objects with the highest "wall abstraction" first.
 		Vector colliderNormal;
@@ -272,7 +271,7 @@ public class CollisionEngine {
 		}
 	}
 
-	private void applyVelocityCollisions() throws MalformedVectorException {	//doesn't care about order. This is because velocity values don't change immediately after a velocity collision, rather, a force is a applied
+	private void applyVelocityCollisions() {	//doesn't care about order. This is because velocity values don't change immediately after a velocity collision, rather, a force is a applied
 		var collisionOrder = getMovableList();									// which alters the velocity later. In the snapshot of time which this set of collisions takes place in, velocity is constant.
 		for (Movable collider: collisionOrder) {
 			for (Collidable collidee : getPoC().getVerticesConnectedTo(collider)) {

@@ -1,7 +1,6 @@
 package movement.Shapes;
 
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class Ellipse extends StandardShape{
 
@@ -10,7 +9,7 @@ public class Ellipse extends StandardShape{
 
 	}
 	@Override
-	public Vector getNormal(double[] position) throws MalformedVectorException {
+	public Vector getNormal(double[] position) {
 		//takes the multivariate derivative, which gives a linear function equivalent at the point,
 		//generating a plane (or dimensional equiv), and outputting the coefficient vector. Which /is/ the normal. Wild.
 		Vector output = new Vector();

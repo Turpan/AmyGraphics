@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 import amyGraphics.Animation;
-import movement.Entity.MalformedEntityException;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Room {
 	private static final int ANIMTHRESHOLD = 20;
@@ -96,35 +94,23 @@ public abstract class Room {
 				}
 			}
 		}
-
-		try {
-			for (Entity entity : getContents()) {
-				if (entity instanceof Movable) {
-					Movable movable = (Movable) entity;
-					movable.applyConstantForces();
-				}
+		for (Entity entity : getContents()) {
+			if (entity instanceof Movable) {
+				Movable movable = (Movable) entity;
+				movable.applyConstantForces();
 			}
-
-			collisionEngine.checkCollisions();
-
-			for (Entity entity : getContents()) {
-				if (entity instanceof Movable) {
-					Movable movable = (Movable) entity;
-					movable.tick();
-				}
+		}
+		
+		collisionEngine.checkCollisions();
+		for (Entity entity : getContents()) {
+			if (entity instanceof Movable) {
+				Movable movable = (Movable) entity;
+				movable.tick();
 			}
-		} catch (MalformedVectorException | MalformedEntityException e) {
-			// TODO deal with exceptions later
-			System.out.println("Dunno how to deal with this");
 		}
 	}
 
 	protected void checkCollision() {
-		try {
-			collisionEngine.checkCollisions();
-		} catch (MalformedVectorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		collisionEngine.checkCollisions();
 	}
 }

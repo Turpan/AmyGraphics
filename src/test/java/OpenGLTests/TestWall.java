@@ -11,9 +11,9 @@ import movement.Movable;
 import movement.Obstacle;
 import movement.Shapes.BigRectangle;
 
-public class TestWall extends Obstacle{
+public class TestWall extends Obstacle {
 
-	public TestWall(boolean wide) throws MalformedEntityException {
+	public TestWall(boolean wide){
 		setCoR(1);
 
 		Texture texture;
@@ -28,7 +28,7 @@ public class TestWall extends Obstacle{
 		setActiveTexture(texture);
 	}
 
-	public Texture longTexture() throws MalformedEntityException {
+	public Texture longTexture() {
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File("graphics/wall-long.png"));
@@ -44,7 +44,7 @@ public class TestWall extends Obstacle{
 
 		return texture;
 	}
-	public Texture wideTexture() throws MalformedEntityException {
+	public Texture wideTexture() {
 		BufferedImage img = null;
 		try {
 			img = ImageIO.read(new File("graphics/wall-wide.png"));

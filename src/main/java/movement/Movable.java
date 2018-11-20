@@ -3,7 +3,6 @@ package movement;
 import java.util.ArrayList;
 import movement.Shapes.OutlineShape;
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Movable extends Collidable{
 
@@ -20,7 +19,7 @@ public abstract class Movable extends Collidable{
 	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
 	private int onFloorTimer;					//Represents an object being on the floor. Or rather, having recently collided with a Floor object.
 
-	public Movable () throws MalformedVectorException {
+	public Movable (){
 		setVelocity(new Vector());
 		setActiveForce(new Vector());
 		setAttachedEntities(new ArrayList<Entity>());
@@ -62,7 +61,7 @@ public abstract class Movable extends Collidable{
 		velocity = v;
 	}
 
-	public void addVelocity(Vector velocity) throws MalformedVectorException {
+	public void addVelocity(Vector velocity) {
 		getVelocity().addVector(velocity);
 	}
 	public boolean isStopped() {
@@ -95,26 +94,26 @@ public abstract class Movable extends Collidable{
 
 	public abstract void collision(Obstacle o);			//analagous to the similar method for Movables in Collidable. Only movables can collide with obstacles, see.
 	//////////////////////////////////////////////////////////////////////////////////
-	protected void moveTick() throws MalformedVectorException {
+	protected void moveTick() {
 		move(Vector.scalarProduct(getVelocity(), TIMESCALE));
 	}
 
-	protected void applyFriction() throws MalformedVectorException {
+	protected void applyFriction() {
 		if (!isStopped()){
 			applyForce(new Vector (getCoF() * getMass()+ getCoD() * Math.pow(getVelocity().getMagnitude(),2),
 					Vector.directionOfReverse(getVelocity())));
 		}
 	}
-	public void applyConstantForces() throws MalformedVectorException {
+	public void applyConstantForces() {
 		applyFriction();
 		applyForce(new Vector(getMass() * GRAVITY, new double[] {0,-1,0}));
 	}
 
-	public void stop() throws MalformedVectorException {
+	public void stop(){
 		setActiveForce(new Vector());
 		getVelocity().setMagnitude(0);
 	}
-	public void applyForce(Vector force) throws MalformedVectorException {
+	public void applyForce(Vector force) {
 		getActiveForce().addVector(force);
 	}
 
@@ -126,7 +125,7 @@ public abstract class Movable extends Collidable{
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////
-	public void accelerationTick() throws MalformedVectorException {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small
+	public void accelerationTick() {	//apply accelerations to velocity. This will happen /after/ movetick, technically creating a small
 		//disconnect, whereby an object will move /before/ it accelerates, but this is very small, and self consistent
 		var velocity = getVelocity();
 		velocity.addVector(Vector.scalarProduct(getActiveForce(),TIMESCALE/getMass()));
@@ -138,7 +137,7 @@ public abstract class Movable extends Collidable{
 			setVelocity(velocity);
 		}
 	}
-	public void tick() throws MalformedVectorException, MalformedEntityException {  //move object/ add forces to velocity.
+	public void tick() {  //move object/ add forces to velocity.
 		accelerationTick();															//ORDER OF USE : Apply all your forces -> CollisionEngine -> tick();
 		moveTick();
 		decrementFloorTimer();

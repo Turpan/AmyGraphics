@@ -1,7 +1,6 @@
 package movement.Shapes;
 
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class Parabaloid extends StandardShape{
 	//creates a parabolic cylinder of a certain thickness.
@@ -20,7 +19,7 @@ public class Parabaloid extends StandardShape{
 		setParity(parity);	//Flips the bit, reverses the parabaloid;
 	}
 	@Override
-	public Vector getNormal(double[] position) throws MalformedVectorException {
+	public Vector getNormal(double[] position) {
 		var dir = new double[Vector.DIMENSIONS];
 		dir[getCurvedDimension()] = getDimensions()[getCurvedDimension()] * (position[getCurvedDimension()]/ Math.pow(getDimensions()[getLongDimension()],2) - 1);
 		double magnitude = Math.sqrt(Math.pow(dir[getCurvedDimension()], 2) + 1);

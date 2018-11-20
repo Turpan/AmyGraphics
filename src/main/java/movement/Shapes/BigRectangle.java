@@ -1,7 +1,6 @@
 package movement.Shapes;
 
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public class BigRectangle implements OutlineShape{
 	//can't be used for collidables. Gives simplistic collision commands, cannot get a distanceIn.
@@ -20,7 +19,7 @@ public class BigRectangle implements OutlineShape{
 		return dimensions;
 	}
 	@Override
-	public Vector getNormal(double[] position) throws MalformedVectorException {
+	public Vector getNormal(double[] position){
 		double minimumDist = Double.MAX_VALUE;	//trivial upperbound
 		double tmpDist = 0;
 		int smallestDimension = 0;
