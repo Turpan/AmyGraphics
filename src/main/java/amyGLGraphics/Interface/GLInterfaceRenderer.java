@@ -9,7 +9,7 @@ import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
 public class GLInterfaceRenderer extends GLRenderer {
-	
+
 	private GLInterfaceProgram program;
 
 	@Override
@@ -28,9 +28,9 @@ public class GLInterfaceRenderer extends GLRenderer {
 		if (!(object instanceof GLComponent)) {
 			return;
 		}
-		
+
 		GLComponent component = (GLComponent) object;
-		
+
 		program.useTexture(component.hasTexture());
 	}
 

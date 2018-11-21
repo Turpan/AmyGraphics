@@ -6,29 +6,25 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import org.lwjgl.BufferUtils;
-
 import amyGraphics.Animation;
 import amyGraphics.Animation.MalformedAnimationException;
 
 public class LucyIO {
-	
+
 	private static final String HEADER = "LUCYOG";
 	private static final byte[] HEADERDATA = HEADER.getBytes();
-	
+
 	private static final String META = "META";
 	private static final byte[] METADATA = META.getBytes();
-	
+
 	private static final String METAEND = "METAEND";
 	private static final byte[] METAENDDATA = METAEND.getBytes();
-	
+
 	private static final String FOOTER = "LUCYEND";
 	private static final byte[] FOOTERDATA = FOOTER.getBytes();
-	
+
 	private static final int BYTELENGTH = 4;
-	
+
 	/*
 	 * will throw an exception if directory does not exist
 	 * lucy file creation program will handle this
@@ -48,7 +44,7 @@ public class LucyIO {
 
 		//header
 		fileWriter.write(HEADERDATA);
-		
+
 		//meta data
 		fileWriter.write(METADATA);
 		fileWriter.write(width);
@@ -60,7 +56,7 @@ public class LucyIO {
 			fileWriter.write(data);
 		}
 		fileWriter.write(METAENDDATA);
-		
+
 		//image file data
 		for (int y=0; y<image.getHeight(); y++) {
 			for (int x=0; x<image.getWidth(); x++) {
@@ -68,16 +64,16 @@ public class LucyIO {
 				fileWriter.write(rgba);
 			}
 		}
-		
+
 		//footer
 		fileWriter.write(FOOTERDATA);
-		
+
 		//finish up
 		fileWriter.close();
 	}
-	
+
 	/*
-	 * Any exception is thrown, or if the file is formatted incorrectly, 
+	 * Any exception is thrown, or if the file is formatted incorrectly,
 	 * this method will return null. The editor will handle the rest
 	 */
 	public static Animation readLucyFile(String fileLocation) {
@@ -95,49 +91,49 @@ public class LucyIO {
 		if (data.length < HEADERDATA.length) {
 			return null;
 		}
-		
+
 		//check header
 		if (!checkSignature(data, offset, HEADERDATA)) {
 			return null;
 		}
 		offset += HEADERDATA.length;
-		
+
 		//check metadata
 		if (!checkSignature(data, offset, METADATA)) {
 			return null;
 		}
 		offset += METADATA.length;
-		
+
 		int width = getByteData(data, offset);
 		if (width <= 0) {
 			return null;
 		}
 		offset += BYTELENGTH;
-		
+
 		int height = getByteData(data, offset);
 		if (height <= 0) {
 			return null;
 		}
 		offset += BYTELENGTH;
-		
+
 		int framewidth = getByteData(data, offset);
 		if (framewidth <= 0) {
 			return null;
 		}
 		offset += BYTELENGTH;
-		
+
 		int frameheight = getByteData(data, offset);
 		if (frameheight <= 0) {
 			return null;
 		}
 		offset += BYTELENGTH;
-		
+
 		int frameorderlength = getByteData(data, offset);
 		if (frameorderlength <= 0) {
 			return null;
 		}
 		offset += BYTELENGTH;
-		
+
 		int[] frameorder = new int[frameorderlength];
 		for (int i=0; i<frameorderlength; i++) {
 			int framedata = getByteData(data, offset);
@@ -147,12 +143,12 @@ public class LucyIO {
 			frameorder[i] = framedata;
 			offset += BYTELENGTH;
 		}
-		
+
 		if (!checkSignature(data, offset, METAENDDATA)) {
 			return null;
 		}
 		offset += METAENDDATA.length;
-		
+
 		//Time to load the image data
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		for (int y=0; y<height; y++) {
@@ -162,12 +158,12 @@ public class LucyIO {
 				offset += BYTELENGTH;
 			}
 		}
-		
+
 		//check the footer
 		if (!checkSignature(data, offset, FOOTERDATA)) {
 			return null;
 		}
-		
+
 		//put it together
 		try {
 			Animation animation = new Animation(image, framewidth, frameheight, frameorder);
@@ -177,19 +173,19 @@ public class LucyIO {
 			return null;
 		}
 	}
-	
+
 	private static byte[] intToByte(int num) {
-		return new byte[] { 
-			(byte)(num >> 24),
-			(byte)(num >> 16),
-			(byte)(num >> 8),
-			(byte)num };
+		return new byte[] {
+				(byte)(num >> 24),
+				(byte)(num >> 16),
+				(byte)(num >> 8),
+				(byte)num };
 	}
-	
+
 	private static int byteToInt(byte[] data) {
 		return data[0] << 24 | (data[1] & 0xFF) << 16 | (data[2] & 0xFF) << 8 | (data[3] & 0xFF);
 	}
-	
+
 	/*
 	 * return false if array is not long enough or if data does not match
 	 */
@@ -205,7 +201,7 @@ public class LucyIO {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * will catch for nullpointer which denotes that the file is cut short too early
 	 */
@@ -220,5 +216,5 @@ public class LucyIO {
 			return -1;
 		}
 	}
-	
+
 }

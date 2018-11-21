@@ -1,27 +1,29 @@
 package movement;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 import amyGraphics.Texture;
-import movement.Entity.MalformedEntityException;
 import movement.mathDS.Vector;
 
 public abstract class Entity {
-	private float[] position;
+	private double[] position;
 	private double[]dimensions;
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
 
-	public void setDimensions(double[] dimensions) throws MalformedEntityException {
-		if (dimensions.length != Vector.DIMENSIONS) {
-			throw new MalformedEntityException("attempt to set dimensions to wrong number of dimensions");
-		}
+	public void setDimensions(double[] dimensions) {
 		for (double dim : dimensions) {
 			if (dim <0) {dim = 0;}
 		}
+		if (dimensions.length != Vector.DIMENSIONS) {
+			this.dimensions = new double[Vector.DIMENSIONS];
+			for (int i = 0; i<dimensions.length && i<Vector.DIMENSIONS; i++) {
+				this.dimensions[i] = dimensions[i];
+			}
+		}else {
 		this.dimensions= dimensions;
+		}
 	}
 	public double[] getDimensions() {
 		return dimensions;
@@ -44,34 +46,25 @@ public abstract class Entity {
 		}
 		this.activeTexture = activeTexture;
 	}
-	public void setPosition(float[] position) throws MalformedEntityException {
+	public void setPosition(double[] position) {
 		if (position.length != Vector.DIMENSIONS) {
-			throw new MalformedEntityException("attempt to set position to wrong number of dimensions");
+			this.position = new double[Vector.DIMENSIONS];
+			for (int i = 0; i<position.length && i<Vector.DIMENSIONS; i++) {
+				this.position[i] = position[i];
+			}
+		}else {
+			this.position = position;
 		}
-		this.position = position;
 	}
-	public float[] getPosition() {
+	public double[] getPosition() {
 		return position;
 	}
 	public void move(Vector movement) {
-		float[] newPosition = new float[Vector.DIMENSIONS];
-		float[] currentPosition = getPosition();
+		double[] newPosition = new double[Vector.DIMENSIONS];
+		double[] currentPosition = getPosition();
 		double[] moveCmpnts = movement.getComponents();
 		for (int i=0;i<Vector.DIMENSIONS;i++) {
-			newPosition[i] = (float) (currentPosition[i] + moveCmpnts[i]);
+			newPosition[i] = (currentPosition[i] + moveCmpnts[i]);
 		}
-		try {
-			setPosition(newPosition);
-		} catch (MalformedEntityException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	public class MalformedEntityException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public MalformedEntityException (String message) {
-	        super (message);
-	    }
 	}
 }

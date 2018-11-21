@@ -8,11 +8,11 @@ import javax.imageio.ImageIO;
 
 import Attackers.Dashing;
 import amyGraphics.Texture;
+import movement.Movable;
 import movement.Obstacle;
 import movement.SelfPropelled;
 import movement.Shapes.*;
-import movement.mathDS.Force;
-import movement.mathDS.Vector.MalformedVectorException;
+import movement.mathDS.Vector;
 
 public class Player extends SelfPropelled implements Dashing {
 
@@ -24,13 +24,13 @@ public class Player extends SelfPropelled implements Dashing {
 	static final int DASHCOOLDOWN = 10;
 	static final int DASHLENGTH = 3;
 	static final int DASHMAGNITUDE = 2000;
-	
+
 	int dashCoolDown;
 	double dashDirection;
 	int dashCounter; //this will be used for checking i frames
 	double dashCoolDownCount;
-	Force dashForce;
-	public Player() throws MalformedEntityException, MalformedVectorException {
+	Vector dashForce;
+	public Player() {
 		setBaseMoveForce(BASEMOVEFORCE);
 		setMass(MASS);
 		setDashCoolDown(DASHCOOLDOWN);
@@ -41,29 +41,29 @@ public class Player extends SelfPropelled implements Dashing {
 		setDimensions(new double[] {50,50,50});
 		setOutline(new Ellipse(getDimensions()));
 	}
-	private void loadImage() throws MalformedEntityException {
+	private void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/funnyman.png"));
+			img = ImageIO.read(new File("graphics/funnyman.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
-		
+
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
 		texture.setHeight(img.getHeight());
-		
+
 		addTexture(texture);
 		setActiveTexture(texture);
 	}
 	@Override
-	public void tick() throws MalformedVectorException, MalformedEntityException{
+	public void tick() {
 		dashCoolDownTick();
 		dashTick();
 		if (isDashing()) {
 			applyForce(dashForce);
-			
-		}		
+
+		}
 		super.tick();
 	}
 	@Override
@@ -107,22 +107,22 @@ public class Player extends SelfPropelled implements Dashing {
 		setDashCounter(getDashCounter() - 1);
 	}
 	@Override
-	public void dash(double[] direction) throws MalformedVectorException {
+	public void dash(double[] direction) {
 		if (!canDash()) {
 			return;
 		}
 		setDashCounter(DASHLENGTH);
-		dashForce = new Force(DASHMAGNITUDE, new double[] {0,1,0});
+		dashForce = new Vector(DASHMAGNITUDE, new double[] {0,1,0});
 		setDashCoolDownCount(getDashCoolDown());
-	}
-	@Override
-	public void collision() {
-		// TODO Auto-generated method stub
-		// you got to fill this in rone
 	}
 	@Override
 	public void collision(Obstacle o) {
 		// TODO Auto-generated method stub
-		
+
+	}
+	@Override
+	public void collision(Movable m) {
+		// TODO Auto-generated method stub
+
 	}
 }

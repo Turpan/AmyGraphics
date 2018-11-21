@@ -12,22 +12,22 @@ import movement.Illimunates;
 import movement.Light;
 
 public class TestSquare extends Entity implements Illimunates{
-	
+
 	TestLight lamp;
-	
+
 	public TestSquare() {
 		loadImage();
 		createLight();
 	}
-	
+
 	public void createLight() {
 		lamp = new TestLight();
 	}
-	
+
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/testsquare.png"));
+			img = ImageIO.read(new File("graphics/testsquare.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}
@@ -41,14 +41,10 @@ public class TestSquare extends Entity implements Illimunates{
 	public Light getLight() {
 		return lamp;
 	}
-	
+
 	@Override
-	public void setPosition(float[] position) {
-		try {
-			super.setPosition(position);
-			lamp.setPosition(position);
-		} catch (MalformedEntityException e) {
-			System.exit(-1);
-		}
+	public void setPosition(double[] position) {
+		super.setPosition(position);
+		lamp.setPosition(position);
 	}
 }

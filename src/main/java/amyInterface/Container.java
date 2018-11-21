@@ -10,46 +10,46 @@ import amyGLGraphics.IO.MouseEvent;
 public class Container extends Component {
 	private Layout layout;
 	private Set<Component> children;
-	
+
 	public Container() {
 		super();
 		layout = null;
 		children = new LinkedHashSet<Component>();
 	}
-	
+
 	public Container(int x, int y, int width, int height) {
 		this();
 		setBounds(x, y, width, height);
 	}
-	
+
 	@Override
 	protected void setX(int x) {
 		super.setX(x);
-		
+
 		refreshLayout();
 	}
 
 	@Override
 	protected void setY(int y) {
 		super.setY(y);
-		
+
 		refreshLayout();
 	}
 
 	@Override
 	protected void setWidth(int width) {
 		super.setWidth(width);
-		
+
 		refreshLayout();
 	}
 
 	@Override
 	protected void setHeight(int height) {
 		super.setHeight(height);
-		
+
 		refreshLayout();
 	}
-	
+
 	public void addChild(Component component) {
 		children.add(component);
 		if (children.contains(component)) {
@@ -58,13 +58,13 @@ public class Container extends Component {
 			refreshLayout();
 		}
 	}
-	
+
 	public void addChild(List<Component> components) {
 		for (Component component : components) {
 			addChild(component);
 		}
 	}
-	
+
 	public void removeChild(Component component) {
 		if (children.contains(component)) {
 			component.setParent(null);
@@ -72,13 +72,13 @@ public class Container extends Component {
 			refreshLayout();
 		}
 	}
-	
+
 	public void removeChild(List<Component> components) {
 		for (Component component : components) {
 			removeChild(component);
 		}
 	}
-	
+
 	@Override
 	public Set<Component> getRenderOrder() {
 		Set<Component> renderOrder = super.getRenderOrder();
@@ -89,19 +89,19 @@ public class Container extends Component {
 		}
 		return renderOrder;
 	}
-	
+
 	@Override
 	public Component findMouseClick(MouseEvent event) {
 		Component clickSource = null;
-		
+
 		if (event == null) {
 			return clickSource;
 		}
-		
+
 		if (clickInBounds(event.getX(), event.getY())) {
 			for (Component component : children) {
 				var current = component.findMouseClick(event);
-				
+
 				if (current != null) {
 					clickSource = current;
 				}
@@ -114,11 +114,11 @@ public class Container extends Component {
 			return clickSource;
 		}
 	}
-	
+
 	public Set<Component> getChildren() {
 		return Collections.unmodifiableSet(children);
 	}
-	
+
 	public void refreshLayout() {
 		if (layout != null) {
 			layout.layoutComponents(this, children);
@@ -126,7 +126,7 @@ public class Container extends Component {
 			Layout.nullAlign(this);
 		}
 	}
-	
+
 	protected Layout getLayout() {
 		return layout;
 	}
@@ -134,11 +134,11 @@ public class Container extends Component {
 	public void setLayout(Layout layout) {
 		this.layout = layout;
 	}
-	
+
 	@Override
 	public void updateAnimation() {
 		super.updateAnimation();
-		
+
 		for (Component child : children) {
 			child.updateAnimation();
 		}

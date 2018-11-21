@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -54,9 +53,9 @@ public abstract class GLObject {
 	protected Matrix4f modelMatrix = new Matrix4f();
 	protected Map<GLTexture, Integer> textures = new HashMap<GLTexture, Integer>();
 	protected GLTexture diffuseTexture;
-	
+
 	protected abstract int[] createDrawOrder();
-	
+
 	public void bindBuffer() {
 		GLBound = true;
 		objectID = glGenVertexArrays();
@@ -66,8 +65,8 @@ public abstract class GLObject {
 		glBindBuffer(GL_ARRAY_BUFFER, objectBufferID);
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STREAM_DRAW);
 		attributePointers = createAttributePointers();
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        objectIndicesBufferID = createOrderBuffer();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		objectIndicesBufferID = createOrderBuffer();
 		glBindVertexArray(0);
 	}
 	protected int createOrderBuffer() {
@@ -88,13 +87,13 @@ public abstract class GLObject {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
-	
+
 	public abstract void update();
-	
+
 	protected abstract List<Integer> createAttributePointers();
-	
+
 	protected abstract FloatBuffer createVertexBuffer();
-	
+
 	public void unbindObject() {
 		GLBound = false;
 		glBindVertexArray(objectID);
@@ -103,21 +102,21 @@ public abstract class GLObject {
 		glBindVertexArray(0);
 		glDeleteVertexArrays(objectID);
 	}
-	
+
 	public void addTexture(GLTexture texture, int target) {
 		textures.put(texture, target);
 	}
-	
+
 	public Map<GLTexture, Integer> getTextures() {
 		return textures;
 	}
-	
+
 	protected abstract void createVertices();
-	
+
 	public List<GLVertex> getVertices() {
 		return Collections.unmodifiableList(vertices);
 	}
-	
+
 	public int getObjectID() {
 		return objectID;
 	}
@@ -127,24 +126,24 @@ public abstract class GLObject {
 	public int getObjectIndicesBufferID() {
 		return objectIndicesBufferID;
 	}
-	
+
 	protected abstract void calculateVertices();
-	
+
 	protected float calculateRelativePosition(int coordinate, int totalsize) {
 		double percentage = calculatePercentage(coordinate, totalsize); //maths stuff
 		percentage = (percentage * 2) - 1; //graphics coordinates go from -1 to 1 so i need percentage that goes from
 		return (float) percentage;
 	}
-	
+
 	protected double calculatePercentage(int a, int b) {
 		return (double) a / (double) b;
 	}
-	
+
 	protected float calculateTranslation(int coordinate, int totalsize) {
 		double percentage = calculatePercentage(coordinate, totalsize);
 		return (float) (percentage * 2);
 	}
-	
+
 	protected float flip(double Value) {
 		if (Value <= 0) {
 			return (float) Math.abs(Value);
@@ -152,7 +151,7 @@ public abstract class GLObject {
 			return (float) (0-Value);
 		}
 	}
-	
+
 	public boolean isGLBound() {
 		return GLBound;
 	}
@@ -160,48 +159,48 @@ public abstract class GLObject {
 	public int getDrawLength() {
 		return draworder.length;
 	}
-	
+
 	public List<Integer> getAttributePointers() {
 		return attributePointers;
 	}
-	
+
 	protected void setDrawOrder() {
 		draworder = createDrawOrder();
 	}
-	
+
 	public Matrix4f getModelMatrix() {
 		return modelMatrix;
 	}
-	
+
 	protected Vector3f calculateSurfaceNormal(Vector3f pointA, Vector3f pointB, Vector3f pointC) {
 		Vector3f U = new Vector3f();
 		Vector3f V = new Vector3f();
-		
+
 		pointB.sub(pointA, U);
 		pointC.sub(pointA, V);
-		
+
 		Vector3f normal;
 		normal = V.cross(U);
 		normal = normal.normalize();
-		
+
 		return normal;
 	}
-	
+
 	public void setDiffuseTexture(GLTexture diffuseTexture) {
 		this.diffuseTexture = diffuseTexture;
 	}
-	
+
 	public GLTexture getDiffuseTexture() {
 		return diffuseTexture;
 	}
-	
+
 	public boolean isTransparent() {
 		if (diffuseTexture == null) {
 			return false;
 		}
-		
+
 		return diffuseTexture.isTransparent();
 	}
-	
+
 	public abstract boolean hasTexture();
 }

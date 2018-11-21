@@ -9,18 +9,19 @@ public class GLTextProgram extends GLProgram {
 	int colourLocation;
 
 	public GLTextProgram() {
-		
+
 	}
-	
+
+	@Override
 	public void createProgram() {
 		super.createProgram();
 		queryVariables();
 	}
-	
+
 	protected void queryVariables() {
 		colourLocation = queryVariable("textColour");
 	}
-	
+
 	public void setColour(Vector4f colour) {
 		updateVec4(colour, colourLocation);
 	}

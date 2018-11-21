@@ -4,37 +4,39 @@ import java.util.ArrayList;
 
 import movement.mathDS.Vector;
 
-public abstract class NormalShape implements OutlineShape {
-	final static int collisionDetectionGranularity = 2 * 10;	//MUST BE EVEN! (Being even means that the divisions along all axis will, 
-	private ArrayList<float[]> collisionNet;				//amongst other places, contain the middle line. This helps define the edges of, for example, spheres.
+public abstract class StandardShape implements OutlineShape {
+	final static int collisionDetectionGranularity = 2 * 10;	//MUST BE EVEN! (Being even means that the divisions along all axis will,
+	private ArrayList<double[]> collisionNet;				//amongst other places, contain the middle line. This helps define the edges of, for example, spheres.
 	double[] dimensions;
 
-	public NormalShape(double[] dimensions) {
+	public StandardShape(double[] dimensions) {
 		setDimensions(dimensions);
 		initialiseCollisionNet();
 	}
+	@Override
 	public void setDimensions(double[] dimensions) {
 		this.dimensions= dimensions;
 	}
+	@Override
 	public double[] getDimensions() {
 		return dimensions;
 	}
-	public ArrayList<float[]> getCollisionNet(){
+	public ArrayList<double[]> getCollisionNet(){
 		return collisionNet;
 	}
-	
+
 	public void initialiseCollisionNet() {
-		collisionNet = new ArrayList<float[]>();
-		float [][] possibleCoords = new float[Vector.DIMENSIONS][];
+		collisionNet = new ArrayList<double[]>();
+		double [][] possibleCoords = new double[Vector.DIMENSIONS][];
 
 		for (int i = 0; i<Vector.DIMENSIONS;i++) {
-			float grainSize = (float) (getDimensions()[i]/collisionDetectionGranularity);
-			possibleCoords[i] = new float[collisionDetectionGranularity + 1];
+			double grainSize = getDimensions()[i]/collisionDetectionGranularity;
+			possibleCoords[i] = new double[collisionDetectionGranularity + 1];
 			for (int j = 0; j<=collisionDetectionGranularity ; j++) {
 				possibleCoords[i][j] = grainSize * j;
 			}
 		}
-		float[][] points = new float[(int) Math.pow(collisionDetectionGranularity+1,Vector.DIMENSIONS)][Vector.DIMENSIONS] ;
+		double[][] points = new double[(int) Math.pow(collisionDetectionGranularity+1,Vector.DIMENSIONS)][Vector.DIMENSIONS] ;
 		int chunkSize;
 		int chunkCounter;
 		int chunkLocation;
@@ -48,28 +50,28 @@ public abstract class NormalShape implements OutlineShape {
 				if (chunkLocation == chunkSize) {
 					chunkLocation = 0;
 					chunkCounter++;
-				}				
+				}
 			}
 		}
-		for (float[] point : points) {
-				if (inCollisionNet(point)) {
-					collisionNet.add(point);
-				}
+		for (double[] point : points) {
+			if (inCollisionNet(point)) {
+				collisionNet.add(point);
+			}
 		}
 	}
 
-	
-	protected abstract boolean inCollisionNet(float[] point);
-	
+
+	protected abstract boolean inCollisionNet(double[] point);
+
 	@Override
-	public float[] exactCollisionPosition(OutlineShape collidee, float[] relativePositionCollideeToCollider) {
+	public double[] exactCollisionPosition(OutlineShape collidee, double[] relativePositionCollideeToCollider) {
 		var net = getCollisionNet();
-		
-		float[] sum = new float[Vector.DIMENSIONS];
+
+		double[] sum = new double[Vector.DIMENSIONS];
 		int numPointsInside = 0;
-		float[] point = new float[Vector.DIMENSIONS];
-		
-		for (float[] f : net) {
+		double[] point = new double[Vector.DIMENSIONS];
+
+		for (double[] f : net) {
 			for (int i = 0; i<Vector.DIMENSIONS;i++) {
 				point[i] = f[i] + relativePositionCollideeToCollider[i];
 			}

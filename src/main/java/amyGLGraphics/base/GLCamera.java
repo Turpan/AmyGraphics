@@ -7,29 +7,29 @@ public class GLCamera {
 	Vector3f position;
 	Vector3f centre;
 	Vector3f up;
-	
+
 	public GLCamera() {
 		setDefault();
 	}
-	
+
 	public void setDefault() {
 		position = new Vector3f(0.0f, 0.0f, 0.0f);
 		centre = new Vector3f(0.0f, 0.0f, -1.0f);
 		up = new Vector3f(0.0f, 1.0f, 0.0f);
 	}
-	
+
 	public void setPosition(Vector3f position) {
 		this.position = position;
 	}
-	
+
 	public void setCentre(Vector3f centre) {
 		this.centre = centre;
 	}
-	
+
 	public void setUp(Vector3f up) {
 		this.up = up;
 	}
-	
+
 	public Vector3f getPosition() {
 		return position;
 	}

@@ -16,7 +16,7 @@ public class Communism extends Entity {
 	public void loadImage() {
 		BufferedImage img = null;
 		try {
-		    img = ImageIO.read(new File("graphics/communism.png"));
+			img = ImageIO.read(new File("graphics/communism.png"));
 		} catch (IOException e) {
 			System.exit(1);
 		}

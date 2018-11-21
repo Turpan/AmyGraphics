@@ -9,7 +9,7 @@ import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
 public class GLTextRenderer extends GLRenderer {
-	
+
 	GLTextProgram program;
 
 	@Override
@@ -19,7 +19,7 @@ public class GLTextRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		
+
 	}
 
 	@Override
@@ -27,9 +27,9 @@ public class GLTextRenderer extends GLRenderer {
 		if (!(object instanceof GLText)) {
 			return;
 		}
-		
+
 		GLText text = (GLText) object;
-		
+
 		program.setColour(text.getTextColour());
 	}
 

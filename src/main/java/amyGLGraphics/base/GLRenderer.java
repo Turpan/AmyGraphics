@@ -1,7 +1,6 @@
 package amyGLGraphics.base;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glDrawElements;
@@ -20,14 +19,14 @@ import org.lwjgl.opengl.GL20;
 import amyGLGraphics.GLTexture;
 
 public abstract class GLRenderer {
-	
+
 	protected GLCamera camera;
-	
+
 	public GLRenderer() {
 		createProgram();
 		getProgram().createProgram();
 	}
-	
+
 	public void render(List<GLObject> objects) {
 		globalSetup();
 		updateUniversalUniforms();
@@ -36,14 +35,14 @@ public abstract class GLRenderer {
 		}
 		resetGlobal();
 	}
-	
+
 	public void render(GLObject object) {
 		globalSetup();
 		updateUniversalUniforms();
 		renderObject(object);
 		resetGlobal();
 	}
-	
+
 	protected void renderObject(GLObject object) {
 		GLProgram program = getProgram();
 		int objectID = object.getObjectID();
@@ -66,18 +65,18 @@ public abstract class GLRenderer {
 		glBindVertexArray(0);
 		GL20.glUseProgram(0);
 	}
-	
+
 	public void resetState() {
 		unbindGL();
 		getProgram().createProgram();
 	}
-	
+
 	public void unbindGL() {
 		if (getProgram() != null && getProgram().isGLBound()) {
 			getProgram().unbindProgram();
 		}
 	}
-	
+
 	protected void bindTextures(GLObject object) {
 		Map<GLTexture, Integer> textures = object.getTextures();
 		for (GLTexture texture : textures.keySet()) {
@@ -86,7 +85,7 @@ public abstract class GLRenderer {
 			glBindTexture(texture.getTextureType(), texture.getTextureID());
 		}
 	}
-	
+
 	protected void unbindTextures(GLObject object) {
 		Map<GLTexture, Integer> textures = object.getTextures();
 		for (GLTexture texture : textures.keySet()) {
@@ -95,21 +94,21 @@ public abstract class GLRenderer {
 			glBindTexture(texture.getTextureType(), 0);
 		}
 	}
-	
+
 	public void setCamera(GLCamera camera) {
 		this.camera = camera;
 	}
-	
+
 	protected abstract void createProgram();
-	
+
 	protected abstract void updateUniversalUniforms();
-	
+
 	protected abstract void updateUniforms(GLObject object);
-	
+
 	protected abstract GLProgram getProgram();
-	
+
 	protected abstract void globalSetup();
-	
+
 	protected abstract void resetGlobal();
-	
+
 }

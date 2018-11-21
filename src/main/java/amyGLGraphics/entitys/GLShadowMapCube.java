@@ -1,6 +1,5 @@
 package amyGLGraphics.entitys;
 
-import amyGLGraphics.GLTextureDepth;
 import amyGLGraphics.GLTextureDepthCube;
 
 import static org.lwjgl.opengl.GL11.GL_NEAREST;

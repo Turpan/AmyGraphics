@@ -3,20 +3,19 @@ package Attackers;
 import movement.GameListener;
 import movement.Movable;
 import movement.mathDS.Vector;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Enemy extends Attacker {
 	private GameListener listener;
 	private double attackCooldown;
 	private double attackCounter;
-	public Enemy(GameListener listener) throws MalformedVectorException {
+	public Enemy(GameListener listener){
 		super();
 		if (listener == null) {
 			throw new NullPointerException();
 		}
 		setListener(listener);
 	}
-	
+
 	public double getAttackCooldown() {
 		return attackCooldown;
 	}
@@ -41,15 +40,16 @@ public abstract class Enemy extends Attacker {
 	}
 	protected double[] calculateDirection() {
 		float[] target = getDesiredPosition();
-		float[] location = getPosition();
+		double[] location = getPosition();
 		double[] output = new double[Vector.DIMENSIONS];
 		for (int i=0;i<Vector.DIMENSIONS;i++) {
 			output[i] = target[i] - location[i];
 		}
 		return output;
-		
+
 	}
-	public void tick() throws MalformedVectorException, MalformedEntityException {
+	@Override
+	public void tick(){
 		if (isActive()) {
 			super.tick();
 			if (canAttack() && attackReady()) {

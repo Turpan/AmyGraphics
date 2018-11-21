@@ -1,10 +1,7 @@
 package amyGLGraphics;
 
-import static org.lwjgl.opengl.GL11.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
@@ -26,7 +23,7 @@ public class GLTextureColourCube extends GLTextureColour {
 	public GLTextureColourCube(int width, int height) {
 		super(width, height);
 	}
-	
+
 	public GLTextureColourCube(int width, int height, int internalformat, int format, int data, int filtering) {
 		super(width, height, internalformat, format, data, filtering);
 	}
@@ -35,24 +32,24 @@ public class GLTextureColourCube extends GLTextureColour {
 	protected void createTexture() {
 		createTexture(GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, GL_LINEAR);
 	}
-	
+
 	@Override
 	protected void createTexture(int internalformat, int format, int data, int filtering) {
 		textureID = glGenTextures();
 		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-		
+
 		for (int i=0; i<6; i++) {
 			FloatBuffer buffer = null;
-			
+
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
-			, 0, internalformat, width, height, 0, format, data, buffer);
+					, 0, internalformat, width, height, 0, format, data, buffer);
 		}
-		
+
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER, filtering);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, filtering);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER, filtering);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, filtering);
 	}
 
 	@Override

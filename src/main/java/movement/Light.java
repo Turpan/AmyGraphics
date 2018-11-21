@@ -8,7 +8,7 @@ public abstract class Light extends Entity {
 	private double ambient;
 	private double diffuse;
 	private double specular;
-	
+
 	public Light(LightType type) {
 		if (type == null) {
 			throw new NullPointerException("Type cannot be null");
@@ -16,24 +16,24 @@ public abstract class Light extends Entity {
 		setType(type);
 		setColor(Color.WHITE);
 	}
-	
+
 	public Light(LightType type, Color color) {
 		this(type);
 		setColor(color);
 	}
-	
+
 	public void setColor(Color color) {
 		this.lightColor = color;
 	}
-	
+
 	public Color getColor() {
 		return lightColor;
 	}
-	
+
 	public void setType(LightType type) {
 		this.type = type;
 	}
-	
+
 	public LightType getType() {
 		return type;
 	}
@@ -61,5 +61,5 @@ public abstract class Light extends Entity {
 	public void setSpecular(double specular) {
 		this.specular = specular;
 	}
-	
+
 }

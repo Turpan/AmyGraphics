@@ -1,10 +1,7 @@
 package Attackers;
 
-import movement.Entity;
 import movement.Movable;
 import movement.SelfPropelled;
-import movement.Entity.MalformedEntityException;
-import movement.mathDS.Vector.MalformedVectorException;
 
 public abstract class Attacker extends SelfPropelled{
 
@@ -14,8 +11,8 @@ public abstract class Attacker extends SelfPropelled{
 	private int force;
 	private double invincibilityTime;
 	private double invincibilityCounter;
-	
-	public Attacker() throws MalformedVectorException {
+
+	public Attacker(){
 		super();
 	}
 	public int getForce() {
@@ -43,7 +40,7 @@ public abstract class Attacker extends SelfPropelled{
 		setInvincibilityCounter(getInvincibilityCounter() - Movable.TIMESCALE);
 	}
 	@Override
-	public void tick() throws MalformedVectorException, MalformedEntityException {
+	public void tick() {
 		super.tick();
 		if (isInvincible()) {
 			invincibilityTick();

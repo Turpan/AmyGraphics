@@ -29,7 +29,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.nio.IntBuffer;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -40,24 +39,24 @@ import amyInterface.Component;
 import movement.Room;
 
 public abstract class GLWindow implements Runnable {
-	
+
 	private static int windowWidth;
 	private static int windowHeight;
-	
+
 	private long window;
 	protected GLGraphicsHandler graphicsContext;
 	protected GLCamera camera;
-	
+
 	protected GraphicsNotifier handler;
-	
+
 	private boolean errorCallbackCreated;
-	
+
 	public GLWindow(int width, int height, GraphicsNotifier handler) {
 		setWindowWidth(width);
 		setWindowHeight(height);
-		
+
 		camera = new GLCamera();
-		
+
 		this.handler = handler;
 	}
 
@@ -67,12 +66,12 @@ public abstract class GLWindow implements Runnable {
 		loop();
 		end();
 	}
-	
+
 	private void init() {
 		//Uncomment this if you want error reporting
 		//GLFWErrorCallback.createPrint(System.err).set();
 		//errorCallbackCreated = true;
-		
+
 		if (!glfwInit()) {
 			throw new IllegalStateException("Unable to initialize GLFW");
 		}
@@ -83,7 +82,7 @@ public abstract class GLWindow implements Runnable {
 			throw new RuntimeException("Failed to create the GLFW window");
 		}
 		setupInputCallback();
-		
+
 		GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		try ( MemoryStack stack = stackPush() ) {
 			IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -97,30 +96,30 @@ public abstract class GLWindow implements Runnable {
 
 			// Center the window
 			glfwSetWindowPos(
-				window,
-				(vidmode.width() - pWidth.get(0)) / 2,
-				(vidmode.height() - pHeight.get(0)) / 2
-			);
+					window,
+					(vidmode.width() - pWidth.get(0)) / 2,
+					(vidmode.height() - pHeight.get(0)) / 2
+					);
 		}
-		
+
 		glfwMakeContextCurrent(window);
 		glfwSwapInterval(1);
 		glfwShowWindow(window);
-		
+
 		GL.createCapabilities();
 		//Uncomment this for error callback
 		GLUtil.setupDebugMessageCallback();
-		
+
 		setupGLSettings();
-		
+
 		graphicsContext = new GLGraphicsHandler();
 		graphicsContext.setCamera(camera);
-		
+
 		if (handler != null) {
 			handler.graphicsCreated();
 		}
 	}
-	
+
 	private void loop() {
 		glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 
@@ -128,7 +127,7 @@ public abstract class GLWindow implements Runnable {
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			 // swap the buffers
+			// swap the buffers
 			graphicsContext.render();
 			glfwSwapBuffers(window);
 			// Poll for window events. The key callback above will only be
@@ -137,7 +136,7 @@ public abstract class GLWindow implements Runnable {
 			processInput();
 		}
 	}
-	
+
 	private void end() {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		graphicsContext.unbindGL();
@@ -149,55 +148,55 @@ public abstract class GLWindow implements Runnable {
 		}
 		System.exit(0);
 	}
-	
+
 	protected abstract void setupWindowHints();
-	
+
 	protected abstract void setupInputCallback();
-	
+
 	protected abstract void setupGLSettings();
-	
+
 	protected abstract void processInput();
-	
+
 	public long getWindow() {
 		return window;
 	}
-	
+
 	public void setActiveRoom(Room room) {
 		graphicsContext.setActiveRoom(room);
 	}
-	
+
 	public void addRoom(Room room) {
 		graphicsContext.addRoom(room);
 	}
-	
+
 	public void removeRoom(Room room) {
 		graphicsContext.removeRoom(room);
 	}
-	
+
 	public void setActiveScene(Component scene) {
 		graphicsContext.setActiveScene(scene);
 	}
-	
+
 	public void addScene(Component scene) {
 		graphicsContext.addScene(scene);
 	}
-	
+
 	public void removeScene(Component scene) {
 		graphicsContext.removeScene(scene);
 	}
-	
+
 	public void setWindowWidth(int width) {
 		GLWindow.windowWidth = width;
 	}
-	
+
 	public void setWindowHeight(int height) {
 		GLWindow.windowHeight = height;
 	}
-	
+
 	public static int getWindowWidth() {
 		return windowWidth;
 	}
-	
+
 	public static int getWindowHeight() {
 		return windowHeight;
 	}

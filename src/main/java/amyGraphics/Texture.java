@@ -4,13 +4,13 @@ import java.awt.image.BufferedImage;
 
 public class Texture {
 	private BufferedImage sprite;
-	
+
 	//These denote what part of the sprite should be rendered
 	private int x;
 	private int y;
 	private int width;
 	private int height;
-	
+
 	public Texture(java.awt.image.BufferedImage sprite) {
 		//setSprite(sprite);
 		this.sprite = sprite;
@@ -85,7 +85,7 @@ public class Texture {
 		}
 		this.height = height;
 	}
-	
+
 	public Texture getRenderTarget() {
 		return this;
 	}

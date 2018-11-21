@@ -1,13 +1,11 @@
 package amyGLGraphics.entitys;
 
-import org.joml.Matrix4f;
-
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
 public class GLNormalRenderer extends GLRenderer{
-	
+
 	private GLWorldProgram normalProgram;
 
 	@Override
@@ -34,11 +32,11 @@ public class GLNormalRenderer extends GLRenderer{
 
 	@Override
 	protected void globalSetup() {
-		
+
 	}
 
 	@Override
 	protected void resetGlobal() {
-		
+
 	}
 }
