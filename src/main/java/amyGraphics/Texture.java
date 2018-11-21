@@ -90,5 +90,13 @@ public class Texture {
 		return this;
 	}
 	
-	
+	@Override
+	public Texture clone() {
+		Texture texture = new Texture(getSprite());
+		texture.setX(getX());
+		texture.setY(getY());
+		texture.setWidth(getWidth());
+		texture.setHeight(getHeight());
+		return texture;
+	}
 }
