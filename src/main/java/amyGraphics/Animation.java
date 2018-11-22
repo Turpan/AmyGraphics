@@ -12,24 +12,31 @@ public class Animation extends Texture {
 
 	private Texture[] frames;
 
-	public Animation(BufferedImage sprite, int width, int height) throws MalformedAnimationException {
+	public Animation(BufferedImage sprite, int width, int height) {
 		super(sprite);
 		setFrameWidth(width);
 		setFrameHeight(height);
 	}
 
-	public Animation(BufferedImage sprite, int width, int height, int[] frameOrder) throws MalformedAnimationException {
+	public Animation(BufferedImage sprite, int width, int height, int[] frameOrder) {
 		this(sprite, width, height);
 		setFrameOrder(frameOrder);
 	}
+	
+	public Animation(Animation animation) {
+		super(animation);
+		setFrameWidth(animation.getFrameWidth());
+		setFrameHeight(animation.getFrameHeight());
+		setFrameOrder(animation.getFrameOrder().clone());
+	}
 
-	public void setFrameWidth(int frameWidth) throws MalformedAnimationException {
+	public void setFrameWidth(int frameWidth) {
 		if (frameWidth <= 0) {
-			throw new MalformedAnimationException("Frame width cannot be 0 or less.");
+			frameWidth = getSprite().getWidth();
 		} else if (frameWidth > getSprite().getWidth()) {
-			throw new MalformedAnimationException("Frame width cannot be wider then the sprite sheet.");
+			frameWidth = getSprite().getWidth();
 		} else if (getSprite().getWidth() % frameWidth != 0) {
-			throw new MalformedAnimationException("Frame width must be a multiple of sprite sheet width.");
+			frameWidth = getSprite().getWidth();
 		}
 		this.frameWidth = frameWidth;
 		if (frameHeight != 0) {
@@ -37,13 +44,13 @@ public class Animation extends Texture {
 		}
 	}
 
-	public void setFrameHeight(int frameHeight) throws MalformedAnimationException {
+	public void setFrameHeight(int frameHeight) {
 		if (frameHeight <= 0) {
-			throw new MalformedAnimationException("Frame height cannot be 0 or less.");
+			frameHeight = getSprite().getHeight();
 		} else if (frameHeight > getSprite().getHeight()) {
-			throw new MalformedAnimationException("Frame height cannot be higher then the sprite sheet.");
+			frameHeight = getSprite().getHeight();
 		} else if (getSprite().getHeight() % frameHeight != 0) {
-			throw new MalformedAnimationException("Frame height must be a multiple of sprite sheet height.");
+			frameHeight = getSprite().getHeight();
 		}
 		this.frameHeight = frameHeight;
 		if (frameWidth != 0) {
@@ -101,21 +108,13 @@ public class Animation extends Texture {
 		return frames[frameOrder[frameCounter]];
 	}
 
-	public class MalformedAnimationException extends Exception {
-		private static final long serialVersionUID = 1L;
-
-		public MalformedAnimationException (String message) {
-			super (message);
-		}
-	}
-
 	public int[] getFrameOrder() {
 		return frameOrder;
 	}
 
-	public void setFrameOrder(int[] frameOrder) throws MalformedAnimationException {
+	public void setFrameOrder(int[] frameOrder) {
 		if (!checkFrameOrder(frameOrder)) {
-			throw new MalformedAnimationException("Frame order contains negative values or values greater than frame count.");
+			frameOrder = new int[] {0};
 		}
 		this.frameOrder = frameOrder;
 	}
@@ -143,16 +142,5 @@ public class Animation extends Texture {
 
 	public int getFrameCounter() {
 		return frameCounter;
-	}
-
-	@Override
-	public Animation clone() {
-		try {
-			return new Animation(getSprite(), getFrameWidth(), getFrameHeight(), getFrameOrder().clone());
-		} catch (MalformedAnimationException e) {
-			//This should never occur, as if cloning throws an exception then an exception should already
-			//have been thrown for this one.
-			return null;
-		}
 	}
 }

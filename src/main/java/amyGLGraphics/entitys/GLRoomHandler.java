@@ -41,7 +41,7 @@ public class GLRoomHandler extends RoomHandler {
 
 	private GLCamera camera;
 
-	private boolean softShadows = false;
+	private boolean softShadows = true;
 
 	public boolean renderNormals = false;
 
