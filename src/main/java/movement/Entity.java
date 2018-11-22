@@ -71,6 +71,7 @@ public abstract class Entity {
 		return position;
 	}
 	public abstract Entity clone();
+	
 	public void move(Vector movement) {
 		double[] newPosition = new double[Vector.DIMENSIONS];
 		double[] currentPosition = getPosition();
@@ -78,5 +79,6 @@ public abstract class Entity {
 		for (int i=0;i<Vector.DIMENSIONS;i++) {
 			newPosition[i] = (currentPosition[i] + moveCmpnts[i]);
 		}
+		setPosition(newPosition);
 	}
 }
