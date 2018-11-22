@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import amyGraphics.Animation;
-import amyGraphics.Animation.MalformedAnimationException;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -285,11 +284,7 @@ public class LucyGUI extends HBox{
 
 		int[] order = compileOrder();
 
-		try {
-			return new Animation(animImage, frameWidth, frameHeight, order);
-		} catch (MalformedAnimationException e) {
-			return null;
-		}
+		return new Animation(animImage, frameWidth, frameHeight, order);
 	}
 
 	private BufferedImage compileImage() {

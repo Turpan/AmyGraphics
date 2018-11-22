@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import amyGraphics.Animation;
-import amyGraphics.Animation.MalformedAnimationException;
 
 public class LucyIO {
 
@@ -165,13 +164,9 @@ public class LucyIO {
 		}
 
 		//put it together
-		try {
-			Animation animation = new Animation(image, framewidth, frameheight, frameorder);
-			//all done
-			return animation;
-		} catch (MalformedAnimationException e) {
-			return null;
-		}
+		Animation animation = new Animation(image, framewidth, frameheight, frameorder);
+		//all done
+		return animation;
 	}
 
 	private static byte[] intToByte(int num) {

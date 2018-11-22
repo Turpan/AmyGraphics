@@ -11,11 +11,19 @@ public class Texture {
 	private int width;
 	private int height;
 
-	public Texture(java.awt.image.BufferedImage sprite) {
+	public Texture(BufferedImage sprite) {
 		//setSprite(sprite);
 		this.sprite = sprite;
 		width = sprite.getWidth();
 		height = sprite.getHeight();
+	}
+	
+	public Texture(Texture texture) {
+		this(texture.getSprite());
+		setX(texture.getX());
+		setY(texture.getY());
+		setWidth(texture.getWidth());
+		setHeight(texture.getHeight());
 	}
 
 	public BufferedImage getSprite() {
@@ -89,6 +97,4 @@ public class Texture {
 	public Texture getRenderTarget() {
 		return this;
 	}
-
-
 }
