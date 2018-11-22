@@ -22,6 +22,14 @@ public class TestLight extends Light{
 		setDiffuse(1);
 		setSpecular(1);
 	}
+	protected TestLight(TestLight tl) {
+		super(tl);
+	}
+	
+	@Override
+	public TestLight clone() {
+		return new TestLight(this);
+	}
 
 	public void loadImage() {
 		BufferedImage img = null;

@@ -13,7 +13,6 @@ import movement.GameListener;
 import movement.Movable;
 import movement.Obstacle;
 import movement.Shapes.Ellipse;
-import movement.Shapes.OutlineShape;
 
 public class ChaserEnemy extends Enemy {
 	static final double MASS = 10;
@@ -33,6 +32,19 @@ public class ChaserEnemy extends Enemy {
 		setDimensions(new double[] {50,50,50});
 		setOutline((new Ellipse(getDimensions())));
 	}
+	protected ChaserEnemy(ChaserEnemy chaserEnemy) {
+		super(chaserEnemy);
+		setMass(chaserEnemy.getMass());
+		setBaseMoveForce(chaserEnemy.getBaseMoveForce());
+		setCoF(chaserEnemy.getCoF());
+		setCoD(chaserEnemy.getCoD());
+		setCoR(chaserEnemy.getCoR());
+	}
+	@Override
+	public ChaserEnemy clone() {
+		return new ChaserEnemy(this);
+	}
+	
 	private void loadImage() {
 		BufferedImage img = null;
 		try {

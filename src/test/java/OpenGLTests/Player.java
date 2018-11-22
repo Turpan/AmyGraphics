@@ -41,6 +41,21 @@ public class Player extends SelfPropelled implements Dashing {
 		setDimensions(new double[] {50,50,50});
 		setOutline(new Ellipse(getDimensions()));
 	}
+	protected Player (Player player) {
+		super(player);
+		setBaseMoveForce(player.getBaseMoveForce());
+		setMass(player.getMass());
+		setDashCoolDown(player.getDashCoolDown());
+		setCoF(player.getCoF());
+		setCoD(player.getCoD());
+		setCoR(player.getCoR());
+	}
+	
+	@Override
+	public Player clone() {
+		return new Player(this);
+	}
+	
 	private void loadImage() {
 		BufferedImage img = null;
 		try {

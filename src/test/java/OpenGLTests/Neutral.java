@@ -14,6 +14,15 @@ public class Neutral extends Entity {
 	public Neutral() {
 		loadImage();
 	}
+	protected Neutral(Neutral neutral) {
+		super(neutral);
+	}
+	
+	@Override
+	public Neutral clone() {
+		return new Neutral(this);
+	}
+	
 	public void loadImage() {
 		BufferedImage img = null;
 		try {

@@ -15,6 +15,18 @@ public abstract class Attacker extends SelfPropelled{
 	public Attacker(){
 		super();
 	}
+	protected Attacker (Attacker attacker) {
+		super(attacker);
+		setMaxHealth(attacker.getMaxHealth());
+		setCurrentHealth(attacker.getCurrentHealth());
+		setDamage(attacker.getDamage());
+		setForce(attacker.getForce());
+		setInvincibilityTime(attacker.getInvincibilityTime());
+		setInvincibilityCounter(attacker.getInvincibilityCounter());
+	}
+	@Override
+	public abstract Attacker clone();
+	
 	public int getForce() {
 		return force;
 	}

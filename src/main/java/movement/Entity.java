@@ -12,6 +12,17 @@ public abstract class Entity {
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
 
+	public Entity() {
+	}
+	protected Entity(Entity entity) {
+		setPosition(entity.getPosition().clone());
+		setDimensions(entity.getDimensions().clone());
+		for (Texture t : entity.getTextures()) {
+			addTexture(t);
+		}
+		setActiveTexture(entity.getActiveTexture());
+	}
+	
 	public void setDimensions(double[] dimensions) {
 		for (double dim : dimensions) {
 			if (dim <0) {dim = 0;}
@@ -59,6 +70,7 @@ public abstract class Entity {
 	public double[] getPosition() {
 		return position;
 	}
+	public abstract Entity clone();
 	public void move(Vector movement) {
 		double[] newPosition = new double[Vector.DIMENSIONS];
 		double[] currentPosition = getPosition();

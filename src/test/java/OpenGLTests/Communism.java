@@ -13,6 +13,14 @@ public class Communism extends Entity {
 	public Communism() {
 		loadImage();
 	}
+	protected Communism(Communism communism) {
+		super(communism);
+	}
+	
+	@Override
+	public Communism clone() {
+		return new Communism(this);
+	}
 	public void loadImage() {
 		BufferedImage img = null;
 		try {

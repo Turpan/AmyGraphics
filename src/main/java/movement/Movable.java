@@ -6,24 +6,30 @@ import movement.mathDS.Vector;
 
 public abstract class Movable extends Collidable{
 
-	private Vector velocity;
+	private Vector velocity = new Vector();
 	final public static double  TIMESCALE = 0.1;
 	final public static double GRAVITY = 9.81;
 	final public static int FLOORWINDOW = 5;
-	private Vector activeForce;
+	private Vector activeForce = new Vector();
 	private double mass; 						// don't let this one equal 0.... If you want a default value, go with 1.
 	private OutlineShape outline;
 	private double coefficientOfDrag;
 	private double coefficientOfFriction;
-	private ArrayList<Entity> attachedEntities;	//move when this one moves!
+	private ArrayList<Entity> attachedEntities = new ArrayList<Entity>();	//move when this one moves!
 	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
 	private int onFloorTimer;					//Represents an object being on the floor. Or rather, having recently collided with a Floor object.
 
-	public Movable (){
-		setVelocity(new Vector());
-		setActiveForce(new Vector());
-		setAttachedEntities(new ArrayList<Entity>());
+	public Movable() {
 	}
+	protected Movable(Movable movable) {
+		super(movable);
+		setVelocity(movable.getVelocity().clone());
+		setActiveForce(movable.getActiveForce().clone());
+		for (Entity attached : movable.getAttachedEntities()) {
+			attachEntity(attached.clone());
+		}
+	}
+	
 	public Vector getActiveForce() {
 		return activeForce;
 	}
@@ -79,8 +85,8 @@ public abstract class Movable extends Collidable{
 	public ArrayList<Entity> getAttachedEntities() {
 		return attachedEntities;
 	}
-	public void setAttachedEntities(ArrayList<Entity> Es) {
-		attachedEntities = Es;
+	public void attachEntity(Entity entity) {
+		getAttachedEntities().add(entity);
 	}
 	public int getOnFloorTimer() {
 		return onFloorTimer;
@@ -91,9 +97,10 @@ public abstract class Movable extends Collidable{
 	public void touchFloor() {
 		onFloorTimer = FLOORWINDOW;
 	}
-
-	public abstract void collision(Obstacle o);			//analagous to the similar method for Movables in Collidable. Only movables can collide with obstacles, see.
+	@Override
+	public abstract Movable clone();	
 	//////////////////////////////////////////////////////////////////////////////////
+	public abstract void collision(Obstacle o);			//analagous to the similar method for Movables in Collidable. Only movables can collide with obstacles, see.
 	protected void moveTick() {
 		move(Vector.scalarProduct(getVelocity(), TIMESCALE));
 	}

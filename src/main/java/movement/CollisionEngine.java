@@ -277,7 +277,7 @@ public class CollisionEngine {
 			for (Collidable collidee : getPoC().getVerticesConnectedTo(collider)) {
 				if (getObstacleList().contains(collidee)) {
 					obstacleCollision((Obstacle)collidee, collider, getPoC().getEdgeValue(collidee, collider));
-				} else if (collisionOrder.indexOf(collider) < collisionOrder.indexOf(collidee)){
+				} else if (collisionOrder.indexOf(collider) < collisionOrder.indexOf(collidee)){	//to avoid double collisions (counting A hitting B & B hitting A, essentially doing one collision twice)
 					moveableCollision(collider, (Movable)collidee, getPoC().getEdgeValue(collider, collidee));
 				}
 			}

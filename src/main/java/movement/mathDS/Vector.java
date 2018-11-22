@@ -32,6 +32,12 @@ public class Vector {
 		return components;
 	}
 
+	@Override
+	public Vector clone() {
+		var output = new Vector();
+		output.setComponents(getComponents().clone());
+		return output;
+	}
 	//////////////////////////////////////////////////////////////////////////////////
 
 	public double[] getDirection() {

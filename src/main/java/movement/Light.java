@@ -21,6 +21,14 @@ public abstract class Light extends Entity {
 		this(type);
 		setColor(color);
 	}
+	protected Light(Light light) {
+		super(light);
+		setType(light.getType());
+		setColor(light.getColor());
+		setAmbient(light.getAmbient());
+		setDiffuse(light.getDiffuse());
+		setSpecular(light.getSpecular());
+	}
 
 	public void setColor(Color color) {
 		this.lightColor = color;
@@ -61,5 +69,6 @@ public abstract class Light extends Entity {
 	public void setSpecular(double specular) {
 		this.specular = specular;
 	}
-
+	@Override
+	public abstract Light clone();
 }

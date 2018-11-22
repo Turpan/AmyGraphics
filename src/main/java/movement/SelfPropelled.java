@@ -6,8 +6,12 @@ public abstract class SelfPropelled extends Movable {
 	private double baseMoveForce;
 
 	public SelfPropelled() {
-		super();
+	}	
+	protected SelfPropelled(SelfPropelled selfPropelled) {
+		super(selfPropelled);
+		setBaseMoveForce(selfPropelled.getBaseMoveForce());
 	}
+	
 	public double getBaseMoveForce() {
 		return baseMoveForce;
 	}
@@ -20,5 +24,6 @@ public abstract class SelfPropelled extends Movable {
 	public void locomote(double[] direction) {
 		applyForce(new Vector(baseMoveForce, direction));
 	}
-
+	@Override
+	public abstract SelfPropelled clone();
 }

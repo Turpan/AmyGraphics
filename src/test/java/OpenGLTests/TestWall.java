@@ -27,7 +27,14 @@ public class TestWall extends Obstacle {
 		addTexture(texture);
 		setActiveTexture(texture);
 	}
-
+	protected TestWall (TestWall tw) {
+		super(tw);
+	}
+	
+	@Override
+	public TestWall clone() {
+		return new TestWall(this);
+	}
 	public Texture longTexture() {
 		BufferedImage img = null;
 		try {

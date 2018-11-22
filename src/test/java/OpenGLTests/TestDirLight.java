@@ -15,6 +15,14 @@ public class TestDirLight extends Light{
 		setDiffuse(0.7);
 		setSpecular(0.7);
 	}
+	protected TestDirLight(TestDirLight tdl) {
+		super(tdl);
+	}
+	
+	@Override
+	public TestDirLight clone() {
+		return new TestDirLight(this);
+	}
 
 	public void loadImage() {
 		/*BufferedImage img = null;

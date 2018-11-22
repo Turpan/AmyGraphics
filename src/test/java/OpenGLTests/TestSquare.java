@@ -19,6 +19,15 @@ public class TestSquare extends Entity implements Illimunates{
 		loadImage();
 		createLight();
 	}
+	protected TestSquare(TestSquare ts) {
+		super(ts);
+		lamp = (TestLight) ts.getLight().clone();
+	}
+	
+	@Override
+	public TestSquare clone() {
+		return new TestSquare(this);
+	}
 
 	public void createLight() {
 		lamp = new TestLight();

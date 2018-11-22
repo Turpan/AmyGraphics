@@ -8,36 +8,42 @@ public abstract class Enemy extends Attacker {
 	private GameListener listener;
 	private double attackCooldown;
 	private double attackCounter;
+	
 	public Enemy(GameListener listener){
 		super();
-		if (listener == null) {
-			throw new NullPointerException();
-		}
 		setListener(listener);
 	}
-
+	protected Enemy(Enemy enemy){
+		super(enemy);
+		setListener(enemy.getListener());
+		setAttackCooldown(enemy.getAttackCooldown());
+		setAttackCounter(enemy.getAttackCounter());
+	}
+	
 	public double getAttackCooldown() {
 		return attackCooldown;
 	}
-
 	public void setAttackCooldown(double attackCooldown) {
 		this.attackCooldown = attackCooldown;
 	}
-
 	public double getAttackCounter() {
 		return attackCounter;
 	}
-
 	public void setAttackCounter(double attackCounter) {
 		this.attackCounter = attackCounter;
 	}
-
 	public GameListener getListener() {
 		return listener;
 	}
 	private void setListener(GameListener listener) {
+		if (listener == null) {
+			throw new NullPointerException();
+		}
 		this.listener = listener;
 	}
+	@Override
+	public abstract Enemy clone();
+	
 	protected double[] calculateDirection() {
 		float[] target = getDesiredPosition();
 		double[] location = getPosition();
@@ -46,7 +52,6 @@ public abstract class Enemy extends Attacker {
 			output[i] = target[i] - location[i];
 		}
 		return output;
-
 	}
 	@Override
 	public void tick(){
