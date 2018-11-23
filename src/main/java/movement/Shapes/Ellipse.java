@@ -8,6 +8,9 @@ public class Ellipse extends StandardShape{
 		super(dimensions);
 
 	}
+	protected Ellipse(Ellipse ellipse) {
+		super(ellipse);
+	}
 	@Override
 	public Vector getNormal(double[] position) {
 		//takes the multivariate derivative, which gives a linear function equivalent at the point,
@@ -63,5 +66,9 @@ public class Ellipse extends StandardShape{
 			sum += Math.pow(point[i] - getDimensions()[i]/2,2) / Math.pow((getDimensions()[i]/2),2);
 		}
 		return sum<=1 && sum>=0.5;
+	}
+	@Override
+	public Ellipse clone() {
+		return new Ellipse(this);
 	}
 }

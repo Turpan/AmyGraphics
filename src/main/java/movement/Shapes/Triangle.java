@@ -2,21 +2,15 @@ package movement.Shapes;
 
 import movement.mathDS.Vector;
 
-public class Triangle implements OutlineShape {
+public class Triangle extends StandardShape {
 	double[] dimensions;
 
 	public Triangle (double[] dimensions) {
 		setDimensions(dimensions);
 	}
-	@Override
-	public void setDimensions(double[] dimensions) {
-		this.dimensions= dimensions;
+	protected Triangle(Triangle triangle) {
+		super(triangle);
 	}
-	@Override
-	public double[] getDimensions() {
-		return dimensions;
-	}
-	@Override
 	public Vector getNormal(double[] position) {
 		return new Vector();
 	}
@@ -38,7 +32,12 @@ public class Triangle implements OutlineShape {
 		return 0;
 	}
 	@Override
-	public double[] exactCollisionPosition(OutlineShape collider, double[] relativePosition) {
+	protected boolean inCollisionNet(double[] point) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public StandardShape clone() {
 		// TODO Auto-generated method stub
 		return null;
 	}

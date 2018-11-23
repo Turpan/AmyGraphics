@@ -6,15 +6,20 @@ import movement.mathDS.Vector;
 
 public abstract class StandardShape implements OutlineShape {
 	final static int collisionDetectionGranularity = 2 * 10;	//MUST BE EVEN! (Being even means that the divisions along all axis will,
-	private ArrayList<double[]> collisionNet;				//amongst other places, contain the middle line. This helps define the edges of, for example, spheres.
-	double[] dimensions;
+	private ArrayList<double[]> collisionNet;				//amongst other places, contain the middle linee. This helps define the edges of, for example, spheres.
+	private double[] dimensions;
 
+	protected StandardShape() {}
 	public StandardShape(double[] dimensions) {
-		setDimensions(dimensions);
+		setDimensions(dimensions.clone());
 		initialiseCollisionNet();
 	}
+	protected StandardShape(StandardShape standardShape) {
+		setDimensions(standardShape.getDimensions());
+		collisionNet = standardShape.getCollisionNet();
+	}
 	@Override
-	public void setDimensions(double[] dimensions) {
+ 	public void setDimensions(double[] dimensions) {
 		this.dimensions= dimensions;
 	}
 	@Override
@@ -25,7 +30,7 @@ public abstract class StandardShape implements OutlineShape {
 		return collisionNet;
 	}
 
-	public void initialiseCollisionNet() {
+	protected void initialiseCollisionNet() {
 		collisionNet = new ArrayList<double[]>();
 		double [][] possibleCoords = new double[Vector.DIMENSIONS][];
 
@@ -61,8 +66,8 @@ public abstract class StandardShape implements OutlineShape {
 	}
 
 
-	protected abstract boolean inCollisionNet(double[] point);
-
+	protected abstract boolean inCollisionNet(double[] point);	//similar to inside, but a little more... discriminating, so as to lower the number of points in 
+																//to cycle through in CN
 	@Override
 	public double[] exactCollisionPosition(OutlineShape collidee, double[] relativePositionCollideeToCollider) {
 		var net = getCollisionNet();
@@ -89,4 +94,6 @@ public abstract class StandardShape implements OutlineShape {
 		}
 		return sum;
 	}
+	
+	public abstract StandardShape clone();
 }

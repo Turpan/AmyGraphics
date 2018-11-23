@@ -10,4 +10,5 @@ public interface OutlineShape {
 	public double[] exactCollisionPosition(OutlineShape collider, double[] relativePosition);
 	public double[] pointOnEdge(double[] position);
 	public double distanceIn(double[] position);	//returns a negative value for values outside of the shape
+	public OutlineShape clone();
 }

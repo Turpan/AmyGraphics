@@ -8,6 +8,9 @@ public class Rectangle extends StandardShape{
 	public Rectangle (double[] dimensions) {
 		super(dimensions);
 	}
+	protected Rectangle(Rectangle rectangle) {
+		super(rectangle);
+	}
 	@Override
 	public Vector getNormal(double[] position) {
 		double minimumDist = Double.MAX_VALUE;	//trivial upperbound
@@ -102,6 +105,10 @@ public class Rectangle extends StandardShape{
 			i++;
 		}
 		return acccccceptable;
+	}
+	@Override
+	public Rectangle clone() {
+		return new Rectangle(this);
 	}
 }
 

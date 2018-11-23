@@ -10,6 +10,9 @@ public class BigRectangle implements OutlineShape{
 	public BigRectangle (double[] dimensions) {
 		setDimensions(dimensions);
 	}
+	protected BigRectangle (BigRectangle bigRectangle) {
+		setDimensions(bigRectangle.getDimensions().clone());
+	}
 	@Override
 	public void setDimensions(double[] dimensions) {
 		this.dimensions= dimensions;
@@ -132,6 +135,10 @@ public class BigRectangle implements OutlineShape{
 			tmp[i] = collider.getDimensions()[i]/2 - relativePosition[i];
 		}
 		return pointOnEdge(tmp);
+	}
+	@Override
+	public BigRectangle clone() {
+		return new BigRectangle(this);
 	}
 
 }

@@ -9,7 +9,7 @@ public abstract class Collidable extends Entity{
 	}
 	protected Collidable(Collidable collidable) {
 		super(collidable);
-		setOutline(collidable.getOutline());
+		setOutline(collidable.getOutline().clone());
 	}
 	
 	public abstract void collision(Movable m);				//for extra collisional effects.

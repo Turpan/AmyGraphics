@@ -18,6 +18,13 @@ public class Parabaloid extends StandardShape{
 		setThickness(thickness);
 		setParity(parity);	//Flips the bit, reverses the parabaloid;
 	}
+	protected Parabaloid (Parabaloid parabaloid) {
+		super(parabaloid);
+		setLongDimension(parabaloid.getLongDimension());
+		setCurvedDimension(parabaloid.getCurvedDimension());
+		setThickness(parabaloid.getThickness());
+		setParity(parabaloid.getParity());	
+	}
 	@Override
 	public Vector getNormal(double[] position) {
 		var dir = new double[Vector.DIMENSIONS];
@@ -120,5 +127,10 @@ public class Parabaloid extends StandardShape{
 	@Override
 	protected boolean inCollisionNet(double[] point) {
 		return inside(point);
+	}
+	@Override
+	public Parabaloid clone() {
+		// TODO Auto-generated method stub
+		return new Parabaloid(this);
 	}
 }

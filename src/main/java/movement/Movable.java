@@ -15,7 +15,7 @@ public abstract class Movable extends Collidable{
 	private OutlineShape outline;
 	private double coefficientOfDrag;
 	private double coefficientOfFriction;
-	private ArrayList<Entity> attachedEntities = new ArrayList<Entity>();	//move when this one moves!
+	private ArrayList<Movable> attachedMovables = new ArrayList<Movable>();	//move when this one moves!
 	private double coefficientOfRestitution; 	//Because CoR is kinda a terrible measure, in a collision, this value is averaged with the enemies because physics doesn't actually have any more direct concept of the 'bounciness' of an object in isolation
 	private int onFloorTimer;					//Represents an object being on the floor. Or rather, having recently collided with a Floor object.
 
@@ -25,8 +25,8 @@ public abstract class Movable extends Collidable{
 		super(movable);
 		setVelocity(movable.getVelocity().clone());
 		setActiveForce(movable.getActiveForce().clone());
-		for (Entity attached : movable.getAttachedEntities()) {
-			attachEntity(attached.clone());
+		for (Movable attached : movable.getAttachedMovable()) {
+			attachMovable(attached.clone());
 		}
 	}
 	
@@ -82,11 +82,11 @@ public abstract class Movable extends Collidable{
 	public OutlineShape getOutline() {
 		return outline;
 	}
-	public ArrayList<Entity> getAttachedEntities() {
-		return attachedEntities;
+	public ArrayList<Movable> getAttachedMovable() {
+		return attachedMovables;
 	}
-	public void attachEntity(Entity entity) {
-		getAttachedEntities().add(entity);
+	public void attachMovable(Movable movable) {
+		getAttachedMovable().add(movable);
 	}
 	public int getOnFloorTimer() {
 		return onFloorTimer;
@@ -127,8 +127,8 @@ public abstract class Movable extends Collidable{
 	@Override
 	public void move(Vector movement) {
 		super.move(movement);
-		for (Entity e : getAttachedEntities()) {
-			e.move(movement);
+		for (Movable m : getAttachedMovable()) {
+			m.move(movement);
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////
