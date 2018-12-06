@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL13;
+
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.GLTextureCube;
@@ -46,6 +48,7 @@ public class GLRoom implements RoomListener {
 		room.addListener(this);
 
 		addEntity(room.getContents());
+		setBackground(room.getBackground());
 	}
 
 	public Room getRoom() {
@@ -138,7 +141,7 @@ public class GLRoom implements RoomListener {
 		if (hasBackground()) {
 			GLTextureCube skyBoxTexture = new GLTextureCube(background);
 			GLTextureCache.setSkybox(skyBoxTexture);
-			//skyBox.addTexture(skyBoxTexture, GL_TEXTURE0);
+			skyBox.addTexture(skyBoxTexture, GL13.GL_TEXTURE0);
 		} else {
 			skyBox.getTextures().clear();
 		}

@@ -222,13 +222,21 @@ public class GLEntity extends GLObject{
 	}
 
 	private int[] create3dDrawOrder() {
-		return new int[] {
+		/*return new int[] {
 				0,1,2, 3,2,1,           //Face front
 				4,5,6, 7,6,5,           //Face right
 				8,9,10, 11,10,9,        //Face left
 				12,13,14, 15,14,13,     //Face bottom
 				16,17,18, 19,18,17,     //Face top
 				20,21,22, 23,22,21,	    //Face back
+		};*/
+		return new int[] {
+				1,0,2, 1,2,3,           //Face front
+				5,4,6, 5,6,7,           //Face right
+				9,8,10, 9,10,11,        //Face left
+				13,12,14, 13,14,15,     //Face bottom
+				17,16,18, 17,18,19,     //Face top
+				21,20,22, 21,22,23,	    //Face back
 		};
 	}
 

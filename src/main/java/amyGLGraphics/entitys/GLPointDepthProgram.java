@@ -11,7 +11,7 @@ public class GLPointDepthProgram extends GLWorldProgram{
 
 	public static final float aspect = GLGraphicsHandler.shadowHeight / GLGraphicsHandler.shadowWidth;
 
-	public static final float near = 0.1f;
+	public static final float near = 0.0f;
 
 	public static final float far = 15.0f;
 

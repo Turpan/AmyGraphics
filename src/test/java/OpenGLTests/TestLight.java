@@ -32,14 +32,6 @@ public class TestLight extends Light{
 	}
 
 	public void loadImage() {
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("graphics/testsquare.png"));
-		} catch (IOException e) {
-			System.exit(1);
-		}
-		Texture texture = new Texture(img);
-		addTexture(texture);
-		setActiveTexture(texture);
+		
 	}
 }

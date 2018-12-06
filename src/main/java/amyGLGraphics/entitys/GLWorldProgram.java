@@ -6,8 +6,13 @@ import amyGLGraphics.base.GLProgram;
 
 public class GLWorldProgram extends GLProgram{
 
+	public static final float RATIO = 16f/9f;
+	public static final float NEAR = 0.1f;
+	public static final float FAR = 10f;
+	public static final float FOV = (float) Math.toRadians(90f);
+	
 	private static final Matrix4f perspective
-	= new Matrix4f().perspective((float) Math.toRadians(90f), 1.77f, 0.1f, 100f);
+	= new Matrix4f().perspective(FOV, RATIO, NEAR, FAR);
 
 	private int modelLocation;
 	private int viewLocation;

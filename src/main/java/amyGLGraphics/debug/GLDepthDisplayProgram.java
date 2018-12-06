@@ -1,4 +1,4 @@
-package amyGLGraphics.depthDebug;
+package amyGLGraphics.debug;
 
 import amyGLGraphics.base.GLProgram;
 

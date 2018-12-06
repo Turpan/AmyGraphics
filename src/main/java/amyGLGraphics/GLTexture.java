@@ -17,6 +17,7 @@ public abstract class GLTexture {
 	protected abstract void createTexture();
 
 	public void changeFiltering(int filtering) {
+		glBindTexture(getTextureType(), textureID);
 		glTexParameteri(getTextureType(), GL_TEXTURE_MIN_FILTER, filtering);
 		glTexParameteri(getTextureType(), GL_TEXTURE_MAG_FILTER, filtering);
 	}

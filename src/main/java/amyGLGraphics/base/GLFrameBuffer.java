@@ -1,6 +1,14 @@
 package amyGLGraphics.base;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import amyGLGraphics.GLTexture;
@@ -13,7 +21,7 @@ public abstract class GLFrameBuffer {
 	private int width;
 	private int height;
 
-	protected GLTextureColour colourTexture;
+	protected Map<GLTextureColour, Integer> colourTextures = new HashMap<GLTextureColour, Integer>();
 	protected GLTextureDepth depthTexture;
 
 	public GLFrameBuffer(int width, int height) {
@@ -36,9 +44,17 @@ public abstract class GLFrameBuffer {
 		setupFrameBuffer(width, height);
 		bufferID = GL30.glGenFramebuffers();
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bufferID);
-		if (colourTexture != null) {
-			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
-					colourTexture.getTextureID(), 0);
+		if (colourTextures.size() > 0) {
+			int[] buffers = new int[colourTextures.size()];
+			int i = 0;
+			for (GLTextureColour colourTexture : colourTextures.keySet()) {
+				int target = colourTextures.get(colourTexture);
+				GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, target,
+						colourTexture.getTextureID(), 0);
+				buffers[i] = target;
+				i++;
+			}
+			GL20.glDrawBuffers(buffers);
 		} else {
 			GL11.glDrawBuffer(GL11.GL_NONE);
 			GL11.glReadBuffer(GL11.GL_NONE);
@@ -55,12 +71,14 @@ public abstract class GLFrameBuffer {
 
 	public void unbindBuffer() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, bufferID);
-		if (colourTexture != null) {
-			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0,
-					0, 0);
-			colourTexture.unbindTexture();
+		if (colourTextures.size() > 0) {
+			for (GLTextureColour colourTexture : colourTextures.keySet()) {
+				int target = colourTextures.get(colourTexture);
+				GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, target,
+						0, 0);
+				colourTexture.unbindTexture();
+			}
 		}
-
 		if (depthTexture != null) {
 			GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT,
 					0, 0);
@@ -112,16 +130,20 @@ public abstract class GLFrameBuffer {
 		}
 	}
 
-	public int getColourTextureID() {
-		return getTextureID(colourTexture);
+	public List<Integer> getColourTextureIDs() {
+		List<Integer> ids = new ArrayList<Integer>();
+		for (GLTextureColour colourTexture : colourTextures.keySet()) {
+			ids.add(colourTextures.get(colourTexture));
+		}
+		return ids;
 	}
 
 	public int getDepthTextureID() {
 		return getTextureID(depthTexture);
 	}
 
-	public GLTextureColour getColourTexture() {
-		return colourTexture;
+	public List<GLTextureColour> getColourTextures() {
+		return new ArrayList<GLTextureColour>(colourTextures.keySet());
 	}
 
 	public GLTextureDepth getDepthTexture() {

@@ -172,7 +172,7 @@ public abstract class GLObject {
 		return modelMatrix;
 	}
 
-	protected Vector3f calculateSurfaceNormal(Vector3f pointA, Vector3f pointB, Vector3f pointC) {
+	public static Vector3f calculateSurfaceNormal(Vector3f pointA, Vector3f pointB, Vector3f pointC) {
 		Vector3f U = new Vector3f();
 		Vector3f V = new Vector3f();
 

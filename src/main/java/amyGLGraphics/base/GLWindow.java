@@ -121,7 +121,7 @@ public abstract class GLWindow implements Runnable {
 	}
 
 	private void loop() {
-		glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
+		glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.

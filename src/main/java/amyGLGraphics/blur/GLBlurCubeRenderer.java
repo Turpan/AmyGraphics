@@ -2,7 +2,7 @@ package amyGLGraphics.blur;
 
 import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLProgram;
-import amyGLGraphics.depthDebug.GLFrameBufferDisplay;
+import amyGLGraphics.debug.GLFrameBufferDisplay;
 
 public class GLBlurCubeRenderer extends GLBlurRenderer {
 	static final private float blur = 1.0f;

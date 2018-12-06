@@ -18,8 +18,8 @@ public class GLGraphicsHandler extends GraphicsHandler {
 	//public static final int interfaceWidth = 4000;
 	//public static final int interfaceHeight = 4000;
 
-	public static final int shadowWidth = 1024;
-	public static final int shadowHeight = 1024;
+	public static final int shadowWidth = 1536;
+	public static final int shadowHeight = 1536;
 
 	public GLGraphicsHandler() {
 		roomHandler = new GLRoomHandler();

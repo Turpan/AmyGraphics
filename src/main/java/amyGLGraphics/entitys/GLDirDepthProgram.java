@@ -5,7 +5,7 @@ import org.joml.Matrix4f;
 public class GLDirDepthProgram extends GLWorldProgram{
 
 	public static final Matrix4f perspective
-	= new Matrix4f().ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 15.0f);
+	= new Matrix4f().ortho(-5.0f, 5.0f, -5.0f, 5.0f, 1.0f, 10.0f);
 
 	private int lightMatrixLocation;
 

@@ -5,17 +5,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
+import amyGLGraphics.GLTextureColour;
 import amyGLGraphics.base.GLFrameBuffer;
 import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 import amyGLGraphics.base.GLWindow;
-import amyGLGraphics.depthDebug.GLFrameBufferDisplay;
+import amyGLGraphics.debug.GLFrameBufferDisplay;
 
 public class GLBlurRenderer extends GLRenderer {
 
-	static final private float blur = 1.0f;
+	static final private float blur = 0.5f;
 
 	static final private Vector2f dirVer = new Vector2f(0.0f, 1.0f);
 	static final private Vector2f dirHor = new Vector2f(1.0f, 0.0f);
@@ -61,7 +62,11 @@ public class GLBlurRenderer extends GLRenderer {
 		program.setDir(dirHor);
 
 		displayObject.getTextures().clear();
-		displayObject.addTexture(buffer.getColourTexture(), GL13.GL_TEXTURE0);
+		int i = 0;
+		for (GLTextureColour texture : buffer.getColourTextures()) {
+			displayObject.addTexture(texture, GL13.GL_TEXTURE0 + i);
+			i++;
+		}
 
 		GL11.glViewport(0, 0, width, height);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, this.buffer.getBufferID());

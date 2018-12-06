@@ -46,8 +46,11 @@ public class GLPointDepthRenderer extends GLRenderer {
 	private boolean softShadow;
 
 	public GLPointDepthRenderer(Light light, GLObject lightObject) {
+		super();
 		this.light = light;
 		this.lightObject = lightObject;
+		
+		shadowBuffer.setSoftShadows(softShadow);
 	}
 
 	public GLShadowMapPoint getShadowMap() {
@@ -103,12 +106,14 @@ public class GLPointDepthRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, shadowBuffer.getBufferID());
 		GL11.glViewport(GLGraphicsHandler.shadowWidth * face, 0, GLGraphicsHandler.shadowWidth, GLGraphicsHandler.shadowHeight);
 	}
 
 	@Override
 	protected void resetGlobal() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glViewport(0, 0, GLWindow.getWindowWidth(), GLWindow.getWindowHeight());
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}

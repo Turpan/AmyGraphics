@@ -94,6 +94,8 @@ public class GraphicsTestWindow extends GLWindow {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable( GL_BLEND );
 		glEnable(GL11.GL_DEPTH_TEST);
+		glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
 	}
 
 	@Override
@@ -103,7 +105,7 @@ public class GraphicsTestWindow extends GLWindow {
 		//Comment this out to remove wasd camera movement
 		Vector3f cameraPosition = camera.getPosition();
 		Vector3f cameraFront = camera.getCentre();
-		Vector3f cameraUp = camera.getUp();
+		Vector3f cameraUp = camera.getOrientation();
 		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
 			Vector3f result = new Vector3f();
 			cameraFront.mul(CAMERASPEED, result);
@@ -191,8 +193,15 @@ public class GraphicsTestWindow extends GLWindow {
 		cameraFront.y = (float) (Math.sin(rpitch));
 		cameraFront.z = (float) (Math.cos(rpitch) * Math.sin(ryaw));
 		cameraFront = cameraFront.normalize();
+		
+		Vector3f cameraUp = new Vector3f();
+		cameraUp.x = (float) (Math.sin(rpitch) * Math.cos(ryaw));
+		cameraUp.y = (float) (-Math.cos(rpitch));
+		cameraUp.z = (float) (Math.sin(rpitch) * Math.sin(ryaw));
+		cameraUp.normalize();
 
 		camera.setCentre(cameraFront);
+		camera.setUp(cameraUp);
 	}
 
 }

@@ -1,4 +1,4 @@
-package amyGLGraphics.entitys;
+package amyGLGraphics.entitys.deferred;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,12 +9,16 @@ import java.util.Map;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 
 import amyGLGraphics.GLTextureColour;
 import amyGLGraphics.IO.GraphicsUtils;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
+import amyGLGraphics.entitys.GLDirDepthRenderer;
+import amyGLGraphics.entitys.GLEntityProgram;
+import amyGLGraphics.entitys.GLRoomHandler;
 
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -23,9 +27,9 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 import movement.Light;
 
-public class GLEntityRenderer extends GLRenderer {
+public class GLLPassRenderer extends GLRenderer {
 
-	private GLEntityProgram entityProgram;
+	private GLLPassProgram program;
 	private List<Light> lightSources;
 	private Map<Light, GLObject> lightMap;
 	private Map<Light, GLTextureColour> lightDepthMap;
@@ -34,7 +38,7 @@ public class GLEntityRenderer extends GLRenderer {
 
 	private boolean softShadow;
 
-	public GLEntityRenderer() {
+	public GLLPassRenderer() {
 		super();
 
 		lightSources = new ArrayList<Light>();
@@ -73,43 +77,60 @@ public class GLEntityRenderer extends GLRenderer {
 
 	@Override
 	protected void createProgram() {
-		entityProgram = new GLEntityProgram();
+		program = new GLLPassProgram();
 	}
 
 	@Override
 	protected void updateUniversalUniforms() {
 		if (camera != null) {
-			entityProgram.updateViewMatrix(camera.getCameraMatrix());
-			entityProgram.updateViewPosition(camera.getPosition());
+			program.updateViewPosition(camera.getPosition());
 		}
 		//TODO this will be setting related, later
-		entityProgram.updateGamma(2.2f);
+		program.updateGamma(2.2f);
 
-		entityProgram.updateSoftShadow(softShadow);
+		program.updateSoftShadow(softShadow);
+		sendLightData();
 	}
 
 	@Override
 	protected void updateUniforms(GLObject object) {
-		entityProgram.updateModelMatrix(object.getModelMatrix());
-		sendLightData(object);
+		
 	}
 
 	@Override
 	protected GLProgram getProgram() {
-		return entityProgram;
+		return program;
 	}
 
-	private List<Light> getClosestLights(GLObject entity) {
+	private void sendLightData() {
+		if (directionalLight != null) {
+			sendDirectionalLightData();
+		} else {
+			clearDirectionalLight();
+		}
+
+		int i=0;
+		var lights = getClosestLights();
+		for (var light : lights) {
+			sendPointLightData(light, i);
+			i++;
+		}
+		for (int j=i; j<GLRoomHandler.DEFPOINTLIGHTCOUNT; j++) {
+			clearPointLight(j);
+		}
+	}
+	
+	private List<Light> getClosestLights() {
 		Collections.sort(lightSources, (Light l1, Light l2) -> {
 			GLObject glLight1 = lightMap.get(l1);
 			GLObject glLight2 = lightMap.get(l2);
 
 			Vector4f vec1 = glLight1.getVertices().get(0).xyzwVector().mul(glLight1.getModelMatrix());
 			Vector4f vec2 = glLight2.getVertices().get(0).xyzwVector().mul(glLight2.getModelMatrix());
-			Vector4f envec = entity.getVertices().get(0).xyzwVector().mul(entity.getModelMatrix());
+			Vector4f camvec = new Vector4f(camera.getPosition().x, camera.getPosition().y, camera.getPosition().z, 1.0f);
 
-			var distance1 = envec.distance(vec1);
-			var distance2 = envec.distance(vec2);
+			var distance1 = camvec.distance(vec1);
+			var distance2 = camvec.distance(vec2);
 
 			int result = 0;
 
@@ -128,7 +149,7 @@ public class GLEntityRenderer extends GLRenderer {
 		for (var light : lightSources) {
 			lights.add(light);
 			i++;
-			if (i == GLRoomHandler.POINTLIGHTCOUNT) {
+			if (i == GLRoomHandler.DEFPOINTLIGHTCOUNT) {
 				break;
 			}
 		}
@@ -136,47 +157,31 @@ public class GLEntityRenderer extends GLRenderer {
 		return lights;
 	}
 
-	private void sendLightData(GLObject entity) {
-		if (directionalLight != null) {
-			sendDirectionalLightData();
-		} else {
-			clearDirectionalLight();
-		}
-
-		int i=0;
-		var lights = getClosestLights(entity);
-		for (var light : lights) {
-			sendPointLightData(light, i);
-			i++;
-		}
-		for (int j=i; j<GLRoomHandler.POINTLIGHTCOUNT; j++) {
-			clearPointLight(j);
-		}
-	}
-
 	private void clearDirectionalLight() {
 		Matrix4f blankM = new Matrix4f();
 
 		Vector3f blank = new Vector3f(0.0f);
 
-		entityProgram.updateDirLightDirection(blank);
-		entityProgram.updateDirLightAmbient(blank);
-		entityProgram.updateDirLightDiffuse(blank);
-		entityProgram.updateDirLightSpecular(blank);
-		entityProgram.updateDirLightMatrix(blankM);
+		program.updateDirLightDirection(blank);
+		program.updateDirLightAmbient(blank);
+		program.updateDirLightDiffuse(blank);
+		program.updateDirLightSpecular(blank);
+		program.updateDirLightMatrix(blankM);
 	}
 
 	private void clearPointLight(int count) {
 		Vector3f blank = new Vector3f(0.0f);
 
-		int target = GLEntityProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
-		glActiveTexture(target);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		if (count < GLRoomHandler.POINTLIGHTCOUNT) {
+			int target = GLLPassProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
+			glActiveTexture(target);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		}
 
-		entityProgram.updatePointLightPosition(blank, count);
-		entityProgram.updatePointLightAmbient(blank, count);
-		entityProgram.updatePointLightDiffuse(blank, count);
-		entityProgram.updatePointLightSpecular(blank, count);
+		program.updatePointLightPosition(blank, count);
+		program.updatePointLightAmbient(blank, count);
+		program.updatePointLightDiffuse(blank, count);
+		program.updatePointLightSpecular(blank, count);
 	}
 
 	private void sendDirectionalLightData() {
@@ -187,29 +192,29 @@ public class GLEntityRenderer extends GLRenderer {
 		Vector3f diffuse = getLightDiffuse(directionalLight);
 		Vector3f specular = getLightSpecular(directionalLight);
 
-		entityProgram.updateDirLightDirection(direction);
-		entityProgram.updateDirLightAmbient(ambient);
-		entityProgram.updateDirLightDiffuse(diffuse);
-		entityProgram.updateDirLightSpecular(specular);
-		entityProgram.updateDirLightMatrix(lightMatrix);
+		program.updateDirLightDirection(direction);
+		program.updateDirLightAmbient(ambient);
+		program.updateDirLightDiffuse(diffuse);
+		program.updateDirLightSpecular(specular);
+		program.updateDirLightMatrix(lightMatrix);
 	}
 
 	private void sendPointLightData(Light light, int count) {
 		GLTextureColour texture = lightDepthMap.get(light);
-
+		
 		Vector3f position = getLightPosition(lightMap.get(light));
 		Vector3f ambient = getLightAmbience(light);
 		Vector3f diffuse = getLightDiffuse(light);
 		Vector3f specular = getLightSpecular(light);
-
-		int target = GLEntityProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
+		
+		int target = GLLPassProgram.pointDepthTextureUnit + count + GL_TEXTURE0;
 		glActiveTexture(target);
 		glBindTexture(texture.getTextureType(), texture.getTextureID());
 
-		entityProgram.updatePointLightPosition(position, count);
-		entityProgram.updatePointLightAmbient(ambient, count);
-		entityProgram.updatePointLightDiffuse(diffuse, count);
-		entityProgram.updatePointLightSpecular(specular, count);
+		program.updatePointLightPosition(position, count);
+		program.updatePointLightAmbient(ambient, count);
+		program.updatePointLightDiffuse(diffuse, count);
+		program.updatePointLightSpecular(specular, count);
 	}
 
 	private Vector3f getLightAmbience(Light light) {
@@ -266,14 +271,12 @@ public class GLEntityRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
-		// TODO Auto-generated method stub
-
+		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
 	@Override
 	protected void resetGlobal() {
-		// TODO Auto-generated method stub
-
+		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 
 	@Override
