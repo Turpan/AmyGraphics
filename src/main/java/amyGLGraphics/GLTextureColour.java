@@ -60,4 +60,9 @@ public class GLTextureColour extends GLTexture {
 		return GL_TEXTURE_2D;
 	}
 
+	@Override
+	public boolean isSemiTransparent() {
+		return false;
+	}
+
 }

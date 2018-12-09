@@ -61,4 +61,9 @@ public class GLTextureDepth extends GLTexture{
 		return GL_TEXTURE_2D;
 	}
 
+	@Override
+	public boolean isSemiTransparent() {
+		return false;
+	}
+
 }

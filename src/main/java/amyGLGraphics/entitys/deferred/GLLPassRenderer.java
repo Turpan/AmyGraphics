@@ -1,5 +1,13 @@
 package amyGLGraphics.entitys.deferred;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,14 +25,7 @@ import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 import amyGLGraphics.entitys.GLDirDepthRenderer;
-import amyGLGraphics.entitys.GLEntityProgram;
 import amyGLGraphics.entitys.GLRoomHandler;
-
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
-
 import movement.Light;
 
 public class GLLPassRenderer extends GLRenderer {
@@ -85,8 +86,6 @@ public class GLLPassRenderer extends GLRenderer {
 		if (camera != null) {
 			program.updateViewPosition(camera.getPosition());
 		}
-		//TODO this will be setting related, later
-		program.updateGamma(2.2f);
 
 		program.updateSoftShadow(softShadow);
 		sendLightData();
@@ -272,11 +271,13 @@ public class GLLPassRenderer extends GLRenderer {
 	@Override
 	protected void globalSetup() {
 		GL11.glDisable(GL11.GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	@Override
 	protected void resetGlobal() {
 		GL11.glEnable(GL11.GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
 	}
 
 	@Override

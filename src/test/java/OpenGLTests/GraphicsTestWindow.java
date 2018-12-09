@@ -27,6 +27,7 @@ import amyGLGraphics.IO.MouseEvent;
 import amyGLGraphics.IO.MouseEventAction;
 import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLWindow;
+import amyGLGraphics.entitys.GLRoomHandler;
 
 public class GraphicsTestWindow extends GLWindow {
 
@@ -76,7 +77,7 @@ public class GraphicsTestWindow extends GLWindow {
 		GLFW.glfwSetKeyCallback(getWindow(), (long window, int key, int scancode, int action, int mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
-
+			
 			for (KeyState keyState : EventManager.getManagerInstance().getKeyStates()) {
 				if (keyState.getKeyCode() == key) {
 					if (action == GLFW.GLFW_PRESS) {
@@ -85,6 +86,10 @@ public class GraphicsTestWindow extends GLWindow {
 						keyState.setPressed(false);
 					}
 				}
+			}
+			
+			if (key == GLFW.GLFW_KEY_M && action == GLFW_RELEASE) {
+				GLRoomHandler.fxaa = !GLRoomHandler.fxaa;
 			}
 		});
 	}
@@ -141,7 +146,6 @@ public class GraphicsTestWindow extends GLWindow {
 
 			displayCursor = !displayCursor;
 		}
-
 	}
 
 	private void mouseClick(int action) {

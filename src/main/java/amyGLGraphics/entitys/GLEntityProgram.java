@@ -25,8 +25,6 @@ public class GLEntityProgram extends GLWorldProgram {
 
 	private int viewPositionLocation;
 
-	private int gammaLocation;
-
 	private int diffuseTextureLocation;
 	private int dirShadowMapLocation;
 
@@ -65,8 +63,6 @@ public class GLEntityProgram extends GLWorldProgram {
 		softShadowLocation = queryVariable("softshadows");
 
 		viewPositionLocation = queryVariable("viewPosition");
-
-		gammaLocation = queryVariable("gamma");
 
 		diffuseTextureLocation = queryVariable("texture_diffuse");
 
@@ -132,10 +128,6 @@ public class GLEntityProgram extends GLWorldProgram {
 
 	public void updateViewPosition(Vector3f position) {
 		updateVec3(position, viewPositionLocation);
-	}
-
-	public void updateGamma(float gamma) {
-		updateFloat(gamma, gammaLocation);
 	}
 
 	public void updateDiffuseTextureUnit(int unit) {

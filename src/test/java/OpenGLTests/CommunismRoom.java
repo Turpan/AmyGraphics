@@ -56,7 +56,7 @@ public class CommunismRoom extends Room {
 		BufferedImage[] background = new BufferedImage[6];
 		for (int i=0; i<6; i++) {
 			try {
-				background[i] = ImageIO.read(new File("graphics/skybox/skybox" + i + ".png"));
+				background[i] = ImageIO.read(new File("graphics/tests/skybox/skybox" + i + ".png"));
 			} catch (IOException e) {
 				System.out.println("where is picture?");
 				System.exit(1);

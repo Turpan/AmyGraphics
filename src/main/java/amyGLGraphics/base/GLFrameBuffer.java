@@ -37,6 +37,14 @@ public abstract class GLFrameBuffer {
 		unbindBuffer();
 		createFrameBuffer();
 	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
 
 	protected abstract void setupFrameBuffer(int width, int height);
 

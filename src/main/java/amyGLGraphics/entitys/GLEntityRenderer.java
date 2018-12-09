@@ -82,8 +82,6 @@ public class GLEntityRenderer extends GLRenderer {
 			entityProgram.updateViewMatrix(camera.getCameraMatrix());
 			entityProgram.updateViewPosition(camera.getPosition());
 		}
-		//TODO this will be setting related, later
-		entityProgram.updateGamma(2.2f);
 
 		entityProgram.updateSoftShadow(softShadow);
 	}

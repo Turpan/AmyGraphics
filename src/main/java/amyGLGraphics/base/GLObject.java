@@ -201,6 +201,14 @@ public abstract class GLObject {
 
 		return diffuseTexture.isTransparent();
 	}
+	
+	public boolean isSemiTransparent() {
+		if (diffuseTexture == null) {
+			return false;
+		}
+
+		return diffuseTexture.isSemiTransparent();
+	}
 
 	public abstract boolean hasTexture();
 }

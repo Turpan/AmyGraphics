@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import amyGLGraphics.GLTexture;
 
@@ -25,6 +26,18 @@ public abstract class GLRenderer {
 	public GLRenderer() {
 		createProgram();
 		getProgram().createProgram();
+	}
+	
+	public void render(List<GLObject> objects, GLFrameBuffer buffer) {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer.getBufferID());
+		render(objects);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+	
+	public void render(GLObject object, GLFrameBuffer buffer) {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer.getBufferID());
+		render(object);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 
 	public void render(List<GLObject> objects) {

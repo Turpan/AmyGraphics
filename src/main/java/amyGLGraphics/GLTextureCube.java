@@ -73,4 +73,9 @@ public class GLTextureCube extends GLTexture{
 	public int getTextureType() {
 		return GL_TEXTURE_CUBE_MAP;
 	}
+
+	@Override
+	public boolean isSemiTransparent() {
+		return false;
+	}
 }

@@ -33,8 +33,6 @@ public class GLLPassProgram extends GLWorldProgram {
 	
 	private int farPlaneLocation;
 	
-	private int gammaLocation;
-	
 	private int positionTextureLocation;
 	private int normalTextureLocation;
 	private int albedoTextureLocation;
@@ -86,8 +84,6 @@ public class GLLPassProgram extends GLWorldProgram {
 		softShadowLocation = queryVariable("softshadows");
 		
 		farPlaneLocation = queryVariable("farPlane");
-		
-		gammaLocation = queryVariable("gamma");
 		
 		updatePositionTextureUnit(positionTextureUnit);
 		updateNormalTextureUnit(normalTextureUnit);
@@ -144,10 +140,6 @@ public class GLLPassProgram extends GLWorldProgram {
 	
 	public void updateFarPlane(float farPlane) {
 		updateFloat(farPlane, farPlaneLocation);
-	}
-	
-	public void updateGamma(float gamma) {
-		updateFloat(gamma, gammaLocation);
 	}
 
 	public void updatePositionTextureUnit(int unit) {

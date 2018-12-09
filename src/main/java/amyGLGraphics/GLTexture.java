@@ -23,6 +23,8 @@ public abstract class GLTexture {
 	}
 
 	public abstract boolean isTransparent();
+	
+	public abstract boolean isSemiTransparent();
 
 	public void unbindTexture() {
 		glBindTexture(GL_TEXTURE_2D, 0);

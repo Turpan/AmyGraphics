@@ -1,6 +1,6 @@
 package amyGLGraphics;
 
-import static org.lwjgl.opengl.GL11.GL_LINEAR_MIPMAP_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST_MIPMAP_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
@@ -31,22 +31,27 @@ import amyGLGraphics.IO.DecodedPNG;
 public class GLTexture2D extends GLTexture {
 	private DecodedPNG textureData;
 	private boolean transparent;
+	private boolean semitransparent;
 	static int counter = 0;
 
 	public GLTexture2D(BufferedImage sprite) {
 		textureData = new DecodedPNG(sprite);
 		createTexture();
-		transparent = determineTransparency();
+		determineTransparency();
 	}
 
-	private boolean determineTransparency() {
+	private void determineTransparency() {
 		byte[] data = textureData.getData();
 		for (int i=0; i<data.length/4; i++) {
-			if (data[(i*4)+3] != -1) {
-				return true;
+			int value = (int) data[(i*4)+3];
+			if (value == 0) {
+				transparent = true;
+			}
+			
+			if (value < 255) {
+				semitransparent = true;
 			}
 		}
-		return false;
 	}
 
 	@Override
@@ -65,7 +70,7 @@ public class GLTexture2D extends GLTexture {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	}
 
 	public byte[] getTextureData() {
@@ -75,6 +80,11 @@ public class GLTexture2D extends GLTexture {
 	@Override
 	public boolean isTransparent() {
 		return transparent;
+	}
+	
+	@Override
+	public boolean isSemiTransparent() {
+		return semitransparent;
 	}
 
 	@Override

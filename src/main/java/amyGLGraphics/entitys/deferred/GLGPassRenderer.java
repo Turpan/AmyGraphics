@@ -18,6 +18,12 @@ public class GLGPassRenderer extends GLRenderer {
 		return buffer;
 	}
 	
+	public void clearBuffer() {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer.getBufferID());
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+	
 	@Override
 	protected void createProgram() {
 		program = new GLGPassProgram();
@@ -44,7 +50,6 @@ public class GLGPassRenderer extends GLRenderer {
 	@Override
 	protected void globalSetup() {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer.getBufferID());
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 	}
 
 	@Override

@@ -9,9 +9,12 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL30;
 
 import amyGLGraphics.base.GLCamera;
+import amyGLGraphics.base.GLFrameBuffer;
 import amyGLGraphics.base.GLObject;
+import amyGLGraphics.base.GLWindow;
 import amyGLGraphics.blur.GLBlurCubeRenderer;
 import amyGLGraphics.blur.GLBlurRenderer;
 import amyGLGraphics.debug.GLDepthDisplayRenderer;
@@ -19,6 +22,9 @@ import amyGLGraphics.debug.GLFrameBufferDisplay;
 import amyGLGraphics.debug.GLFustrumRender;
 import amyGLGraphics.entitys.deferred.GLGPassRenderer;
 import amyGLGraphics.entitys.deferred.GLLPassRenderer;
+import amyGLGraphics.entitys.post.GLFinalRenderer;
+import amyGLGraphics.entitys.post.GLFxaaRenderer;
+import amyGLGraphics.entitys.post.GLPostProcessingBuffer;
 import amyGraphics.RoomHandler;
 import movement.Entity;
 import movement.Light;
@@ -52,10 +58,19 @@ public class GLRoomHandler extends RoomHandler {
 	private GLFrameBufferDisplay displayObject = new GLFrameBufferDisplay();
 	
 	private GLFustrumRender fustrumObject = new GLFustrumRender();
+	
+	private GLFrameBuffer postProcessingBuffer1 = new GLPostProcessingBuffer();
+	private GLFrameBuffer postProcessingBuffer2 = new GLPostProcessingBuffer();
+	private GLFinalRenderer finalRenderer = new GLFinalRenderer();
+	
+	private GLFxaaRenderer fxaaRenderer = new GLFxaaRenderer();
 
 	private GLCamera camera;
 
 	private boolean softShadows = false;
+	
+	//TODO temp
+	public static boolean fxaa = false;
 
 	public boolean renderNormals = false;
 
@@ -72,12 +87,16 @@ public class GLRoomHandler extends RoomHandler {
 			camera.calculatePlane();
 			//fustrumObject.update(camera.getNearPlaneBounds(), camera.getFarPlaneBounds(), camera.getPlaneNormals());
 			
+			clearBuffer(postProcessingBuffer1);
+			clearBuffer(postProcessingBuffer2);
+			
 			GLRoom glRoom = roomObjects.get(getActiveRoom());
 
 			List<GLObject> entitys = new ArrayList<GLObject>();
 
 			List<GLObject> opaque = new ArrayList<GLObject>();
 			List<GLObject> transparent = new ArrayList<GLObject>();
+			List<GLObject> semiTransparent = new ArrayList<GLObject>();
 
 			List<GLObject> lights = new ArrayList<GLObject>();
 
@@ -98,7 +117,9 @@ public class GLRoomHandler extends RoomHandler {
 				}
 				
 				if (isAffectedByLight(entity)) {
-					if (object.isTransparent()) {
+					if (object.isSemiTransparent()) {
+						semiTransparent.add(object);
+					} else if (object.isTransparent()) {
 						transparent.add(object);
 					} else {
 						opaque.add(object);
@@ -110,12 +131,13 @@ public class GLRoomHandler extends RoomHandler {
 
 			sortOpaque(opaque);
 			sortTransparent(transparent);
+			sortTransparent(semiTransparent);
 
 			dirDepthRenderer.setSoftShadow(softShadows);
 			dirDepthRenderer.setDirectionalLight(entityMap.get(glRoom.getDirLight()));
 			dirDepthRenderer.render(entitys);
 			
-			displayObject.getTextures().clear();
+			//displayObject.getTextures().clear();
 			//displayObject.getTextures().put(dirDepthRenderer.getShadowMap().getColourTexture(), GL13.GL_TEXTURE0);
 			//displayObject.getTextures().put(gPassRenderer.getPassBuffer().getColourTextures().get(0), GL13.GL_TEXTURE0);
 
@@ -135,21 +157,40 @@ public class GLRoomHandler extends RoomHandler {
 
 			entityRenderer.setSoftShadow(softShadows);
 			
-			gPassRenderer.render(entitys);
-			lPassRenderer.render(lPassObject);
-			//entityRenderer.render(opaque);
+			gPassRenderer.clearBuffer();
+			gPassRenderer.render(opaque);
+			gPassRenderer.render(transparent);
+			lPassRenderer.render(lPassObject, postProcessingBuffer1);
+			
+			copyDepthBuffer(gPassRenderer.getPassBuffer());
+			entityRenderer.render(semiTransparent, postProcessingBuffer1);
 
-			//lightRenderer.render(lights);
+			lightRenderer.render(lights, postProcessingBuffer1);
 
 			if (renderNormals) {
 				normalRenderer.render(entitys);
 			}
 
 			if (skyBox.isGLBound() && glRoom.hasBackground()) {
-				//skyboxRenderer.render(skyBox);
+				skyboxRenderer.render(skyBox, postProcessingBuffer1);
 			}
-
-			//entityRenderer.render(transparent);
+			
+			boolean source1stBuffer = true;
+			
+			if (fxaa) {
+				GLFrameBuffer source = source1stBuffer ? postProcessingBuffer1 : postProcessingBuffer2;
+				GLFrameBuffer dest = source1stBuffer ? postProcessingBuffer2 : postProcessingBuffer1;
+				source1stBuffer = !source1stBuffer;
+				
+				addBufferTexture(source);
+				fxaaRenderer.render(displayObject, dest);
+			}
+			
+			//final pass
+			GLFrameBuffer source = source1stBuffer ? postProcessingBuffer1 : postProcessingBuffer2;
+			
+			addBufferTexture(source);
+			finalRenderer.render(displayObject);
 			
 			//GL11.glDisable(GL11.GL_CULL_FACE);
 			//lightRenderer.render(fustrumObject);
@@ -179,6 +220,25 @@ public class GLRoomHandler extends RoomHandler {
 			}
 		}*/
 	}
+	
+	private void copyDepthBuffer(GLFrameBuffer buffer) {
+		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, buffer.getBufferID());
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, postProcessingBuffer1.getBufferID());
+		GL30.glBlitFramebuffer(0, 0, buffer.getWidth(), buffer.getHeight(),
+				0, 0, postProcessingBuffer1.getWidth(), postProcessingBuffer1.getWidth(), GL11.GL_DEPTH_BUFFER_BIT, GL11.GL_NEAREST);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+	
+	private void clearBuffer(GLFrameBuffer buffer) {
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, buffer.getBufferID());
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+	
+	private void addBufferTexture(GLFrameBuffer buffer) {
+		displayObject.getTextures().clear();
+		displayObject.getTextures().put(buffer.getColourTextures().get(0), GL13.GL_TEXTURE0);
+	}
 
 	public void resetState() {
 		unBindOpenGL();
@@ -196,6 +256,10 @@ public class GLRoomHandler extends RoomHandler {
 		lPassObject = new GLFrameBufferDisplay();
 		displayObject = new GLFrameBufferDisplay();
 		fustrumObject = new GLFustrumRender();
+		postProcessingBuffer1.resetState();
+		postProcessingBuffer2.resetState();
+		fxaaRenderer.resetState();
+		finalRenderer.resetState();
 	}
 	public void unBindOpenGL() {
 		for (Room room : roomObjects.keySet()) {
@@ -215,6 +279,10 @@ public class GLRoomHandler extends RoomHandler {
 		lPassObject.unbindObject();
 		displayObject.unbindObject();
 		fustrumObject.unbindObject();
+		postProcessingBuffer1.unbindBuffer();
+		postProcessingBuffer2.unbindBuffer();
+		fxaaRenderer.unbindGL();
+		finalRenderer.unbindGL();
 	}
 
 	private boolean isAffectedByLight(Entity entity) {
