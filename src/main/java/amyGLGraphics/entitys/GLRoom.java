@@ -134,7 +134,7 @@ public class GLRoom implements RoomListener {
 			dirLight = light;
 		}
 
-		bufferedentity.universalColour(GraphicsUtils.colourToVec3(light.getColor()));
+		bufferedentity.universalColour(GraphicsUtils.colourToVec3(light.getColor()).mul((float) light.getDiffuse()));
 	}
 
 	private void setBackground(BufferedImage[] background) {

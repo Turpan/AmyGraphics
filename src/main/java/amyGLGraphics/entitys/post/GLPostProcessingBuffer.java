@@ -1,6 +1,6 @@
 package amyGLGraphics.entitys.post;
 
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 
@@ -19,7 +19,7 @@ public class GLPostProcessingBuffer extends GLFrameBuffer {
 
 	@Override
 	protected void setupFrameBuffer(int width, int height) {
-		GLTextureColour colourTexture = new GLTextureColour(width, height, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, GL_LINEAR);
+		GLTextureColour colourTexture = new GLTextureColour(width, height, GL30.GL_RGB16F, GL_RGB, GL_FLOAT, GL_LINEAR);
 		colourTextures.put(colourTexture, GL30.GL_COLOR_ATTACHMENT0);
 		depthTexture = new GLTextureDepth(width, height);
 	}

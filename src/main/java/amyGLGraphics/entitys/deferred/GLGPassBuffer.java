@@ -19,7 +19,7 @@ public class GLGPassBuffer extends GLFrameBuffer {
 			GLTextureColour texture;
 			if (i == 2) {
 				texture = 
-						new GLTextureColour(width, height, GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, GL11.GL_NEAREST);
+						new GLTextureColour(width, height, GL30.GL_RGBA16F, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, GL11.GL_NEAREST);
 			} else {
 				texture = 
 						new GLTextureColour(width, height, GL30.GL_RGB16F, GL11.GL_RGB, GL11.GL_FLOAT, GL11.GL_NEAREST);

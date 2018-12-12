@@ -5,6 +5,8 @@ import amyGLGraphics.base.GLProgram;
 public class GLFinalProgram extends GLProgram {
 	
 	private int gammaLocation;
+	
+	private int exposureLocation;
 
 	@Override
 	protected void createShaders() {
@@ -14,6 +16,8 @@ public class GLFinalProgram extends GLProgram {
 	
 	private void setUpVars() {
 		gammaLocation = queryVariable("gamma");
+		
+		exposureLocation = queryVariable("exposure");
 	}
 	
 	@Override
@@ -24,6 +28,10 @@ public class GLFinalProgram extends GLProgram {
 	
 	public void updateGamma(float gamma) {
 		updateFloat(gamma, gammaLocation);
+	}
+	
+	public void updateExposure(float exposure) {
+		updateFloat(exposure, exposureLocation);
 	}
 
 }

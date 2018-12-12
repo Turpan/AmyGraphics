@@ -13,6 +13,12 @@ import amyGLGraphics.base.GLRenderer;
 public class GLFinalRenderer extends GLRenderer {
 	
 	private GLFinalProgram program;
+	
+	private float exposure;
+	
+	public void setExposure(float exposure) {
+		this.exposure = exposure;
+	}
 
 	@Override
 	protected void createProgram() {
@@ -23,6 +29,7 @@ public class GLFinalRenderer extends GLRenderer {
 	protected void updateUniversalUniforms() {
 		//TODO this will be setting related, later
 		program.updateGamma(2.2f);
+		program.updateExposure(exposure);
 	}
 
 	@Override

@@ -1,5 +1,11 @@
 package amyGLGraphics.entitys;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -7,10 +13,12 @@ import java.util.List;
 import java.util.Map;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
+import amyGLGraphics.GLTextureColour;
 import amyGLGraphics.base.GLCamera;
 import amyGLGraphics.base.GLFrameBuffer;
 import amyGLGraphics.base.GLObject;
@@ -73,6 +81,8 @@ public class GLRoomHandler extends RoomHandler {
 	public static boolean fxaa = false;
 
 	public boolean renderNormals = false;
+	
+	private float currentExposure = 1.0f;
 
 	public GLRoomHandler() {
 
@@ -177,6 +187,8 @@ public class GLRoomHandler extends RoomHandler {
 			
 			boolean source1stBuffer = true;
 			
+			currentExposure = calculateSceneExposure();
+			
 			if (fxaa) {
 				GLFrameBuffer source = source1stBuffer ? postProcessingBuffer1 : postProcessingBuffer2;
 				GLFrameBuffer dest = source1stBuffer ? postProcessingBuffer2 : postProcessingBuffer1;
@@ -190,6 +202,7 @@ public class GLRoomHandler extends RoomHandler {
 			GLFrameBuffer source = source1stBuffer ? postProcessingBuffer1 : postProcessingBuffer2;
 			
 			addBufferTexture(source);
+			finalRenderer.setExposure(currentExposure);
 			finalRenderer.render(displayObject);
 			
 			//GL11.glDisable(GL11.GL_CULL_FACE);
@@ -199,6 +212,49 @@ public class GLRoomHandler extends RoomHandler {
 
 			//displayRenderer.render(displayObject);
 		}
+	}
+	
+	private float calculateSceneExposure() {
+		GLTextureColour  hdrRender = postProcessingBuffer1.getColourTextures().get(0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, hdrRender.getTextureID());
+		GL30.glGenerateMipmap(GL_TEXTURE_2D);
+		int level = (int) (Math.floor(Math.log(Math.max(postProcessingBuffer1.getWidth(),
+				postProcessingBuffer1.getHeight())) / Math.log(2)));
+		int size = GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, level, GL11.GL_TEXTURE_WIDTH)
+				* GL11.glGetTexLevelParameteri(GL_TEXTURE_2D, level, GL11.GL_TEXTURE_HEIGHT) * 3;
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(size);
+		GL11.glGetTexImage(GL_TEXTURE_2D, level, GL11.GL_RGB, GL11.GL_FLOAT, buffer);
+		
+		float lumaAverage = 0.0f;
+		
+		for (int i=0; i<size/3; i++) {
+			float red = buffer.get((i * 3));
+			float green = buffer.get((i * 3) + 1);
+			float blue = buffer.get((i * 3) + 2);
+			
+			red *= 0.299;
+			green *= 0.587;
+			blue *= 0.111;
+			
+			float luma = red + green + blue;
+			lumaAverage += luma;
+		}
+		
+		final float jumpSize = 0.005f;
+		
+		lumaAverage /= (size / 3);
+		
+		float exposure = 0.5f / lumaAverage;
+		
+		float jump = jumpSize * Math.signum(exposure - currentExposure);
+		
+		float futureExposure = currentExposure + jump;
+		if (Math.abs(exposure - futureExposure) <= jumpSize && Math.abs(exposure - futureExposure) >= 0.0f) {
+			futureExposure = exposure;
+		}
+		
+		return futureExposure;
 	}
 	
 	private void setUpLPassObject(Map<Light, GLPointDepthRenderer> lightDepthMap) {

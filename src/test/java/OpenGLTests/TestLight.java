@@ -19,8 +19,8 @@ public class TestLight extends Light{
 		super(LightType.POINT, color);
 		loadImage();
 		setAmbient(0.0);
-		setDiffuse(1);
-		setSpecular(1);
+		setDiffuse(0.7);
+		setSpecular(0.7);
 	}
 	protected TestLight(TestLight tl) {
 		super(tl);
