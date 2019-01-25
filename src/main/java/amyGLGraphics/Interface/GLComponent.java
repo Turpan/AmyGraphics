@@ -147,9 +147,9 @@ public class GLComponent extends GLObject{
 		Texture target = component.getActiveTexture().getRenderTarget();
 
 		float s = (float) calculatePercentage(target.getX(), target.getSprite().getWidth());
-		float t = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
+		float t = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
 		float right = (float) calculatePercentage(target.getX() + target.getWidth(), target.getSprite().getWidth());
-		float bottom = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
+		float bottom = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
 
 		vertices.get(0).setST(s, t);
 		vertices.get(1).setST(right, t);
@@ -277,9 +277,9 @@ public class GLComponent extends GLObject{
 		Texture target = component.getActiveTexture().getRenderTarget();
 
 		float s = (float) calculatePercentage(target.getX(), target.getSprite().getWidth());
-		float t = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
+		float t = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
 		float right = (float) calculatePercentage(target.getX() + target.getWidth(), target.getSprite().getWidth());
-		float bottom = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
+		float bottom = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
 
 		float s1 = (float) (((s - right) * xfactor) + right);
 		float t1 = (float) (((t - bottom) * yfactor) + bottom);

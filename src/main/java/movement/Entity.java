@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import amyGraphics.Texture;
+import amyGraphics.TexturePosition;
 import movement.mathDS.Vector;
 
 public abstract class Entity {
@@ -11,6 +12,7 @@ public abstract class Entity {
 	private double[]dimensions;
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
+	private TexturePosition texturePosition = TexturePosition.FRONT;
 
 	public Entity() {
 	}
@@ -50,6 +52,12 @@ public abstract class Entity {
 	}
 	public Texture getActiveTexture() {
 		return activeTexture;
+	}
+	public TexturePosition getTexturePosition() {
+		return texturePosition;
+	}
+	public void setTexturePosition(TexturePosition texturePosition) {
+		this.texturePosition = texturePosition;
 	}
 	public void setActiveTexture(Texture activeTexture) {
 		if (!textures.contains(activeTexture)) {

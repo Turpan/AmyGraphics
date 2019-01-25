@@ -19,6 +19,7 @@ import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLVertex;
 import amyGraphics.Animation;
 import amyGraphics.Texture;
+import amyGraphics.TexturePosition;
 import movement.Entity;
 
 public class GLEntity extends GLObject{
@@ -150,11 +151,28 @@ public class GLEntity extends GLObject{
 	protected void createVertices() {
 		for (int i=0; i<4; i++) {
 			var vertex = new GLVertex();
-			vertex.setST(texturecoords[i*2], texturecoords[(i*2) + 1]);
 			vertices.add(vertex);
 		}
 		if (is3D()) {
 			create3DVertices();
+		}
+		setTexture(0.0f, 0.0f, 1.0f, 1.0f, entity.getTexturePosition());
+	}
+	
+	protected void setTexture(float s, float t, float right, float bottom, TexturePosition face) {
+		switch (face) {
+		case FRONT:
+			vertices.get(0).setST(s, t);
+			vertices.get(1).setST(right, t);
+			vertices.get(2).setST(s, bottom);
+			vertices.get(3).setST(right, bottom);
+			break;
+		case TOP:
+			vertices.get(16).setST(s, t);
+			vertices.get(17).setST(right, t);
+			vertices.get(18).setST(s, bottom);
+			vertices.get(19).setST(right, bottom);
+			break;
 		}
 	}
 
@@ -166,14 +184,11 @@ public class GLEntity extends GLObject{
 		Texture target = entity.getActiveTexture().getRenderTarget();
 
 		float s = (float) calculatePercentage(target.getX(), target.getSprite().getWidth());
-		float t = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
+		float t = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
 		float right = (float) calculatePercentage(target.getX() + target.getWidth(), target.getSprite().getWidth());
-		float bottom = (float) calculatePercentage(target.getY() + target.getHeight(), target.getSprite().getHeight());
+		float bottom = (float) calculatePercentage(target.getY(), target.getSprite().getHeight());
 
-		vertices.get(0).setST(s, t);
-		vertices.get(1).setST(right, t);
-		vertices.get(2).setST(s, bottom);
-		vertices.get(3).setST(right, bottom);
+		setTexture(s, t, right, bottom, entity.getTexturePosition());
 	}
 
 	protected boolean textureChanged() {

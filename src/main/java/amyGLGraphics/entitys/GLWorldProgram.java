@@ -8,7 +8,7 @@ public class GLWorldProgram extends GLProgram{
 
 	public static final float RATIO = 16f/9f;
 	public static final float NEAR = 0.1f;
-	public static final float FAR = 10f;
+	public static final float FAR = 20f;
 	public static final float FOV = (float) Math.toRadians(90f);
 	
 	private static final Matrix4f perspective

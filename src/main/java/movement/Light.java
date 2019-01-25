@@ -51,6 +51,10 @@ public abstract class Light extends Entity {
 	}
 
 	public void setAmbient(double ambient) {
+		if (ambient < 0) {
+			ambient = 0;
+		}
+		
 		this.ambient = ambient;
 	}
 
@@ -59,6 +63,10 @@ public abstract class Light extends Entity {
 	}
 
 	public void setDiffuse(double diffuse) {
+		if (diffuse < 0) {
+			diffuse = 0;
+		}
+		
 		this.diffuse = diffuse;
 	}
 
@@ -67,6 +75,10 @@ public abstract class Light extends Entity {
 	}
 
 	public void setSpecular(double specular) {
+		if (specular < 0) {
+			specular = 0;
+		}
+		
 		this.specular = specular;
 	}
 	@Override

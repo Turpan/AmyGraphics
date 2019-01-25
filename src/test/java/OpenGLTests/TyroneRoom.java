@@ -38,7 +38,9 @@ public class TyroneRoom extends Room implements GameListener {
 				}
 			}
 
-			setBackground(background);
+			addBackground(background);
+			setActiveBackground1(background);
+			setActiveBackground2(background);
 			createEntitys();
 		}
 

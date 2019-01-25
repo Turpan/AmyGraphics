@@ -33,6 +33,7 @@ import amyGLGraphics.entitys.deferred.GLLPassRenderer;
 import amyGLGraphics.entitys.post.GLFinalRenderer;
 import amyGLGraphics.entitys.post.GLFxaaRenderer;
 import amyGLGraphics.entitys.post.GLPostProcessingBuffer;
+import amyGLGraphics.entitys.ssao.GLSsaoRenderer;
 import amyGraphics.RoomHandler;
 import movement.Entity;
 import movement.Light;
@@ -53,6 +54,7 @@ public class GLRoomHandler extends RoomHandler {
 	private GLEntityRenderer entityRenderer = new GLEntityRenderer();
 	private GLLightRenderer lightRenderer = new GLLightRenderer();
 	private GLSkyBoxRenderer skyboxRenderer = new GLSkyBoxRenderer();
+	private GLBackgroundRenderer backgroundRenderer = new GLBackgroundRenderer();
 	
 	private GLDirDepthRenderer dirDepthRenderer = new GLDirDepthRenderer();
 	private GLBlurRenderer blurRenderer = new GLBlurRenderer();
@@ -62,6 +64,7 @@ public class GLRoomHandler extends RoomHandler {
 	private GLFrameBufferDisplay lPassObject = new GLFrameBufferDisplay();
 	private GLGPassRenderer gPassRenderer = new GLGPassRenderer();
 	private GLLPassRenderer lPassRenderer = new GLLPassRenderer();
+	//private GLSsaoRenderer ssaoRenderer = new GLSsaoRenderer();
 
 	private GLFrameBufferDisplay displayObject = new GLFrameBufferDisplay();
 	
@@ -79,6 +82,10 @@ public class GLRoomHandler extends RoomHandler {
 	
 	//TODO temp
 	public static boolean fxaa = false;
+	
+	public static boolean eyeAdaption = true;
+	
+	public static boolean ssao = true;
 
 	public boolean renderNormals = false;
 	
@@ -113,7 +120,7 @@ public class GLRoomHandler extends RoomHandler {
 			Map<Entity, GLEntity> entityMap = glRoom.getEntityMap();
 			Map<Light, GLPointDepthRenderer> lightDepthMap = glRoom.getLightDepthMap();
 
-			GLSkyBox skyBox = glRoom.getSkyBox();
+			GLObject skyBox = glRoom.getSkyBox();
 			
 			setUpLPassObject(lightDepthMap);
 
@@ -170,6 +177,11 @@ public class GLRoomHandler extends RoomHandler {
 			gPassRenderer.clearBuffer();
 			gPassRenderer.render(opaque);
 			gPassRenderer.render(transparent);
+			
+			if (ssao) {
+				//ssaoRenderer.render(displayObject, gPassRenderer.getPassBuffer());
+			}
+			
 			lPassRenderer.render(lPassObject, postProcessingBuffer1);
 			
 			copyDepthBuffer(gPassRenderer.getPassBuffer());
@@ -181,13 +193,19 @@ public class GLRoomHandler extends RoomHandler {
 				normalRenderer.render(entitys);
 			}
 
-			if (skyBox.isGLBound() && glRoom.hasBackground()) {
-				skyboxRenderer.render(skyBox, postProcessingBuffer1);
+			if (glRoom.hasBackground() && skyBox.isGLBound()) {
+				if (glRoom.useSkybox()) {
+					skyboxRenderer.setBlend(glRoom.getBlend());
+					skyboxRenderer.render(skyBox, postProcessingBuffer1);
+				} else {
+					backgroundRenderer.setBlend(glRoom.getBlend());
+					backgroundRenderer.render(skyBox, postProcessingBuffer1);
+				}
 			}
 			
 			boolean source1stBuffer = true;
 			
-			currentExposure = calculateSceneExposure();
+			currentExposure = eyeAdaption ? calculateSceneExposure() : 1.0f;
 			
 			if (fxaa) {
 				GLFrameBuffer source = source1stBuffer ? postProcessingBuffer1 : postProcessingBuffer2;
@@ -210,6 +228,7 @@ public class GLRoomHandler extends RoomHandler {
 			//normalRenderer.render(fustrumObject);
 			//GL11.glEnable(GL11.GL_CULL_FACE);
 
+			//addBufferTexture(ssaoRenderer.getSSAOBuffer());
 			//displayRenderer.render(displayObject);
 		}
 	}
@@ -241,7 +260,7 @@ public class GLRoomHandler extends RoomHandler {
 			lumaAverage += luma;
 		}
 		
-		final float jumpSize = 0.005f;
+		final float jumpSize = 0.01f;
 		
 		lumaAverage /= (size / 3);
 		
@@ -281,7 +300,7 @@ public class GLRoomHandler extends RoomHandler {
 		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, buffer.getBufferID());
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, postProcessingBuffer1.getBufferID());
 		GL30.glBlitFramebuffer(0, 0, buffer.getWidth(), buffer.getHeight(),
-				0, 0, postProcessingBuffer1.getWidth(), postProcessingBuffer1.getWidth(), GL11.GL_DEPTH_BUFFER_BIT, GL11.GL_NEAREST);
+				0, 0, postProcessingBuffer1.getWidth(), postProcessingBuffer1.getHeight(), GL11.GL_DEPTH_BUFFER_BIT, GL11.GL_NEAREST);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 	
@@ -301,6 +320,7 @@ public class GLRoomHandler extends RoomHandler {
 		entityRenderer.resetState();
 		lightRenderer.resetState();
 		skyboxRenderer.resetState();
+		backgroundRenderer.resetState();
 		normalRenderer.resetState();
 		dirDepthRenderer.resetState();
 		blurRenderer.resetState();
@@ -309,6 +329,7 @@ public class GLRoomHandler extends RoomHandler {
 		roomObjects.clear();
 		gPassRenderer.resetState();
 		lPassRenderer.resetState();
+		//ssaoRenderer.resetState();
 		lPassObject = new GLFrameBufferDisplay();
 		displayObject = new GLFrameBufferDisplay();
 		fustrumObject = new GLFustrumRender();
@@ -325,6 +346,7 @@ public class GLRoomHandler extends RoomHandler {
 		entityRenderer.unbindGL();
 		lightRenderer.unbindGL();
 		skyboxRenderer.unbindGL();
+		backgroundRenderer.unbindGL();
 		normalRenderer.unbindGL();
 		dirDepthRenderer.unbindGL();
 		blurRenderer.unbindGL();
@@ -332,6 +354,7 @@ public class GLRoomHandler extends RoomHandler {
 		displayRenderer.unbindGL();
 		gPassRenderer.unbindGL();
 		lPassRenderer.unbindGL();
+		//ssaoRenderer.unbindGL();
 		lPassObject.unbindObject();
 		displayObject.unbindObject();
 		fustrumObject.unbindObject();
@@ -436,6 +459,7 @@ public class GLRoomHandler extends RoomHandler {
 		skyboxRenderer.setCamera(camera);
 		gPassRenderer.setCamera(camera);
 		lPassRenderer.setCamera(camera);
+		//ssaoRenderer.setCamera(camera);
 		this.camera = camera;
 	}
 }

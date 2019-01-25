@@ -91,6 +91,10 @@ public class GraphicsTestWindow extends GLWindow {
 			if (key == GLFW.GLFW_KEY_M && action == GLFW_RELEASE) {
 				GLRoomHandler.fxaa = !GLRoomHandler.fxaa;
 			}
+			
+			if (key == GLFW.GLFW_KEY_N && action == GLFW_RELEASE) {
+				GLRoomHandler.eyeAdaption = !GLRoomHandler.eyeAdaption;
+			}
 		});
 	}
 
@@ -106,6 +110,20 @@ public class GraphicsTestWindow extends GLWindow {
 	@Override
 	protected void processInput() {
 		//This is done in the rendering loop
+		
+		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_F) == GLFW.GLFW_PRESS) {
+			if (displayCursor) {
+				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+			} else {
+				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			}
+
+			displayCursor = !displayCursor;
+		}
+		
+		if (displayCursor) {
+			return;
+		}
 
 		//Comment this out to remove wasd camera movement
 		Vector3f cameraPosition = camera.getPosition();
@@ -136,16 +154,6 @@ public class GraphicsTestWindow extends GLWindow {
 			cameraPosition.add(result);
 		}
 		camera.setPosition(cameraPosition);
-
-		if (GLFW.glfwGetKey(getWindow(), GLFW.GLFW_KEY_F) == GLFW.GLFW_PRESS) {
-			if (displayCursor) {
-				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
-			} else {
-				GLFW.glfwSetInputMode(getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-			}
-
-			displayCursor = !displayCursor;
-		}
 	}
 
 	private void mouseClick(int action) {
@@ -175,6 +183,10 @@ public class GraphicsTestWindow extends GLWindow {
 		float yoffset = (float) (lastY - ypos);
 		lastX = (float) xpos;
 		lastY = (float) ypos;
+		
+		if (displayCursor) {
+			return;
+		}
 
 		float sensitivity = 0.05f;
 		xoffset *= sensitivity;

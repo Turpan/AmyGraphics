@@ -62,7 +62,9 @@ public class CommunismRoom extends Room {
 				System.exit(1);
 			}
 		}
-		setBackground(background);
+		addBackground(background);
+		setActiveBackground1(background);
+		setActiveBackground2(background);
 		addEntity(floor);
 		addEntity(neutral);
 		addEntity(comm);

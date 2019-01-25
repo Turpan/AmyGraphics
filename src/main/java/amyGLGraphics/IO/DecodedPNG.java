@@ -17,7 +17,7 @@ public class DecodedPNG {
 	}
 	private void decodePNG(BufferedImage png) {
 		int counter = 0;
-		for (int y=0; y<png.getHeight(); y++) {
+		for (int y=png.getHeight() - 1; y>-1; y--) {
 			for (int x=0; x<png.getWidth(); x++) {
 				int rgb = png.getRGB(x, y);
 				int red = (rgb >> 16) & 0xFF;

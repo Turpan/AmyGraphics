@@ -1,5 +1,11 @@
 package amyGLGraphics.debug;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+
+import org.lwjgl.opengl.GL11;
+
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
@@ -30,12 +36,14 @@ public class GLDepthDisplayRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
-
+		glDisable(GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
 	@Override
 	protected void resetGlobal() {
-
+		glEnable(GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 
 }

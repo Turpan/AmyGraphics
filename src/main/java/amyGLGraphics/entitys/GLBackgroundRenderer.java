@@ -6,31 +6,26 @@ import static org.lwjgl.opengl.GL11.glDepthFunc;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
 
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
 
-public class GLSkyBoxRenderer extends GLRenderer {
+public class GLBackgroundRenderer extends GLRenderer {
 
-	private GLSkyBoxProgram skyboxProgram;
+	private GLBackgroundProgram backgroundProgram;
 	
 	private float blend;
 
 	@Override
 	protected void createProgram() {
-		skyboxProgram = new GLSkyBoxProgram();
+		backgroundProgram = new GLBackgroundProgram();
 	}
 
 	@Override
 	protected void updateUniversalUniforms() {
-		if (camera != null) {
-			Matrix4f cameraMatrix = new Matrix4f(new Matrix3f(camera.getCameraMatrix()));
-
-			skyboxProgram.updateViewMatrix(cameraMatrix);
-		}
-		
-		skyboxProgram.updateBlend(blend);
+		backgroundProgram.updateBlend(blend);
 	}
 
 	@Override
@@ -44,17 +39,19 @@ public class GLSkyBoxRenderer extends GLRenderer {
 
 	@Override
 	protected GLProgram getProgram() {
-		return skyboxProgram;
+		return backgroundProgram;
 	}
 
 	@Override
 	protected void globalSetup() {
 		glDepthFunc(GL_LEQUAL);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
 	@Override
 	protected void resetGlobal() {
 		glDepthFunc(GL_LESS);
+		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 
 }

@@ -43,9 +43,10 @@ public class GLTexture2D extends GLTexture {
 	private void determineTransparency() {
 		byte[] data = textureData.getData();
 		for (int i=0; i<data.length/4; i++) {
-			int value = (int) data[(i*4)+3];
+			int value = (int) data[(i*4)+3] & 0xff;
 			if (value == 0) {
 				transparent = true;
+				continue;
 			}
 			
 			if (value < 255) {

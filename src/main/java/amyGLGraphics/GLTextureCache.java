@@ -5,11 +5,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GLTextureCache {
+	private static Map<BufferedImage[], GLTexture2D> backgroundTextureMap = new HashMap<BufferedImage[], GLTexture2D>();
+	private static Map<BufferedImage[], GLTextureCube> skyboxTextureMap = new HashMap<BufferedImage[], GLTextureCube>();
+	
 	private static Map<BufferedImage, GLTexture2D> diffuseTextureMap = new HashMap<BufferedImage, GLTexture2D>();
-	private static GLTextureCube skyboxTexture;
 
 	private static Map<BufferedImage, GLTexture2D> interfaceTextureMap = new HashMap<BufferedImage, GLTexture2D>();
 	private static Map<BufferedImage, GLTexture2D> fontTextureMap = new HashMap<BufferedImage, GLTexture2D>();
+	
+	public static void addBackground(BufferedImage[] key, GLTexture2D value) {
+		backgroundTextureMap.put(key, value);
+	}
+	
+	public static void removeBackground(BufferedImage[] key) {
+		backgroundTextureMap.remove(key);
+	}
+	
+	public static GLTexture2D getBackground(BufferedImage[] key) {
+		return backgroundTextureMap.get(key);
+	}
+	
+	public static void addSkybox(BufferedImage[] key, GLTextureCube value) {
+		skyboxTextureMap.put(key, value);
+	}
+	
+	public static void removeSkybox(BufferedImage[] key) {
+		skyboxTextureMap.remove(key);
+	}
+	
+	public static GLTextureCube getSkybox(BufferedImage[] key) {
+		return skyboxTextureMap.get(key);
+	}
 
 	public static void addTexture(BufferedImage key, GLTexture2D value) {
 		diffuseTextureMap.put(key, value);
@@ -41,17 +67,6 @@ public class GLTextureCache {
 
 	public static boolean hasInterfaceTexture(BufferedImage key) {
 		return interfaceTextureMap.containsKey(key);
-	}
-
-	public static void setSkybox(GLTextureCube texture) {
-		if (skyboxTexture != null) {
-			skyboxTexture.unbindTexture();
-		}
-		skyboxTexture = texture;
-	}
-
-	public static GLTextureCube getSkyboxTexture() {
-		return skyboxTexture;
 	}
 
 	public static GLTexture2D getFontTexture(BufferedImage sprite) {

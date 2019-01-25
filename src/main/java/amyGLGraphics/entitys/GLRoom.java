@@ -1,17 +1,21 @@
 package amyGLGraphics.entitys;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.GLTextureCube;
 import amyGLGraphics.IO.GraphicsUtils;
+import amyGLGraphics.base.GLObject;
+import amyGLGraphics.debug.GLFrameBufferDisplay;
 import amyGraphics.Texture;
 import movement.Entity;
 import movement.Light;
@@ -28,6 +32,7 @@ public class GLRoom implements RoomListener {
 
 	private Map<Entity, GLEntity> entityMap = new HashMap<Entity, GLEntity>();
 	private GLSkyBox skyBox = new GLSkyBox();
+	private GLFrameBufferDisplay background = new GLFrameBufferDisplay();
 
 	private Map<Light, GLPointDepthRenderer> lightDepthMap = new HashMap<Light, GLPointDepthRenderer>();
 
@@ -48,7 +53,9 @@ public class GLRoom implements RoomListener {
 		room.addListener(this);
 
 		addEntity(room.getContents());
-		setBackground(room.getBackground());
+		for (BufferedImage[] background : room.getBackgrounds()) {
+			addBackground(background);
+		}
 	}
 
 	public Room getRoom() {
@@ -71,8 +78,18 @@ public class GLRoom implements RoomListener {
 		return lightDepthMap;
 	}
 
-	public GLSkyBox getSkyBox() {
-		return skyBox;
+	public GLObject getSkyBox() {
+		if (!hasBackground()) {
+			return null;
+		}
+		
+		changeBackground();
+		
+		if (useSkybox()) {
+			return skyBox;
+		} else {
+			return background;
+		}
 	}
 
 	private void addEntity(Entity entity) {
@@ -136,14 +153,71 @@ public class GLRoom implements RoomListener {
 
 		bufferedentity.universalColour(GraphicsUtils.colourToVec3(light.getColor()).mul((float) light.getDiffuse()));
 	}
-
-	private void setBackground(BufferedImage[] background) {
-		if (hasBackground()) {
-			GLTextureCube skyBoxTexture = new GLTextureCube(background);
-			GLTextureCache.setSkybox(skyBoxTexture);
-			skyBox.addTexture(skyBoxTexture, GL13.GL_TEXTURE0);
+	
+	public float getBlend() {
+		return room.getBackgroundBlend();
+	}
+	
+	private void changeBackground() {
+		skyBox.getTextures().clear();
+		background.getTextures().clear();
+		
+		setSkyboxTexture(room.getActiveBackground1(), 0);
+		setSkyboxTexture(room.getActiveBackground2(), 1);
+	}
+	
+	private void setSkyboxTexture(BufferedImage[] background, int target) {
+		if (background == null) {
+			return;
+		}
+		
+		if (background.length == 1) {
+			this.background.addTexture(GLTextureCache.getBackground(background), GL13.GL_TEXTURE0 + target);
 		} else {
-			skyBox.getTextures().clear();
+			skyBox.addTexture(GLTextureCache.getSkybox(background), GL13.GL_TEXTURE0 + target);
+		}
+	}
+	
+	private void addBackground(BufferedImage[] background) {
+		if (background == null) {
+			return;
+		}
+		
+		if (background.length == 1) {
+			GLTexture2D texture = new GLTexture2D(background[0]);
+			GLTextureCache.addBackground(background, texture);
+		} else {
+			BufferedImage[] cube = new BufferedImage[6];
+			int i = 0;
+			
+			for (BufferedImage face : background) {
+				cube[i] = face;
+				i++;
+				
+				if (i == 6) {
+					break;
+				}
+			}
+			
+			for (int j=i; j<6; j++) {
+				cube[j] = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+				cube[j].setRGB(0, 0, Color.BLACK.getRGB());
+			}
+			
+			GLTextureCube texture = new GLTextureCube(cube);
+			GLTextureCache.addSkybox(background, texture);
+		}
+	}
+	
+	private void removeBackground(BufferedImage[] background) {
+		if (background == null) {
+			return;
+		}
+		
+		if (background.length == 1) {
+			GLTextureCache.removeBackground(background);
+		} else {
+			GLTextureCache.removeSkybox(background);
 		}
 	}
 
@@ -189,19 +263,16 @@ public class GLRoom implements RoomListener {
 	}
 
 	protected boolean hasBackground() {
-		if (room.getBackground() == null) {
-			return false;
-		}
-
-		if (room.getBackground().length != 6) {
-			return false;
-		}
-
-		return true;
+		return room.getActiveBackground1() != null;
+	}
+	
+	protected boolean useSkybox() {
+		return room.getActiveBackground1().length == 6;
 	}
 
 	public void unbindGL() {
 		skyBox.unbindObject();
+		background.unbindObject();
 
 		removeEntity(room.getContents());
 
@@ -223,7 +294,17 @@ public class GLRoom implements RoomListener {
 	}
 
 	@Override
-	public void backgroundChanged(BufferedImage[] background) {
-		setBackground(background);
+	public void backgroundAdded(BufferedImage[] background) {
+		addBackground(background);
+	}
+
+	@Override
+	public void backgroundRemoved(BufferedImage[] background) {
+		removeBackground(background);
+	}
+
+	@Override
+	public void backgroundChanged() {
+		
 	}
 }
