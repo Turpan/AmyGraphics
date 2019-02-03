@@ -4,6 +4,9 @@ package movement.mathDS;
 public class Vector {
 	// Creates a generic, n (see DIMENSIONS) dimensional vector, expressed internally in components, for ease of operations. 
 	public static final int DIMENSIONS = 3;		// NOTE: WHEN CHANGING THIS MAKE SURE TO MAKE THE BELOW VECTORS OF APPROPRIATE LENGTH!
+	//Welp, I tried my best to make this whole engine generalise in terms of dimensions, and, honestly, for the most part I succeeded. However, unfortunately, due to rotation formalisms bein fuckin wild, this 
+	//was not possible to do. Most of the physics engine is still generalised though. Basically, you'll need to restructure rotation, and not a whole lot else. Look for any method calling the cross product.
+	
 	private static final double[] SIMPLEVECTOR = new double[] {1,0,0};	//This is just called everytime a vector is called using the emptyconstructor, and constructing it everytime takes a for loop and junk.
 	
 	private double[] components;
@@ -16,8 +19,12 @@ public class Vector {
 		setComponents(cmpnts);
 	}
 	public Vector(){
-		this(0, SIMPLEVECTOR);
+		this(SIMPLEVECTOR);
 	}
+	public Vector(double[] cmpnts) {
+		setComponents(cmpnts);
+	}
+	
 	public void setComponents(double[] components){
 		if (components.length != DIMENSIONS) {
 			this.components = new double[DIMENSIONS];
@@ -97,20 +104,11 @@ public class Vector {
 
 	///////////////////////////////////////////////////////////////////////////////
 
-	public void addVector (Vector vToAdd) {
-		double[] cmpnts = getComponents();
-		double[] toAdd = vToAdd.getComponents();
-		for (int i = 0; i<DIMENSIONS;i++) {
-			cmpnts[i] += toAdd[i];
-		}
-		setComponents(cmpnts);
-	}
-
 	public static double[] directionOfReverse(Vector v){
 		return Vector.getReverse(v).getDirection();
 	}
 	public static Vector getReverse(Vector v){
-		return Vector.scalarProduct(v,-1);
+		return Vector.scalarMultiply(v,-1);
 	}
 	public static double dotProduct(Vector v1, Vector v2) { //standard vector operation, gives cos(angle)*|v1|*|v2|
 		double[] cmpnts1 = v1.getComponents();
@@ -121,6 +119,12 @@ public class Vector {
 		}
 		return sum;
 	}
+	public static Vector crossProduct(Vector v1, Vector v2) {
+		double[] cmpnts1 = v1.getComponents();
+		double[] cmpnts2 = v2.getComponents();
+		return new Vector (new double[] {cmpnts1[1]*cmpnts2[2]-cmpnts1[2]*cmpnts2[1],cmpnts1[2]*cmpnts2[0]-cmpnts1[0]*cmpnts2[2],cmpnts1[0]*cmpnts2[1]-cmpnts1[1]*cmpnts2[0]});		
+	}
+	
 	public static double angleBetween (Vector v1, Vector v2) {
 		double mag1 = v1.getMagnitude();
 		double mag2 = v2.getMagnitude();
@@ -143,7 +147,7 @@ public class Vector {
 		if (tmp == 0) {return 0;}
 		return tmp/comparator.getMagnitude();
 	}
-	public static Vector scalarProduct(Vector v, double scalar) {
+	public static Vector scalarMultiply(Vector v, double scalar) {
 		var inCmpnts = v.getComponents();
 		var outCmpnts = new double[Vector.DIMENSIONS];
 		for (int i = 0; i<Vector.DIMENSIONS;i++){
@@ -152,5 +156,15 @@ public class Vector {
 		var output = new Vector();
 		output.setComponents(outCmpnts);
 		return output;
+	}
+	public static Vector addVectors (Vector... args) {
+		var cmpnts = new double[Vector.DIMENSIONS];
+		for (Vector toAdd: args) {
+			var toAddCmpnts = toAdd.getComponents();
+			for (int i = 0; i<DIMENSIONS;i++) {
+				cmpnts[i] += toAddCmpnts[i];
+			}
+		}
+		return new Vector(cmpnts);
 	}
 }
