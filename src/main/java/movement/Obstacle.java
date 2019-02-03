@@ -1,9 +1,11 @@
 package movement;
 
+import movement.Shapes.OutlineShape;
 
 public abstract class Obstacle extends Collidable{
 	//Collidable objects that don't move
 	private double CoR;
+	private OutlineShape outlineShape;
 	
 	public Obstacle() {
 	}
@@ -18,6 +20,14 @@ public abstract class Obstacle extends Collidable{
 	public void setCoR(double CoR) {
 		this.CoR = CoR;
 	}
+	public OutlineShape getOutline() {
+		return outlineShape;
+		
+	}
+	public void setOutline(OutlineShape outline) {
+		this.outlineShape = outline;
+	}
+	
 	@Override
 	public abstract Obstacle clone();
 }

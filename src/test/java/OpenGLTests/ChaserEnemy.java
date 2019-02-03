@@ -30,7 +30,7 @@ public class ChaserEnemy extends Enemy {
 		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
 		setDimensions(new double[] {50,50,50});
-		setOutline((new Ellipse(getDimensions())));
+		setSimpleOutline((new Ellipse(getDimensions())));
 	}
 	protected ChaserEnemy(ChaserEnemy chaserEnemy) {
 		super(chaserEnemy);
@@ -88,7 +88,7 @@ public class ChaserEnemy extends Enemy {
 
 	}
 	@Override
-	public void collision(Movable m) {
+	public void collision(Movable m, double[] collisionLocationInThis) {
 		// TODO Auto-generated method stub
 
 	}

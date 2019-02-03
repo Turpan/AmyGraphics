@@ -39,7 +39,7 @@ public class Player extends SelfPropelled implements Dashing {
 		setCoR(COEFFICIENT_OF_RESTITUTION);
 		loadImage();
 		setDimensions(new double[] {50,50,50});
-		setOutline(new Ellipse(getDimensions()));
+		setSimpleOutline(new Ellipse(getDimensions()));
 	}
 	protected Player (Player player) {
 		super(player);
@@ -136,7 +136,7 @@ public class Player extends SelfPropelled implements Dashing {
 
 	}
 	@Override
-	public void collision(Movable m) {
+	public void collision(Movable m, double[] collisionLocationInThis) {
 		// TODO Auto-generated method stub
 
 	}
