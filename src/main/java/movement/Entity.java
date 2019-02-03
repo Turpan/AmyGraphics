@@ -13,6 +13,7 @@ public abstract class Entity {
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
 	private TexturePosition texturePosition = TexturePosition.FRONT;
+	private boolean visible = true;
 
 	public Entity() {
 	}
@@ -64,6 +65,12 @@ public abstract class Entity {
 			activeTexture = null;
 		}
 		this.activeTexture = activeTexture;
+	}
+	public boolean isVisible() {
+		return visible;
+	}
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 	public void setPosition(double[] position) {
 		if (position.length != Vector.DIMENSIONS) {

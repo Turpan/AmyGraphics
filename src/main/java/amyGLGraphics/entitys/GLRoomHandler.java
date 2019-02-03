@@ -127,11 +127,12 @@ public class GLRoomHandler extends RoomHandler {
 			for (var entity : getActiveRoom().getContents()) {
 				GLObject object = entityMap.get(entity);
 				object.update();
+				
+				if (!entity.isVisible()) continue;
+				
 				if (isAffectedByLight(entity)) entitys.add(object);
 				
-				if (!camera.isInFustrum(object)) {
-					continue;
-				}
+				if (!camera.isInFustrum(object)) continue;
 				
 				if (isAffectedByLight(entity)) {
 					if (object.isSemiTransparent()) {
