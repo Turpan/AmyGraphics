@@ -156,14 +156,15 @@ public abstract class Room {
 				}
 			}
 		}
+
 		for (Entity entity : getContents()) {
 			if (entity instanceof Movable) {
 				Movable movable = (Movable) entity;
 				movable.applyConstantForces();
 			}
 		}
-		
-		collisionEngine.checkCollisions();
+
+		checkCollision();
 		for (Entity entity : getContents()) {
 			if (entity instanceof Movable) {
 				Movable movable = (Movable) entity;

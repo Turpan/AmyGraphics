@@ -4,27 +4,22 @@ import java.util.ArrayList;
 
 import movement.mathDS.Vector;
 
-public abstract class StandardShape implements OutlineShape {
-	final static int collisionDetectionGranularity = 2 * 10;	//MUST BE EVEN! (Being even means that the divisions along all axis will,
-	private ArrayList<double[]> collisionNet;				//amongst other places, contain the middle linee. This helps define the edges of, for example, spheres.
-	private double[] dimensions;
-
+public abstract class StandardShape extends OutlineShape {
+	final static int collisionDetectionGranularity = 2 * 10;	//Leave this EVEN! (Being even means that the divisions along all axis will,
+	private ArrayList<double[]> collisionNet;					//amongst other places, contain the middle linee. This helps define the edges of, for example, spheres.	This just naturally cleans everything up for a 
+																//bunch of shapes with positive curvature at... the middle points. In general, there /should/ be a collision net point at the peak of every shape with a
+																//positive curvature if you want it to sit /nicely/ for a force moving it into that direction. Making it even just solves this problem for spheres and parabaloids
 	protected StandardShape() {}
 	public StandardShape(double[] dimensions) {
-		setDimensions(dimensions.clone());
+		setDimensions(dimensions);
 		initialiseCollisionNet();
 	}
 	protected StandardShape(StandardShape standardShape) {
-		setDimensions(standardShape.getDimensions());
-		collisionNet = standardShape.getCollisionNet();
-	}
-	@Override
- 	public void setDimensions(double[] dimensions) {
-		this.dimensions= dimensions;
-	}
-	@Override
-	public double[] getDimensions() {
-		return dimensions;
+		super(standardShape);
+		var collisionNet = new ArrayList<double[]>();
+		for (double[] point : standardShape.getCollisionNet()) {
+			collisionNet.add(point.clone());
+		}
 	}
 	public ArrayList<double[]> getCollisionNet(){
 		return collisionNet;
@@ -69,16 +64,17 @@ public abstract class StandardShape implements OutlineShape {
 	protected abstract boolean inCollisionNet(double[] point);	//similar to inside, but a little more... discriminating, so as to lower the number of points in 
 																//to cycle through in CN
 	@Override
-	public double[] exactCollisionPosition(OutlineShape collidee, double[] relativePositionCollideeToCollider) {
+	public double[] exactCollisionPosition(OutlineShape collidee, double[] relativePositionCollideeToCollider) {	//returns the collision position relative to the "real world". Accounts for rotation in answer
 		var net = getCollisionNet();
 
 		double[] sum = new double[Vector.DIMENSIONS];
 		int numPointsInside = 0;
 		double[] point = new double[Vector.DIMENSIONS];
 
-		for (double[] f : net) {
+		for (double[] f : net) {		
+			point = rotatePoint(f);		
 			for (int i = 0; i<Vector.DIMENSIONS;i++) {
-				point[i] = f[i] + relativePositionCollideeToCollider[i];
+				point[i] += relativePositionCollideeToCollider[i];
 			}
 			if (collidee.inside(point)){
 				numPointsInside++;
@@ -92,8 +88,8 @@ public abstract class StandardShape implements OutlineShape {
 		for (int i = 0;i<Vector.DIMENSIONS;i++) {
 			sum[i] =sum[i]/ numPointsInside;
 		}
-		return sum;
+		return rotatePoint(sum);
 	}
-	
+
 	public abstract StandardShape clone();
 }

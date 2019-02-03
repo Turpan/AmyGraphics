@@ -17,17 +17,20 @@ public class EventManager {
 	private KeyState moveDown;
 	private KeyState moveLeft;
 	private KeyState moveRight;
+	private KeyState attack1;
 
 	private EventManager() {
 		moveUp = new KeyState(GLFW.GLFW_KEY_UP);
 		moveDown = new KeyState(GLFW.GLFW_KEY_DOWN);
 		moveLeft = new KeyState(GLFW.GLFW_KEY_LEFT);
 		moveRight = new KeyState(GLFW.GLFW_KEY_RIGHT);
-
+		attack1 = new KeyState(GLFW.GLFW_KEY_Z);
+				
 		keyStates.add(moveUp);
 		keyStates.add(moveDown);
 		keyStates.add(moveLeft);
 		keyStates.add(moveRight);
+		keyStates.add(attack1);
 	}
 
 	public static EventManager getManagerInstance() {
@@ -68,7 +71,11 @@ public class EventManager {
 	public synchronized KeyState getMoveRight() {
 		return moveRight;
 	}
+	public synchronized KeyState getAttack1() {
+		return attack1;
+	}
 
+	
 	public class KeyState {
 
 		private int glfwKeyCode;
