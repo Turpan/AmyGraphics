@@ -9,15 +9,14 @@ import movement.mathDS.Vector;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
 
 public class CollisionEngine {
-	
+
 	private static final double teleportOutBuffer = 2;
-	
+
 	private List<Obstacle> obstacleList;
 	private List<Movable> movableList;
 	private Graph<Collidable, double[][]> pointsOfContact;	//directed graph of all the points of contact. Edge values are size 2 arrays of collision locations. First location is collisionlocation of source, second is collisionlocation of dest
@@ -70,7 +69,7 @@ public class CollisionEngine {
 		var totalList = new ArrayList<Collidable>();
 		totalList.addAll(getMovableList());
 		totalList.addAll(getObstacleList());
-		return totalList; 
+		return totalList;
 	}
 	private void setPoC(Graph<Collidable, double[][]> PoC) {
 		pointsOfContact = PoC;
@@ -101,9 +100,21 @@ public class CollisionEngine {
 	}
 
 	private boolean checkBoundsCollision(Movable object1, Collidable object2) {
-		return Math.sqrt(Math.pow(object1.getDimensions()[0],2) + Math.pow(object1.getDimensions()[1],2) + Math.pow(object1.getDimensions()[2],2)) +
-				Math.sqrt(Math.pow(object2.getDimensions()[0],2) + Math.pow(object2.getDimensions()[1],2) + Math.pow(object2.getDimensions()[2],2)) 
-		> Math.sqrt(Math.pow(object1.getPosition()[0] - object2.getPosition()[0],2) + Math.pow(object1.getPosition()[1]-object2.getPosition()[1],2) + Math.pow(object1.getPosition()[2]-object2.getPosition()[2],2));
+		double edge1;
+		double edge2;
+		double[] pos1 = object1.getPosition();
+		double[] pos2 = object2.getPosition();
+		double[] dims1 = object1.getDimensions();
+		double[] dims2 = object2.getDimensions();
+		boolean output = true;
+		int i = 0;
+		while (output && i<Vector.DIMENSIONS){
+			edge1 = dims1[i] + pos1[i];
+			edge2 = dims2[i] + pos2[i];
+			output = pos1[i]<edge2 && pos2[i] < edge1;
+			i++;
+		}
+		return output;
 	}
 	private void addToCollisionGraph(Movable object1, Collidable object2) {
 		var collisionLocation2in1 = object1.getOutline().exactCollisionPosition(object2.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
@@ -117,7 +128,9 @@ public class CollisionEngine {
 	}
 
 	private void moveableCollision(Movable object1, Movable object2, double[][] collisionLocations) {
-		
+		var outputForce1 = new Vector();
+		var outputForce2 = new Vector();
+
 		var normal1 = object1.getOutline().getNormal(collisionLocations[0]);
 		var normal2 = object2.getOutline().getNormal(collisionLocations[1]);
 
@@ -132,43 +145,63 @@ public class CollisionEngine {
 		var collisionForce2 = new Vector(CoR_Effect * timeScaleInverse* Vector.getComponentParallel(object2.getVelocity(),normal1)* object2.getMass() * (1-((1-massRatio)/(1+massRatio))),
 				Vector.vectorMovingWith(object2.getVelocity() , normal1) ? Vector.directionOfReverse(normal1) : normal1.getDirection());
 
-		object1.applyForce(Vector.addVectors(collisionForce1, Vector.getReverse(collisionForce2)));
-		object2.applyForce(Vector.addVectors(collisionForce2, Vector.getReverse(collisionForce1)));
+		outputForce1.addVector(collisionForce1);
+		outputForce1.addVector(Vector.getReverse(collisionForce2));
+		outputForce2.setComponents(Vector.getReverse(outputForce1).getComponents());
+
 		//assures that if the object gets in, it gets teleported immediately out
-		//ignores 'ghost' components of the movable. 
-		var collisionLocation1in2 = object1.getCorporealOutline().exactCollisionPosition(object2.getCorporealOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
-		if (collisionLocation1in2 != null) {
-			var relativeEdgeLocation1in2 = relativeLocation(object1.getOutline().pointOnEdge(collisionLocation1in2), object1, object2);
-			double distance;
-			if (object2.getCorporealOutline().inside(relativeEdgeLocation1in2)){
-				distance = object2.getCorporealOutline().distanceIn(relativeEdgeLocation1in2);
-				if (distance > teleportOutBuffer) {
-					var normalInQuestion = object2.getCorporealOutline().getNormal(relativeEdgeLocation1in2);
-					object1.move(new Vector((distance - teleportOutBuffer)/2, normalInQuestion.getDirection()));
-					object2.move(new Vector((distance - teleportOutBuffer)/2, Vector.directionOfReverse(normalInQuestion)));
+		var relativeEdgeLocation1 = relativeLocation(object1.getOutline().pointOnEdge(collisionLocations[0]), object1, object2);
+		double distance;
+		if (object2.getOutline().inside(relativeEdgeLocation1)){
+			distance = object2.getOutline().distanceIn(relativeEdgeLocation1);
+			if (distance > teleportOutBuffer) {
+				object1.move(new Vector(distance - teleportOutBuffer, normal2.getDirection()));
+			}
+		}
+		for (Obstacle obs : getObstacleList()) {
+			if (checkBoundsCollision(object1, obs)) {
+				var exactObstacleCollisionLocation = object1.getOutline().exactCollisionPosition(obs.getOutline(), relativeLocation(new double[Vector.DIMENSIONS], object1, obs));
+				if (exactObstacleCollisionLocation != null) {
+					double distanceInObs = obs.getOutline().distanceIn(relativeLocation(object1.getOutline().pointOnEdge(exactObstacleCollisionLocation), object1, obs));
+					if (distanceInObs > teleportOutBuffer) {
+						var revertVector = new Vector(distanceInObs - teleportOutBuffer, Vector.directionOfReverse(normal2));
+						object1.move(revertVector);
+						object2.move(revertVector);
+
+					}
 				}
 			}
 		}
+		for (Obstacle obs : getObstacleList()) {
+			if (checkBoundsCollision(object2, obs)) {
+				var exactObstacleCollisionLocation = object2.getOutline().exactCollisionPosition(obs.getOutline(), relativeLocation(new double[Vector.DIMENSIONS], object2, obs));
+				if (exactObstacleCollisionLocation != null) {
+					double distanceInObs = obs.getOutline().distanceIn(relativeLocation(object2.getOutline().pointOnEdge(exactObstacleCollisionLocation), object2, obs));
+					if (distanceInObs > teleportOutBuffer) {
+						var revertVector = new Vector(distanceInObs - teleportOutBuffer, Vector.directionOfReverse(normal1));
+						object2.move(revertVector);
+						object1.move(revertVector);
+					}
+				}
+			}
+		}
+		object1.applyForce(outputForce1);
+		object2.applyForce(outputForce2);
 	}
 	private void obstacleCollision(Obstacle o, Movable m, double[][] collisionLocations) {
 
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ?
 				new Vector() :
-				new Vector((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
-						,normalObstacle.getDirection());
-
-		m.applyForce(outputForce);
-		
-		//assures that if the object gets in, it gets teleported immediately out
-		var collisionLocationOinM = m.getCorporealOutline().exactCollisionPosition(o.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],m, o));
-		if (collisionLocationOinM != null) {
-			var relativeEdgeCollisionLocation = relativeLocation(m.getOutline().pointOnEdge(collisionLocationOinM), m, o);
-			double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);
-			if (distanceEdgeIn>teleportOutBuffer ) {
-				m.move(new Vector(distanceEdgeIn-teleportOutBuffer, normalObstacle.getDirection()));
-			}
-		}
+					new Vector((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
+							,normalObstacle.getDirection());
+				//assures that if the object gets in, it gets teleported immediately out
+				var edgeCollisionLocation = m.getOutline().pointOnEdge(collisionLocations[1]);
+				double[] relativeEdgeCollisionLocation = relativeLocation(edgeCollisionLocation, m, o);double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);
+				if (distanceEdgeIn>teleportOutBuffer ) {
+					m.move(new Vector(distanceEdgeIn-teleportOutBuffer, normalObstacle.getDirection()));
+				}
+				m.applyForce(outputForce);
 	}
 
 	private void organiseCollisionOrder() {	//sorts the movable list, such that they are in the appropriate order to be processed

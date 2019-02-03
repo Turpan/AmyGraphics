@@ -33,7 +33,7 @@ public class Rectangle extends StandardShape{
 		}
 		double[] direction = new double[Vector.DIMENSIONS];
 		direction[smallestDimension] = farside ? -1 : 1;
-		return new Vector(direction);
+		return new Vector(1, direction);
 	}
 	@Override
 	public boolean inside(double[] position) {

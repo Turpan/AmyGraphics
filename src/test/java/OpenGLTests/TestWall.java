@@ -69,7 +69,8 @@ public class TestWall extends Obstacle {
 	}
 
 	@Override
-	public void collision(Movable m, double[] collisionLocationInThis) {
+	public void collision(Movable m) {
 		// TODO Auto-generated method stub
+
 	}
 }

@@ -9,11 +9,7 @@ import movement.mathDS.Vector;
 
 public abstract class Entity {
 	private double[] position;
-	private double[] dimensions;
-	private double[] rotationAxis = {1,0,0};		//axis/angle bitchhhhh
-	private double[] centreOfRotation = {0,0,0};
-	private double angle = 0;							//just a set of default values. Not a big deal because angle is 0.
-		
+	private double[]dimensions;
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();
 	private TexturePosition texturePosition = TexturePosition.FRONT;
@@ -24,9 +20,6 @@ public abstract class Entity {
 	protected Entity(Entity entity) {
 		setPosition(entity.getPosition().clone());
 		setDimensions(entity.getDimensions().clone());
-		setRotationAxis(entity.getRotationAxis().clone());
-		setAngle(entity.getAngle());
-		setCentreOfRotation(entity.getCentreOfRotation().clone());
 		for (Texture t : entity.getTextures()) {
 			addTexture(t);
 		}
@@ -92,42 +85,6 @@ public abstract class Entity {
 	public double[] getPosition() {
 		return position;
 	}
-	public void setRotationAxis(double[] rotationAxis) {
-		var tmp = rotationAxis.clone();		//don't want to be destructive of direction...
-		if (tmp.length < 3) {	//don't need to check for tmp>DIM, as, due to the implementation, this doesn't actually matter.
-			var tmp2 = new double[3];
-			for(int i = 0; i< tmp.length; i++) {
-				tmp2[i] = tmp[i];
-			}
-			tmp = tmp2;
-		}
-		double check = 0;
-		for (int i = 0; i<3;i++) {
-			check += tmp[i]*tmp[i];
-		}
-		if (check<0.999||check>1.001) {//technically, should equal 1, but slight rounding errors, working with irrational numbers converted to decimal.
-			for (int i = 0; i<3;i++) {
-				tmp[i] = tmp[i]/check;
-			}
-		}
-		this.rotationAxis = tmp;
-	}
-	public double[] getRotationAxis() {
-		return rotationAxis;
-	}
-	public double getAngle() {
-		return angle;
-	}
-	public void setAngle(double angle) {
-		this.angle = angle;
-	}
-	public double[] getCentreOfRotation() {
-		return centreOfRotation;
-	}
-	public void setCentreOfRotation(double[] centreOfRotation) {
-		this.centreOfRotation = centreOfRotation;
-	}
-	
 	public abstract Entity clone();
 	
 	public void move(Vector movement) {
