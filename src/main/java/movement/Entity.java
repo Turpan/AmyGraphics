@@ -53,6 +53,10 @@ public abstract class Entity {
 		return textures;
 	}
 	public void addTexture(Texture texture) {
+		if (texture == null) {
+			return;
+		}
+		
 		textures.add(texture);
 	}
 	public void removeTexture(Texture texture) {

@@ -32,6 +32,7 @@ public class GLEntityRenderer extends GLRenderer {
 	private Light directionalLight;
 	private GLObject dirLightObject;
 
+	private boolean shadow;
 	private boolean softShadow;
 
 	public GLEntityRenderer() {
@@ -42,6 +43,10 @@ public class GLEntityRenderer extends GLRenderer {
 		lightDepthMap = new HashMap<Light, GLTextureColour>();
 		directionalLight = null;
 		dirLightObject = null;
+	}
+	
+	public void setShadow(boolean shadow) {
+		this.shadow = shadow;
 	}
 
 	public void setSoftShadow(boolean softShadow) {
@@ -83,6 +88,7 @@ public class GLEntityRenderer extends GLRenderer {
 			entityProgram.updateViewPosition(camera.getPosition());
 		}
 
+		entityProgram.updateShadow(shadow);
 		entityProgram.updateSoftShadow(softShadow);
 	}
 

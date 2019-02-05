@@ -21,6 +21,7 @@ public class GLEntityProgram extends GLWorldProgram {
 
 	private int dirLightMatrixLocation;
 
+	private int shadowLocation;
 	private int softShadowLocation;
 
 	private int viewPositionLocation;
@@ -60,6 +61,7 @@ public class GLEntityProgram extends GLWorldProgram {
 
 		dirLightMatrixLocation = queryVariable("dirLightMatrix");
 
+		shadowLocation = queryVariable("shadows");
 		softShadowLocation = queryVariable("softshadows");
 
 		viewPositionLocation = queryVariable("viewPosition");
@@ -122,6 +124,10 @@ public class GLEntityProgram extends GLWorldProgram {
 		updateMat4(matrix, dirLightMatrixLocation);
 	}
 
+	public void updateShadow(boolean shadow) {
+		updateBoolean(shadow, shadowLocation);
+	}
+	
 	public void updateSoftShadow(boolean softShadow) {
 		updateBoolean(softShadow, softShadowLocation);
 	}

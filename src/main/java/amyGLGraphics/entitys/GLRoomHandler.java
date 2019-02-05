@@ -78,7 +78,8 @@ public class GLRoomHandler extends RoomHandler {
 
 	private GLCamera camera;
 
-	private boolean softShadows = false;
+	public static boolean shadows = true;
+	public static boolean softShadows = false;
 	
 	//TODO temp
 	public static boolean fxaa = false;
@@ -151,28 +152,31 @@ public class GLRoomHandler extends RoomHandler {
 			sortTransparent(transparent);
 			sortTransparent(semiTransparent);
 
-			dirDepthRenderer.setSoftShadow(softShadows);
-			dirDepthRenderer.setDirectionalLight(entityMap.get(glRoom.getDirLight()));
-			dirDepthRenderer.render(entitys);
+			if (shadows) {
+				dirDepthRenderer.setSoftShadow(softShadows);
+				dirDepthRenderer.setDirectionalLight(entityMap.get(glRoom.getDirLight()));
+				dirDepthRenderer.render(entitys);
+				
+				for (Light light : lightDepthMap.keySet()) {
+					GLPointDepthRenderer renderer = lightDepthMap.get(light);
+					renderer.setSoftShadow(softShadows);
+					renderer.render(entitys);
+				}
+				
+				if (softShadows) {
+					blurRenderer.blur(dirDepthRenderer.getShadowMap());
+					for (Light light : lightDepthMap.keySet()) {
+						GLPointDepthRenderer renderer = lightDepthMap.get(light);
+						blurCubeRenderer.blur(renderer.getShadowMap());
+					}
+				}
+			}
 			
 			//displayObject.getTextures().clear();
 			//displayObject.getTextures().put(dirDepthRenderer.getShadowMap().getColourTexture(), GL13.GL_TEXTURE0);
 			//displayObject.getTextures().put(gPassRenderer.getPassBuffer().getColourTextures().get(0), GL13.GL_TEXTURE0);
 
-			for (Light light : lightDepthMap.keySet()) {
-				GLPointDepthRenderer renderer = lightDepthMap.get(light);
-				renderer.setSoftShadow(softShadows);
-				renderer.render(entitys);
-			}
-
-			if (softShadows) {
-				blurRenderer.blur(dirDepthRenderer.getShadowMap());
-				for (Light light : lightDepthMap.keySet()) {
-					GLPointDepthRenderer renderer = lightDepthMap.get(light);
-					blurCubeRenderer.blur(renderer.getShadowMap());
-				}
-			}
-
+			entityRenderer.setShadow(shadows);
 			entityRenderer.setSoftShadow(softShadows);
 			
 			gPassRenderer.clearBuffer();
@@ -183,6 +187,8 @@ public class GLRoomHandler extends RoomHandler {
 				//ssaoRenderer.render(displayObject, gPassRenderer.getPassBuffer());
 			}
 			
+			lPassRenderer.setShadow(shadows);
+			lPassRenderer.setSoftShadow(softShadows);
 			lPassRenderer.render(lPassObject, postProcessingBuffer1);
 			
 			copyDepthBuffer(gPassRenderer.getPassBuffer());

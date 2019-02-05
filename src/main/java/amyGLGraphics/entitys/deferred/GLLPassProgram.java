@@ -29,6 +29,7 @@ public class GLLPassProgram extends GLWorldProgram {
 	
 	private int viewPositionLocation;
 	
+	private int shadowLocation;
 	private int softShadowLocation;
 	
 	private int farPlaneLocation;
@@ -81,6 +82,7 @@ public class GLLPassProgram extends GLWorldProgram {
 			updatePointShadowMapUnit(i + pointDepthTextureUnit, i);
 		}
 		
+		shadowLocation = queryVariable("shadows");
 		softShadowLocation = queryVariable("softshadows");
 		
 		farPlaneLocation = queryVariable("farPlane");
@@ -132,6 +134,10 @@ public class GLLPassProgram extends GLWorldProgram {
 
 	public void updateViewPosition(Vector3f position) {
 		updateVec3(position, viewPositionLocation);
+	}
+	
+	public void updateShadow(boolean shadow) {
+		updateBoolean(shadow, shadowLocation);
 	}
 	
 	public void updateSoftShadow(boolean softShadow) {

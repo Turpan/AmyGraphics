@@ -95,6 +95,10 @@ public class GraphicsTestWindow extends GLWindow {
 			if (key == GLFW.GLFW_KEY_N && action == GLFW_RELEASE) {
 				GLRoomHandler.eyeAdaption = !GLRoomHandler.eyeAdaption;
 			}
+			
+			if (key == GLFW.GLFW_KEY_K && action == GLFW_RELEASE) {
+				GLRoomHandler.shadows = !GLRoomHandler.shadows;
+			}
 		});
 	}
 
