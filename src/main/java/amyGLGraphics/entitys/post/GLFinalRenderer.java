@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.lwjgl.opengl.GL11;
 
+import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
@@ -27,8 +28,7 @@ public class GLFinalRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		//TODO this will be setting related, later
-		program.updateGamma(2.2f);
+		program.updateGamma(GLGraphicsHandler.gamma);
 		program.updateExposure(exposure);
 	}
 

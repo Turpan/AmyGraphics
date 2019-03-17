@@ -4,6 +4,8 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 
+import org.lwjgl.opengl.GL11;
+
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
@@ -40,11 +42,13 @@ public class GLTextRenderer extends GLRenderer {
 
 	@Override
 	protected void globalSetup() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		glDisable(GL_DEPTH_TEST);
 	}
 
 	@Override
 	protected void resetGlobal() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 	}
 

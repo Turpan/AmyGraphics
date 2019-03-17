@@ -4,6 +4,7 @@ import amyGLGraphics.base.GLProgram;
 
 public class GLInterfaceProgram extends GLProgram {
 
+	int gammaLocation;
 	int colourRoutineLocation;
 
 	public GLInterfaceProgram() {
@@ -18,6 +19,11 @@ public class GLInterfaceProgram extends GLProgram {
 
 	protected void queryVariables() {
 		colourRoutineLocation = queryVariable("colourSelector");
+		gammaLocation = queryVariable("gamma");
+	}
+	
+	public void updateGamma(float gamma) {
+		updateFloat(gamma, gammaLocation);
 	}
 
 	public void useTexture(boolean useTexture) {

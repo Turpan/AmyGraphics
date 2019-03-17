@@ -34,6 +34,15 @@ public class FontTexture extends Texture {
 		this.character = 'a';
 	}
 
+	public FontTexture(FontTexture texture) {
+		super(texture);
+		
+		this.font = texture.font;
+		this.glyphs = texture.glyphs;
+		
+		this.character = 'a';
+	}
+
 	public Font getFont() {
 		return font;
 	}
@@ -92,7 +101,7 @@ public class FontTexture extends Texture {
 			font = new Font(Font.SERIF, Font.PLAIN, 20);
 		}
 
-		return font.deriveFont(100f);
+		return font.deriveFont(200f);
 	}
 
 	public static FontTexture createFontTexture(String fontFile, boolean antiAlias) {

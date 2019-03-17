@@ -13,13 +13,15 @@ public class GLGraphicsHandler extends GraphicsHandler {
 	public static final int viewHeight = 4000;
 	public static final int viewDepth = 4000;
 
-	public static final int interfaceWidth = 640;
-	public static final int interfaceHeight = 360;
+	public static final int interfaceWidth = 480;
+	public static final int interfaceHeight = 270;
 	//public static final int interfaceWidth = 4000;
 	//public static final int interfaceHeight = 4000;
 
 	public static final int shadowWidth = 1536;
 	public static final int shadowHeight = 1536;
+	
+	public static final float gamma = 2.2f;
 
 	public GLGraphicsHandler() {
 		roomHandler = new GLRoomHandler();

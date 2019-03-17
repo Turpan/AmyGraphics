@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.lwjgl.opengl.GL11;
+
 import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGraphics.Texture;
@@ -63,6 +65,10 @@ public class GLScene {
 
 	protected void createComponent(Component component) {
 		for (var texture : component.getTextures()) {
+			if (texture == null) {
+				continue;
+			}
+			
 			createInterfaceTexture(texture);
 		}
 
@@ -74,6 +80,7 @@ public class GLScene {
 	protected void createInterfaceTexture(Texture texture) {
 		if (!GLTextureCache.hasInterfaceTexture(texture.getSprite())) {
 			GLTexture2D gltexture = new GLTexture2D(texture.getSprite());
+			gltexture.changeFiltering(GL11.GL_NEAREST);
 			GLTextureCache.addInterfaceTexture(texture.getSprite(), gltexture);
 		}
 	}
@@ -126,6 +133,9 @@ public class GLScene {
 		for (var testedcomponent : scene.getRenderOrder()) {
 			if (testedcomponent != component) {
 				for (var testedtexture : testedcomponent.getTextures()) {
+					if (testedtexture == null || texture == null) {
+						continue;
+					}
 					if (testedtexture.getSprite() == texture.getSprite()) {
 						return true;
 					}
