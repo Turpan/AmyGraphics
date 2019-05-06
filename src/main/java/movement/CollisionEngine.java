@@ -96,6 +96,7 @@ public class CollisionEngine {
 			var object2 = eL.get(i);
 			if (checkBoundsCollision(object1, object2)) {
 				addToCollisionGraph(object1,object2);
+				
 			}
 		}
 	}
@@ -107,16 +108,26 @@ public class CollisionEngine {
 	}
 	private void addToCollisionGraph(Movable object1, Collidable object2) {
 		var collisionLocation2in1 = object1.getOutline().exactCollisionPosition(object2.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
-		var collisionLocation1in2 = object2.getOutline().exactCollisionPosition(object1.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object2, object1));
-		if (collisionLocation1in2 != null && collisionLocation2in1 != null) {
-			double[][] edge1to2 = {collisionLocation2in1, collisionLocation1in2};
-			double[][] edge2to1 = {collisionLocation1in2, collisionLocation2in1};
-			getPoC().addEdge(object1, object2, edge1to2);
-			getPoC().addEdge(object2, object1, edge2to1);
+		System.out.println("/////////////////");
+		System.out.println(Arrays.toString(collisionLocation2in1));
+		if (object1.getOutline().inside(collisionLocation2in1)) {
+			System.out.println("first passed");
+			var collisionLocation1in2 = object2.getOutline().exactCollisionPosition(object1.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object2, object1));
+			System.out.println(Arrays.toString(collisionLocation1in2));
+			if (object2.getOutline().inside(collisionLocation2in1)) {
+				System.out.println("2nd passed");
+				double[][] edge1to2 = {collisionLocation2in1, collisionLocation1in2};
+				double[][] edge2to1 = {collisionLocation1in2, collisionLocation2in1};
+				getPoC().addEdge(object1, object2, edge1to2);
+				getPoC().addEdge(object2, object1, edge2to1);
+			}
 		}
 	}
 
 	private void moveableCollision(Movable object1, Movable object2, double[][] collisionLocations) {
+		
+		object1.extraCollisionEffect(object2);
+		object2.extraCollisionEffect(object1);
 		
 		var normal1 = object1.getOutline().getNormal(collisionLocations[0]);
 		var normal2 = object2.getOutline().getNormal(collisionLocations[1]);
@@ -137,7 +148,7 @@ public class CollisionEngine {
 		//assures that if the object gets in, it gets teleported immediately out
 		//ignores 'ghost' components of the movable. 
 		var collisionLocation1in2 = object1.getCorporealOutline().exactCollisionPosition(object2.getCorporealOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
-		if (collisionLocation1in2 != null) {
+		if (object1.getCorporealOutline().inside(collisionLocation1in2)) {
 			var relativeEdgeLocation1in2 = relativeLocation(object1.getOutline().pointOnEdge(collisionLocation1in2), object1, object2);
 			double distance;
 			if (object2.getCorporealOutline().inside(relativeEdgeLocation1in2)){
@@ -151,20 +162,18 @@ public class CollisionEngine {
 		}
 	}
 	private void obstacleCollision(Obstacle o, Movable m, double[][] collisionLocations) {
-
+		
 		var normalObstacle = o.getOutline().getNormal(collisionLocations[0]);
 		var outputForce = Vector.vectorMovingWith(m.getVelocity(), normalObstacle) ?
-				new Vector() :
+				new Vector(new double[]{0,0,0}) :
 				new Vector((1+m.getCoR() * o.getCoR()) *Vector.getComponentParallel(m.getVelocity(), normalObstacle) * (1/Movable.TIMESCALE) *m.getMass()
 						,normalObstacle.getDirection());
-
 		m.applyForce(outputForce);
-		
 		//assures that if the object gets in, it gets teleported immediately out
 		var collisionLocationOinM = m.getCorporealOutline().exactCollisionPosition(o.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],m, o));
-		if (collisionLocationOinM != null) {
-			var relativeEdgeCollisionLocation = relativeLocation(m.getOutline().pointOnEdge(collisionLocationOinM), m, o);
-			double distanceEdgeIn = o.getOutline().distanceIn(relativeEdgeCollisionLocation);
+		if (m.getCorporealOutline().inside(collisionLocationOinM)) {
+			o.collision(m);
+			double distanceEdgeIn = m.getOutline().distanceIn(collisionLocationOinM);
 			if (distanceEdgeIn>teleportOutBuffer ) {
 				m.move(new Vector(distanceEdgeIn-teleportOutBuffer, normalObstacle.getDirection()));
 			}
@@ -220,16 +229,16 @@ public class CollisionEngine {
 			for (Collidable collidee : getPoC().getVerticesConnectedTo(collider)) {
 				collideeNormal = collidee.getOutline().getNormal(getPoC().getEdgeValue(collidee, collider)[0]);
 				if (getObstacleList().contains(collidee)){
-					if (Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
+					if (!Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
 						collider.applyForce(new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));
 					}
 				}else if (collisionOrder.indexOf(collider)< collisionOrder.indexOf(collidee)) {
-					if (Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
+					if (!Vector.vectorMovingWith(collider.getActiveForce(), collideeNormal)){
 						collider.applyForce( new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), collideeNormal.getDirection()));
 						((Movable) collidee).applyForce(new Vector(Vector.getComponentParallel(collider.getActiveForce(), collideeNormal), Vector.directionOfReverse(collideeNormal)));
 					}
 					colliderNormal = collider.getOutline().getNormal(getPoC().getEdgeValue(collidee, collider)[1]);
-					if (Vector.vectorMovingWith(((Movable)collidee).getActiveForce()  ,colliderNormal)){
+					if (!Vector.vectorMovingWith(((Movable)collidee).getActiveForce()  ,colliderNormal)){
 						((Movable) collidee).applyForce( new Vector(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), colliderNormal.getDirection()));
 						collider.applyForce( new Vector(Vector.getComponentParallel(((Movable) collidee).getActiveForce(), colliderNormal), Vector.directionOfReverse(colliderNormal)));
 					}
