@@ -1,9 +1,11 @@
 package movement.Shapes;
 
+import java.util.Arrays;
+
 import movement.mathDS.Vector;
 
-public class Ellipse extends StandardShape{
-
+public class Ellipse extends OutlineShape{
+ 
 	public Ellipse (double[] dimensions) {
 		super(dimensions);
 
@@ -37,7 +39,7 @@ public class Ellipse extends StandardShape{
 		return alteredMagnitude<=1;
 	}
 	@Override
-	public double[] pointOnEdge(double[] position) {	//returns the point on the outer edge of the shape inline with this point & the centre
+	public double[] pointOnEdge(double[] position) {	//returns the (global) point on the outer edge of the shape inline with this point & the centre
 		double alteredMagnitude = 0;
 		var positionRelativeShape = unrotatePoint(position);
 		for (int i = 0 ; i<Vector.DIMENSIONS;i++) {
@@ -49,14 +51,6 @@ public class Ellipse extends StandardShape{
 			output[i] =(positionRelativeShape[i] - getDimensions()[i]/2) / alteredMagnitude + getDimensions()[i]/2 ;
 		}
 		return rotatePoint(output);
-	}
-	@Override
-	protected boolean inCollisionNet(double[] point) {
-		double sum = 0;
-		for (int i = 0;i<Vector.DIMENSIONS;i++) {
-			sum += Math.pow(point[i] - getDimensions()[i]/2,2) / Math.pow((getDimensions()[i]/2),2);
-		}
-		return sum<=1 && sum>=0.5;
 	}
 	@Override
 	public Ellipse clone() {
