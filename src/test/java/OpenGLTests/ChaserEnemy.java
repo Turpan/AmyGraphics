@@ -83,13 +83,13 @@ public class ChaserEnemy extends Enemy {
 
 	}
 	@Override
-	public void collision(Obstacle o) {
+	public void extraCollisionEffect(Movable m) {
 		// TODO Auto-generated method stub
 
 	}
 	@Override
-	public void collision(Movable m, double[] collisionLocationInThis) {
+	protected void applyCollisionEffect(Movable m) {
 		// TODO Auto-generated method stub
-
+		
 	}
 }

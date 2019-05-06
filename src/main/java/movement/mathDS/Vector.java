@@ -76,12 +76,10 @@ public class Vector {
 			check += tmp[i]*tmp[i];
 			output[i] = magnitude * tmp[i];
 		}
-		if (check<0.98||check>1.02) {//technically, should equal 1, but slight rounding errors, working with irrational numbers converted to decimal.
-			
+		if (check<0.999||check>1.001) {//technically, should equal 1, but slight rounding errors, working with irrational numbers converted to decimal.
 			for (int i = 0; i<DIMENSIONS;i++) {
-				tmp[i] = tmp[i]/check;
+				output[i] /= check;
 			}
-			setDirection(tmp);
 		}
 		setComponents(output);
 	}

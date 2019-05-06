@@ -80,9 +80,6 @@ public class GraphicsTestEnvironment {
 
 	protected List<Room> getRooms() {
 		List<Room> rooms = new ArrayList<Room>();
-		Room room = new TyroneRoom();
-
-		rooms.add(room);
 		return rooms;
 	}
 

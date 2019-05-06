@@ -10,9 +10,9 @@ import movement.mathDS.Vector;
 public abstract class Entity {
 	private double[] position;
 	private double[] dimensions;
-	private double[] rotationAxis = {1,0,0};		//axis/angle bitchhhhh
-	private double[] centreOfRotation = {0,0,0};
-	private double angle = 0;							//just a set of default values. Not a big deal because angle is 0.
+	protected double[] rotationAxis = {1,0,0};		//axis/angle bitchhhhh
+	protected double[] centreOfRotation = {0,0,0};
+	protected double angle = 0;							//just a set of default values. Not a big deal because angle is 0.
 		
 	private Texture activeTexture;
 	private List<Texture> textures = new ArrayList<Texture>();

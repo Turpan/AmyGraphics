@@ -2,12 +2,15 @@ package movement.Shapes;
 
 import movement.mathDS.Vector;
 
-public abstract class OutlineShape {
-	private double[] dimensions;
+public abstract class OutlineShape {				//All outline shapes have (and must have) "postive curvature" nothing more curved in than a flat plane. 
+	private double[] dimensions;					//Ellipses, rectangles are in. A bowl is not.
 	private double[] rotationAxis = {1,0,0};		
-	private double angle = 0;
-	private double[] centreOfRotation = {0,0,0};
+	private double angle = 0;						//I should mention somewhere a point of nomenclature. When I say a point relative a shape, generally I mean it hasn't
+	private double[] centreOfRotation = {0,0,0};	//been reotated. Such a point can't be used relative other shapes. Global points /have/ been rotated.
 	
+	public OutlineShape(double[] dimensions) {
+		this.dimensions = dimensions;
+	}
 	public OutlineShape() {}
 	public OutlineShape(OutlineShape outlineShape) {
 		setDimensions(dimensions.clone());
@@ -68,7 +71,7 @@ public abstract class OutlineShape {
 	public void setCentreOfRotation(double[] centreOfRotation) {
 		this.centreOfRotation = centreOfRotation;
 	}
-	public double[] rotatePoint(double[] positionOnEntity) {
+	public double[] rotatePoint(double[] positionOnEntity) {	//in : relative point 	out : global point
 		var cmpnts = new double[Vector.DIMENSIONS];
 		for (int i = 0; i< Vector.DIMENSIONS; i++) {
 			cmpnts[i] = positionOnEntity[i] - getCentreOfRotation()[i];
@@ -88,7 +91,7 @@ public abstract class OutlineShape {
 		}
 		var positionVector = new Vector(cmpnts);
 		var rotationVector = new Vector(getRotationAxis());
-		var output = Vector.addVectors(Vector.scalarMultiply(positionVector, Math.cos(-getAngle())), Vector.scalarMultiply(Vector.crossProduct(positionVector, rotationVector), Math.sin(-getAngle())), Vector.scalarMultiply(rotationVector, (1 - Math.cos(-getAngle())) * Vector.dotProduct(rotationVector, positionVector))).getComponents(); 
+		var output = Vector.addVectors(Vector.scalarMultiply(positionVector, Math.cos(getAngle())), Vector.scalarMultiply(Vector.crossProduct(positionVector, rotationVector), Math.sin(-getAngle())), Vector.scalarMultiply(rotationVector, (1 - Math.cos(getAngle())) * Vector.dotProduct(rotationVector, positionVector))).getComponents(); 
 		for (int i = 0; i< Vector.DIMENSIONS; i++) {
 			output[i] += getCentreOfRotation()[i];
 		}
@@ -97,8 +100,23 @@ public abstract class OutlineShape {
 	
 	public abstract Vector getNormal(double[] position); //normal of the shape at a point.
 	public abstract boolean inside(double[] position);
-	public abstract double[] exactCollisionPosition(OutlineShape collider, double[] relativePosition);
 	public abstract double[] pointOnEdge(double[] position);
+	
+	public double[] exactCollisionPosition(OutlineShape collider, double[] relativePositionCollideeToCollider) {	//returns the point nearest the collision, 
+		double[] thisCentre = new double[3];														//relative to collidees position, BUT in global coords.
+		for (int i = 0; i < 3; i++) {
+			thisCentre[i] = getDimensions()[i]/2;
+		}
+		thisCentre = rotatePoint(thisCentre);
+		for (int i = 0; i < 3; i++) {
+			thisCentre[i] += relativePositionCollideeToCollider[i];
+		}
+		var collisionPoint= collider.pointOnEdge(thisCentre);
+		for (int i = 0; i < 3; i++) {
+			collisionPoint[i] -= relativePositionCollideeToCollider[i];
+		}
+		return collisionPoint;
+	}
 	
 	public double distanceIn(double[] position) {//returns a negative value for values outside of the shape
 		var edgePosition = pointOnEdge(position);

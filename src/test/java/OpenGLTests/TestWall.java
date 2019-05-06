@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import amyGraphics.Texture;
 import movement.Movable;
 import movement.Obstacle;
-import movement.Shapes.BigRectangle;
+import movement.Shapes.Rectangle;
 
 public class TestWall extends Obstacle {
 
@@ -43,7 +43,7 @@ public class TestWall extends Obstacle {
 			System.exit(1);
 		}
 		setDimensions(new double[] {50,600,700});
-		setOutline(new BigRectangle(getDimensions()));
+		setOutline(new Rectangle(getDimensions()));
 
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
@@ -59,7 +59,7 @@ public class TestWall extends Obstacle {
 			System.exit(1);
 		}
 		setDimensions(new double[] {600,50,700});
-		setOutline(new BigRectangle(getDimensions()));
+		setOutline(new Rectangle(getDimensions()));
 
 		Texture texture = new Texture(img);
 		texture.setWidth(img.getWidth());
@@ -69,7 +69,7 @@ public class TestWall extends Obstacle {
 	}
 
 	@Override
-	public void collision(Movable m, double[] collisionLocationInThis) {
+	public void collision(Movable m) {
 		// TODO Auto-generated method stub
 	}
 }
