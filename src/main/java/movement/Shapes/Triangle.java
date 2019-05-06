@@ -2,7 +2,7 @@ package movement.Shapes;
 
 import movement.mathDS.Vector;
 
-public class Triangle extends StandardShape {
+public class Triangle extends OutlineShape {
 	double[] dimensions;
 
 	public Triangle (double[] dimensions) {
@@ -32,12 +32,7 @@ public class Triangle extends StandardShape {
 		return 0;
 	}
 	@Override
-	protected boolean inCollisionNet(double[] point) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	@Override
-	public StandardShape clone() {
+	public Triangle clone() {
 		// TODO Auto-generated method stub
 		return null;
 	}
