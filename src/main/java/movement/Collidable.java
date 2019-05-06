@@ -2,9 +2,6 @@ package movement;
 
 import movement.Shapes.OutlineShape;
 
-//Collidables are entities that can exist as objects in the world that can be 
-//hysically interacted with. They require a functioning outlineShape.
-
 public abstract class Collidable extends Entity{
 	public Collidable() {
 	}
@@ -12,6 +9,7 @@ public abstract class Collidable extends Entity{
 		super(collidable);
 	}
 	
+	public abstract void collision(Movable m, double[] collisionLocationInThis);				//for extra collisional effects.
 	public abstract OutlineShape getOutline();
 	
 	@Override
