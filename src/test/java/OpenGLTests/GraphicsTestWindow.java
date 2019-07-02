@@ -68,6 +68,7 @@ public class GraphicsTestWindow extends GLWindow {
 	@Override
 	protected void setupInputCallback() {
 		GLFW.glfwSetCursorPosCallback(getWindow(), (window, xpos, ypos) -> {
+			mouseMovement(xpos, ypos);
 			mouseInput(xpos, ypos);
 		});
 		GLFW.glfwSetMouseButtonCallback(getWindow(), (long window, int button, int action, int mods) -> {
@@ -177,6 +178,24 @@ public class GraphicsTestWindow extends GLWindow {
 
 		MouseEvent event = new MouseEvent(x, y, mouseaction);
 
+		EventManager.getManagerInstance().addMouseEvent(event);
+	}
+	
+	private void mouseMovement(double posx, double posy) {
+		if (posx == lastX && posy == lastY || !displayCursor) {
+			return;
+		}
+		
+		double percentx = posx / width;
+		double percenty = posy / height;
+
+		int x = (int) (percentx * GLGraphicsHandler.interfaceWidth);
+		int y = (int) (percenty * GLGraphicsHandler.interfaceHeight);
+		
+		MouseEventAction mouseaction = MouseEventAction.MOVEMENT;
+		
+		MouseEvent event = new MouseEvent(x, y, mouseaction);
+		
 		EventManager.getManagerInstance().addMouseEvent(event);
 	}
 

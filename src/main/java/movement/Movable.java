@@ -46,6 +46,7 @@ public abstract class Movable extends Collidable{
 
 	private int state = 0;			//for when movables want to swap between a few things.
 	
+	private List<Collidable> hitByCurrentAbility = new ArrayList<Collidable>();
 	
 	public Movable() {
 	}
@@ -267,13 +268,20 @@ public abstract class Movable extends Collidable{
 	
 	public void extraCollisionEffect(Movable m) {
 		var relativePosition = new double[3];
-		for (int i = 0; i<3;i++) {
-			relativePosition[i] = getPosition()[i]-m.getPosition()[i];
-		}
-		if (m.getOutline().inside(m.getCorporealOutline().exactCollisionPosition(getActiveOutline(), relativePosition))) {
-			applyCollisionEffect(m);
+		if (!hitByCurrentAbility.contains(m)) {
+			hitByCurrentAbility.add(m);
+			for (int i = 0; i<3;i++) {
+				relativePosition[i] = getPosition()[i]-m.getPosition()[i];
+			}
+			if (m.getOutline().inside(m.getCorporealOutline().exactCollisionPosition(getActiveOutline(), relativePosition))) {
+				applyCollisionEffect(m);
+			}
 		}
 	}
+	public void resetAbilityHits() {	//basically just ensures that each ability only hits an enemy once. If an ability is to allow multiple hits, just call this multiple times.
+		hitByCurrentAbility.clear();
+	}
+	
 	protected abstract void applyCollisionEffect(Movable m);
 	
 	protected void moveTick() {

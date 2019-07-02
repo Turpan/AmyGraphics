@@ -108,14 +108,9 @@ public class CollisionEngine {
 	}
 	private void addToCollisionGraph(Movable object1, Collidable object2) {
 		var collisionLocation2in1 = object1.getOutline().exactCollisionPosition(object2.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object1, object2));
-		System.out.println("/////////////////");
-		System.out.println(Arrays.toString(collisionLocation2in1));
 		if (object1.getOutline().inside(collisionLocation2in1)) {
-			System.out.println("first passed");
 			var collisionLocation1in2 = object2.getOutline().exactCollisionPosition(object1.getOutline(), relativeLocation(new double[Vector.DIMENSIONS],object2, object1));
-			System.out.println(Arrays.toString(collisionLocation1in2));
 			if (object2.getOutline().inside(collisionLocation2in1)) {
-				System.out.println("2nd passed");
 				double[][] edge1to2 = {collisionLocation2in1, collisionLocation1in2};
 				double[][] edge2to1 = {collisionLocation1in2, collisionLocation2in1};
 				getPoC().addEdge(object1, object2, edge1to2);
