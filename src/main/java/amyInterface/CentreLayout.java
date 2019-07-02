@@ -28,8 +28,8 @@ public class CentreLayout extends Layout {
 			child.setX(parent.getX());
 			child.setY(parent.getY());
 
-			parent.setPreferredWidth(child.getWidth());
-			parent.setPreferredHeight(child.getHeight());
+			if (parent.getPreferredWidth() < child.getWidth()) parent.setPreferredWidth(child.getWidth());
+			if (parent.getPreferredHeight() < child.getHeight()) parent.setPreferredHeight(child.getHeight());
 
 			child.setWidth(parent.getWidth());
 			child.setHeight(parent.getHeight());

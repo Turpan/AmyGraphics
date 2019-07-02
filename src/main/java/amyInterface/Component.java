@@ -163,14 +163,6 @@ public class Component {
 		return textures;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-
 	public boolean isVisible() {
 		return visible;
 	}
@@ -216,7 +208,7 @@ public class Component {
 			return clickSource;
 		}
 
-		if (isEnabled() && isVisible() && clickInBounds(event.getX(), event.getY())) {
+		if (isInteractable() && isVisible() && clickInBounds(event.getX(), event.getY())) {
 			clickSource = this;
 		} else {
 			clickSource = null;

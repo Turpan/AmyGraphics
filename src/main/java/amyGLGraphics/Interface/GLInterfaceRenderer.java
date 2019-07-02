@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.lwjgl.opengl.GL11;
 
+import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.base.GLProgram;
 import amyGLGraphics.base.GLRenderer;
@@ -21,8 +22,7 @@ public class GLInterfaceRenderer extends GLRenderer {
 
 	@Override
 	protected void updateUniversalUniforms() {
-		// TODO Auto-generated method stub
-
+		program.updateGamma(GLGraphicsHandler.gamma);
 	}
 
 	@Override

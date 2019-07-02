@@ -7,6 +7,8 @@ import amyGLGraphics.IO.MouseEventAction;
 public class InterfaceController {
 
 	private Component root;
+	
+	private Component mouseOver;
 
 	private int tickCount;
 	private int tickThreshold;
@@ -52,11 +54,16 @@ public class InterfaceController {
 	protected Component processInput(MouseEvent event) {
 		Component clickSource = root.findMouseClick(event);
 
+		if (event.getMouseAction() == MouseEventAction.MOVEMENT) {
+			mouseOver(clickSource, event);
+		}
+		
 		if (clickSource == null) {
 			return clickSource;
 		}
 
-		if (clickSource instanceof Button) {
+		if (clickSource instanceof Button && event.getMouseAction() == MouseEventAction.PRESS
+				|| event.getMouseAction() == MouseEventAction.RELEASE) {
 			Button button = (Button) clickSource;
 
 			buttonClick(button, event);
@@ -70,6 +77,22 @@ public class InterfaceController {
 			button.setPressed(true);
 		} else if (event.getMouseAction() == MouseEventAction.RELEASE) {
 			button.setPressed(false);
+		}
+	}
+	
+	protected void mouseOver(Component component, MouseEvent event) {
+		if (component != mouseOver) {
+			if (mouseOver instanceof Hoverable) {
+				Hoverable target = (Hoverable) mouseOver;
+				target.mouseOff();
+			}
+			
+			mouseOver = component;
+			
+			if (mouseOver instanceof Hoverable) {
+				Hoverable target = (Hoverable) mouseOver;
+				target.mouseOn();
+			}
 		}
 	}
 

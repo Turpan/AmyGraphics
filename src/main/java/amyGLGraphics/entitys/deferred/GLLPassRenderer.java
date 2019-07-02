@@ -233,6 +233,8 @@ public class GLLPassRenderer extends GLRenderer {
 	private Vector3f getLightDirection(Light light) {
 		Vector3f position = getLightPosition(dirLightObject);
 		Vector3f origin = new Vector3f(0.0f);
+		
+		System.out.println(position.x);
 
 		Vector3f direction = origin.sub(position);
 		direction = direction.normalize();

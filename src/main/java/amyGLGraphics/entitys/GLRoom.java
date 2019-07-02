@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,9 @@ public class GLRoom implements RoomListener {
 	private GLFrameBufferDisplay background = new GLFrameBufferDisplay();
 
 	private Map<Light, GLPointDepthRenderer> lightDepthMap = new HashMap<Light, GLPointDepthRenderer>();
+	
+	private List<Entity> toAdd = new ArrayList<Entity>();
+	private List<Entity> toRemove = new ArrayList<Entity>();
 
 	Room room;
 
@@ -55,6 +59,22 @@ public class GLRoom implements RoomListener {
 		addEntity(room.getContents());
 		for (BufferedImage[] background : room.getBackgrounds()) {
 			addBackground(background);
+		}
+	}
+	
+	public void resolveQueue() {
+		Iterator<Entity> addIter = toAdd.iterator();
+		while (addIter.hasNext()) {
+			Entity entity = addIter.next();
+			addEntity(entity);
+			addIter.remove();
+		}
+		
+		Iterator<Entity> removeIter = toRemove.iterator();
+		while (removeIter.hasNext()) {
+			Entity entity = removeIter.next();
+			removeEntity(entity);
+			removeIter.remove();
 		}
 	}
 
@@ -285,12 +305,12 @@ public class GLRoom implements RoomListener {
 
 	@Override
 	public void entityAdded(Entity entity) {
-		addEntity(entity);
+		toAdd.add(entity);
 	}
 
 	@Override
 	public void entityRemoved(Entity entity) {
-		removeEntity(entity);
+		toRemove.remove(entity);
 	}
 
 	@Override

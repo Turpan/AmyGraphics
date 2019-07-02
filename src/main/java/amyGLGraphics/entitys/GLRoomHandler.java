@@ -109,6 +109,7 @@ public class GLRoomHandler extends RoomHandler {
 			clearBuffer(postProcessingBuffer2);
 			
 			GLRoom glRoom = roomObjects.get(getActiveRoom());
+			glRoom.resolveQueue();
 
 			List<GLObject> entitys = new ArrayList<GLObject>();
 
