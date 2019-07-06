@@ -29,6 +29,8 @@ public class Component {
 
 	private Texture activeTexture;
 	private Color colour = BASE;
+	
+	private float alpha = 1.0f;
 
 	private boolean enabled;
 	private boolean visible;
@@ -161,6 +163,14 @@ public class Component {
 
 	public List<Texture> getTextures() {
 		return textures;
+	}
+	
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+	
+	public float getAlpha() {
+		return alpha;
 	}
 
 	public boolean isVisible() {
