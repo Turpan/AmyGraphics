@@ -2,99 +2,71 @@ package lucyAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 
 public class AnimRenderer extends Canvas {
-	private int selectedIndex = -1;
-	private int width;
+	
 	private List<Image> frames = new ArrayList<Image>();
-
+	private int[] frameOrder = new int[] {0};
+	private Timer timer;
+	private float fps = 10.0f;
+	private int tickcount;
+	private int framePosition;
+	
 	public AnimRenderer() {
 		super();
 	}
+	
+	public void startRender() {
+		tickcount = 0;
+		framePosition = 0;
+		
+		if (fps <= 0.0f) {
+			fps = 10.0f;
+		}
+		
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
 
-	protected void drawImage() {
-		clearImage();
+			@Override
+			public void run() {
+				tick();
+			}
+			
+		}, 1, 1);
+		
 		setSize();
-		//program wont allow images with multiple sizes to get to this point
-		double imageWidth = frames.get(0).getWidth();
-		double imageHeight = frames.get(0).getHeight();
-
-		double x = 0;
-		double y = 0;
-		int count = 0;
-
-		GraphicsContext gc = getGraphicsContext2D();
-		gc.setFill(Color.BLACK);
-		gc.setStroke(Color.AZURE);
-
-		while (count < frames.size()) {
-			gc.drawImage(frames.get(count), x, y);
-			x += imageWidth;
-			if ((count+1) % width == 0) {
-				x = 0;
-				y += imageHeight;
-			}
-			count++;
-		}
-
-		for (int i=0; i<width - ((count) % width); i++) {
-			gc.fillRect(x, y, imageWidth, imageHeight);
-			x += imageWidth;
-		}
-
-		if (selectedIndex >= 0) {
-			drawHighlight();
-		}
+		drawFrame();
 	}
-
-	public void drawHighlight() {
-		GraphicsContext gc = getGraphicsContext2D();
-		gc.setFill(Color.AZURE);
-		gc.setStroke(Color.AZURE);
-
-		double imageWidth = frames.get(0).getWidth();
-		double imageHeight = frames.get(0).getHeight();
-
-		double x = 0;
-		double y = 0;
-		int count = 0;
-
-		while (count < frames.size()) {
-			if (count == selectedIndex) {
-				gc.strokeRect(x, y, imageWidth, imageHeight);
-				break;
-			}
-			x += imageWidth;
-			if ((count+1) % width == 0) {
-				x = 0;
-				y += imageHeight;
-			}
-
-			count++;
-
-		}
+	
+	public void stopRender() {
+		timer.cancel();
 	}
-
-	public void clearImage() {
+	
+	public void drawFrame() {
+		clearImage();
+		
+		GraphicsContext gc = getGraphicsContext2D();
+		if (frames.size() > 0) gc.drawImage(frames.get(framePosition), 0, 0);
+	}
+	
+	private void clearImage() {
 		GraphicsContext gc = getGraphicsContext2D();
 		gc.clearRect(0, 0, getWidth(), getHeight());
 	}
-
+	
 	private void setSize() {
 		double width;
 		double height;
 
 		if (frames.size() > 0) {
-			double imageWidth = frames.get(0).getWidth();
-			double imageHeight = frames.get(0).getHeight();
-
-			height = (Math.ceil(Math.abs((double) frames.size()/this.width))) * imageHeight;
-			width = imageWidth * this.width;
+			width = frames.get(0).getWidth();
+			height = frames.get(0).getHeight();
 		} else {
 			width = 0;
 			height = 0;
@@ -103,33 +75,31 @@ public class AnimRenderer extends Canvas {
 		setWidth(width);
 		setHeight(height);
 	}
-
-	public void setWidth(int width) {
-		this.width = width;
-		if (frames.size() > 0) {
-			drawImage();
-		} else {
-			setSize();
-			clearImage();
-		}
-	}
-
-	public int getFrameWidth() {
-		return width;
-	}
-
+	
 	public void setFrames(List<Image> frames) {
 		this.frames = frames;
-		if (frames.size() > 0) {
-			drawImage();
-		} else {
-			clearImage();
+	}
+	
+	public void setFrameOrder(int[] frameOrder) {
+		if (frameOrder == null || frameOrder.length <= 0) {
+			frameOrder = new int[] {0};
+		}
+		
+		this.frameOrder = frameOrder;
+	}
+	
+	public void setFPS(float fps) {
+		this.fps = fps;
+	}
+	
+	public void tick() {
+		tickcount++;
+		
+		if (tickcount == (1000 / fps)) {
+			framePosition++;
+			if (framePosition >= frameOrder.length) framePosition = 0;
+			tickcount = 0;
+			drawFrame();
 		}
 	}
-
-	public void setSelected(int index) {
-		this.selectedIndex = index;
-		drawImage();
-	}
-
 }

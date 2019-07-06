@@ -27,10 +27,11 @@ import javafx.scene.layout.VBox;
 public class LucyGUI extends HBox{
 
 	static final Color clearColor = Color.BLACK;
-
-	private AnimRenderer renderer;
+	
+	private SheetRenderer renderer;
 	private FramePanel panel;
 	private OrderManager orderManager;
+	private AnimRenderer animRenderer;
 	private List<WorkingFrame> frameList;
 	private int selected = -1;
 
@@ -42,8 +43,9 @@ public class LucyGUI extends HBox{
 
 	private void createComponents() {
 		orderManager = new OrderManager();
+		animRenderer = new AnimRenderer();
 
-		renderer = new AnimRenderer();
+		renderer = new SheetRenderer();
 		VBox imBox = new VBox();
 		imBox.getChildren().add(renderer);
 		getChildren().add(imBox);
@@ -74,6 +76,8 @@ public class LucyGUI extends HBox{
 		Optional<ButtonType> result = orderBox.showAndWait();
 		if (result.get() != ButtonType.OK) {
 			orderManager.setOrder(backup);
+			
+			animRenderer.setFrameOrder(compileOrder());
 			return;
 		}
 
@@ -178,6 +182,7 @@ public class LucyGUI extends HBox{
 
 		update();
 		renderer.setWidth(width);
+		animRenderer.setFrameOrder(anim.getFrameOrder());
 		orderManager.setOrder(orderList);
 		LucyMain.resizeCall();
 		LucyMain.setUnsaved(false);
@@ -192,6 +197,7 @@ public class LucyGUI extends HBox{
 		renderer.setFrames(images);
 		panel.updateList(frameList);
 		orderManager.setFrames(frameList);
+		animRenderer.setFrames(images);
 	}
 
 	public boolean addFrame(File file) {
@@ -217,6 +223,20 @@ public class LucyGUI extends HBox{
 		update();
 
 		return true;
+	}
+	
+	public void renderAnimation() {
+		Alert orderBox = new Alert(AlertType.INFORMATION);
+		orderBox.setTitle("Animation Viewer");
+		orderBox.setGraphic(null);
+		orderBox.setHeaderText(null);
+		orderBox.getDialogPane().setContent(animRenderer);
+		
+		animRenderer.startRender();
+
+		orderBox.showAndWait();
+		
+		animRenderer.stopRender();
 	}
 
 	public void removeFrame(int i) {

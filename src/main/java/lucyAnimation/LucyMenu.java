@@ -10,6 +10,7 @@ public class LucyMenu extends MenuBar{
 
 	private Menu fileMenu;
 	private Menu editMenu;
+	private Menu viewMenu;
 
 	private MenuItem newAnim;
 	private MenuItem save;
@@ -20,6 +21,8 @@ public class LucyMenu extends MenuBar{
 	private MenuItem add;
 	private MenuItem width;
 	private MenuItem order;
+	
+	private MenuItem animRend;
 
 	public LucyMenu() {
 		super();
@@ -29,6 +32,7 @@ public class LucyMenu extends MenuBar{
 	private void createComponents() {
 		fileMenu = new Menu("File");
 		editMenu = new Menu("Edit");
+		viewMenu = new Menu("View");
 
 		newAnim = new MenuItem("New");
 		save = new MenuItem("Save");
@@ -39,12 +43,16 @@ public class LucyMenu extends MenuBar{
 		add = new MenuItem("Add Frame");
 		width = new MenuItem("Set Width");
 		order = new MenuItem("Configure Frame Order");
+		
+		animRend = new MenuItem("Animation");
 
 		fileMenu.getItems().addAll(newAnim, save, saveAs, load, exit);
 		editMenu.getItems().addAll(add, width, order);
+		viewMenu.getItems().addAll(animRend);
 
 		getMenus().add(fileMenu);
 		getMenus().add(editMenu);
+		getMenus().add(viewMenu);
 	}
 
 	public void setNewHandler(EventHandler<ActionEvent> handler) {
@@ -77,6 +85,10 @@ public class LucyMenu extends MenuBar{
 
 	public void setOrderHandler(EventHandler<ActionEvent> handler) {
 		order.setOnAction(handler);
+	}
+	
+	public void setAnimationHandler(EventHandler<ActionEvent> handler) {
+		animRend.setOnAction(handler);
 	}
 
 }

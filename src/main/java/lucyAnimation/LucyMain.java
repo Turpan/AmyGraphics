@@ -169,6 +169,10 @@ public class LucyMain extends Application{
 		menu.setOrderHandler((ActionEvent e) -> {
 			gui.editOrder();
 		});
+		
+		menu.setAnimationHandler((ActionEvent e) -> {
+			gui.renderAnimation();
+		});
 	}
 
 	private void displayFailure(boolean[] succ) {
