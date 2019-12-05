@@ -60,6 +60,8 @@ public class GLScene {
 		if (!GLTextureCache.hasFontTexture(texture.getSprite())) {
 			GLTexture2D gltexture = new GLTexture2D(texture.getSprite());
 			GLTextureCache.addFontTexture(texture.getSprite(), gltexture);
+		} else {
+			GLTextureCache.addFontTexture(texture.getSprite(), null);
 		}
 	}
 
@@ -82,6 +84,8 @@ public class GLScene {
 			GLTexture2D gltexture = new GLTexture2D(texture.getSprite());
 			gltexture.changeFiltering(GL11.GL_NEAREST);
 			GLTextureCache.addInterfaceTexture(texture.getSprite(), gltexture);
+		} else {
+			GLTextureCache.addInterfaceTexture(texture.getSprite(), null);
 		}
 	}
 
@@ -99,17 +103,19 @@ public class GLScene {
 	private void unbindComponent(Component component) {
 		unbindComponentBuffer(component);
 		for (var texture : component.getTextures()) {
-			if (!textureRemains(component, texture)) {
-				unbindTexture(texture);
-			}
+			//if (!textureRemains(component, texture)) {
+				//unbindTexture(texture);
+			//}
+			unbindTexture(texture);
 		}
 
 		if (component instanceof Label) {
 			Label label = (Label) component;
 
-			if (!fontTextureRemains(label)) {
-				unbindFontTexture(label.getFont());
-			}
+			//if (!fontTextureRemains(label)) {
+				
+			//}
+			unbindFontTexture(label.getFont());
 		}
 	}
 
@@ -118,18 +124,25 @@ public class GLScene {
 		glcomponent.unbindObject();
 	}
 	private void unbindTexture(Texture texture) {
-		GLTextureCache.getInterfaceTexture(texture.getSprite()).unbindTexture();
+		if (texture == null) return;
+		
+		//GLTexture2D gltexture = GLTextureCache.getInterfaceTexture(texture.getSprite());
+		//if (gltexture == null) return;
+		
+		//gltexture.unbindTexture();
 
 		GLTextureCache.removeInterfaceTexture(texture.getSprite());
 	}
 
 	private void unbindFontTexture(FontTexture texture) {
-		GLTextureCache.getFontTexture(texture.getSprite()).unbindTexture();
+		if (texture == null) return;
+		
+		//GLTextureCache.getFontTexture(texture.getSprite()).unbindTexture();
 
 		GLTextureCache.removeFontTexture(texture.getSprite());
 	}
 
-	private boolean textureRemains(Component component, Texture texture) {
+	/*private boolean textureRemains(Component component, Texture texture) {
 		for (var testedcomponent : scene.getRenderOrder()) {
 			if (testedcomponent != component) {
 				for (var testedtexture : testedcomponent.getTextures()) {
@@ -143,9 +156,9 @@ public class GLScene {
 			}
 		}
 		return false;
-	}
+	}*/
 
-	private boolean fontTextureRemains(Label label) {
+	/*private boolean fontTextureRemains(Label label) {
 		for (var testedcomponent : scene.getRenderOrder()) {
 			if (testedcomponent instanceof Label) {
 				Label testedlabel = (Label) testedcomponent;
@@ -156,6 +169,6 @@ public class GLScene {
 			}
 		}
 		return false;
-	}
+	}*/
 
 }

@@ -18,20 +18,27 @@ public class CentreLayout extends Layout {
 		child.setWidth(child.getPreferredWidth());
 		child.setHeight(child.getPreferredHeight());
 
-		if (child.getWidth() < parent.getWidth() && child.getHeight() < parent.getHeight()) {
+		if (child.getWidth() < parent.getWidth()) {
 			int x = (parent.getWidth() - child.getWidth()) / 2;
-			int y = (parent.getHeight() - child.getHeight()) / 2;
 
 			child.setX(x + parent.getX());
-			child.setY(y + parent.getY());
 		} else {
 			child.setX(parent.getX());
-			child.setY(parent.getY());
-
+			
 			if (parent.getPreferredWidth() < child.getWidth()) parent.setPreferredWidth(child.getWidth());
-			if (parent.getPreferredHeight() < child.getHeight()) parent.setPreferredHeight(child.getHeight());
-
+			
 			child.setWidth(parent.getWidth());
+		}
+		
+		if (child.getHeight() < parent.getHeight()) {
+			int y = (parent.getHeight() - child.getHeight()) / 2;
+			
+			child.setY(y + parent.getY());
+		} else {
+			child.setY(parent.getY());
+			
+			if (parent.getPreferredHeight() < child.getHeight()) parent.setPreferredHeight(child.getHeight());
+			
 			child.setHeight(parent.getHeight());
 		}
 

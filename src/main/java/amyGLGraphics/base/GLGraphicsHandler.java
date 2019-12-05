@@ -38,10 +38,4 @@ public class GLGraphicsHandler extends GraphicsHandler {
 		inter.unBindOpenGL();
 	}
 
-	public void setCamera(GLCamera camera) {
-		GLRoomHandler handler = (GLRoomHandler) roomHandler;
-
-		handler.setCamera(camera);
-	}
-
 }

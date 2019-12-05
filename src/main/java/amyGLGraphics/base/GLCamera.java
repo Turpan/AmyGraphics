@@ -227,6 +227,12 @@ public class GLCamera {
 	public Matrix4f getCameraMatrix() {
 		Vector3f result = new Vector3f();
 		centre.add(position, result);
-		return new Matrix4f().lookAt(position, result, orientation);
+		return new Matrix4f().lookAt(position, centre, orientation);
+		
+		/*Vector3f position = new Vector3f(0.0f, 0.0f, 1.0f);
+		Vector3f dir = new Vector3f(0.0f, -1.0f, 0.0f);
+		Vector3f orientation = new Vector3f(0.0f, 1.0f, 0.0f);
+		
+		return new Matrix4f().lookAt(position, dir, orientation);*/
 	}
 }

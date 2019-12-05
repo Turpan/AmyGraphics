@@ -32,6 +32,8 @@ public class GLText extends GLObject {
 	int lastY;
 	int lastRight;
 	int lastBottom;
+	
+	String lastText;
 
 	public GLText(Label label) {
 		this.label = label;
@@ -45,6 +47,8 @@ public class GLText extends GLObject {
 		lastY = label.getY();
 		lastRight = label.getRight();
 		lastBottom = label.getBottom();
+		
+		lastText = label.getText();
 	}
 
 	private void createTexture() {
@@ -83,9 +87,18 @@ public class GLText extends GLObject {
 	@Override
 	public void update() {
 		boolean shouldUpdate = false;
+		
+		if (textChanged()) {
+			changeVertexCount();
+			calculateVertices();
+			calculateTexture();
+			replaceBuffer();
+			return;
+		}
 
 		if (hasMoved()) {
 			calculateVertices();
+			calculateTexture();
 			shouldUpdate = true;
 		}
 
@@ -136,6 +149,48 @@ public class GLText extends GLObject {
 			calculateTexture(letter, index);
 
 			index+=4;
+		}
+		
+		if (label.getLetters().size() <= 0) {
+			for (int i=0; i<4; i++) {
+				var vertex = new GLVertex();
+
+				vertices.add(vertex);
+			}
+		}
+	}
+	
+	private void changeVertexCount() {
+		int requiredVertexCount = label.getLetters().size() * 4;
+		
+		requiredVertexCount = Math.max(requiredVertexCount, 4);
+		
+		boolean update = true;
+		
+		if (requiredVertexCount < vertices.size()) {
+			vertices.subList(requiredVertexCount, vertices.size()).clear();
+		} else if (requiredVertexCount > vertices.size()) {
+			requiredVertexCount -= vertices.size();
+			
+			for (int i=0; i<requiredVertexCount; i++) {
+				var vertex = new GLVertex();
+
+				vertices.add(vertex);
+			}
+		} else {
+			update = false;
+		}
+		
+		if (update) updateOrderBuffer();
+	}
+	
+	private void calculateTexture() {
+		int index = 0;
+		
+		for (Component letter : label.getLetters()) {
+			calculateTexture(letter, index);
+			
+			index += 4;
 		}
 	}
 
@@ -226,6 +281,16 @@ public class GLText extends GLObject {
 
 		return moved;
 	}
+	
+	protected boolean textChanged() {
+		if (label.getText() == null) return false;
+		
+		boolean changed = !(label.getText().equals(lastText));
+		
+		lastText = label.getText();
+		
+		return changed;
+	}
 
 	@Override
 	protected void calculateVertices() {
@@ -248,6 +313,9 @@ public class GLText extends GLObject {
 			float fy = calculateRelativePosition(y, viewHeight);
 			float fr = calculateRelativePosition(right, viewWidth);
 			float fb = calculateRelativePosition(bottom, viewHeight);
+			
+			if (index >= vertices.size()) changeVertexCount();
+			
 			vertices.get(index).setXY(fx, flip(fy));
 			vertices.get(index+1).setXY(fr, flip(fy));
 			vertices.get(index+2).setXY(fx, flip(fb));

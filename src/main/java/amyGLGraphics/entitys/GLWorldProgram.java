@@ -11,8 +11,11 @@ public class GLWorldProgram extends GLProgram{
 	public static final float FAR = 20f;
 	public static final float FOV = (float) Math.toRadians(90f);
 	
+	//private static final Matrix4f perspective
+	//= new Matrix4f().perspective(FOV, RATIO, NEAR, FAR);
+	
 	private static final Matrix4f perspective
-	= new Matrix4f().perspective(FOV, RATIO, NEAR, FAR);
+	= new Matrix4f().ortho(-RATIO, RATIO, -1, 1, NEAR, FAR);
 
 	private int modelLocation;
 	private int viewLocation;

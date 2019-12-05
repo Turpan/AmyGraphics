@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
@@ -15,6 +16,8 @@ import amyGLGraphics.GLTexture2D;
 import amyGLGraphics.GLTextureCache;
 import amyGLGraphics.GLTextureCube;
 import amyGLGraphics.IO.GraphicsUtils;
+import amyGLGraphics.base.GLCamera;
+import amyGLGraphics.base.GLGraphicsHandler;
 import amyGLGraphics.base.GLObject;
 import amyGLGraphics.debug.GLFrameBufferDisplay;
 import amyGraphics.Texture;
@@ -39,6 +42,8 @@ public class GLRoom implements RoomListener {
 	
 	private List<Entity> toAdd = new ArrayList<Entity>();
 	private List<Entity> toRemove = new ArrayList<Entity>();
+	
+	private GLCamera camera = new GLCamera();
 
 	Room room;
 
@@ -77,6 +82,28 @@ public class GLRoom implements RoomListener {
 			removeIter.remove();
 		}
 	}
+	
+	public void updateCamera() {
+		double[] position = room.getCameraPosition();
+		double[] centre = room.getCameraCentre();
+		
+		float positionx = (float) (position[0] / GLGraphicsHandler.viewWidth);
+		float positiony = (float) (position[1] / GLGraphicsHandler.viewHeight);
+		float positionz = (float) (position[2] / GLGraphicsHandler.viewDepth);
+		
+		float centrex = (float) (centre[0] / GLGraphicsHandler.viewWidth);
+		float centrey = (float) (centre[1] / GLGraphicsHandler.viewHeight);
+		float centrez = (float) (centre[2] / GLGraphicsHandler.viewDepth);
+		
+		Vector3f positionv = new Vector3f(positionx, positiony, positionz);
+		Vector3f centrev = new Vector3f(centrex, centrey, centrez);
+		
+		camera.setPosition(positionv);
+		camera.setCentre(centrev);
+		
+		System.out.println(positionx + ", " + positiony + ", " + positionz);
+		System.out.println(centrex + ", " + centrey + ", " + centrez);
+	}
 
 	public Room getRoom() {
 		return room;
@@ -110,6 +137,10 @@ public class GLRoom implements RoomListener {
 		} else {
 			return background;
 		}
+	}
+	
+	public GLCamera getCamera() {
+		return camera;
 	}
 
 	private void addEntity(Entity entity) {

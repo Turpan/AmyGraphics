@@ -25,6 +25,9 @@ public abstract class Room {
 	private CollisionEngine collisionEngine;
 
 	private int tickCount;
+	
+	private double cameraPosition[] = new double[3];
+	private double cameraCentre[] = new double[3];
 
 	public Room() {
 		backgrounds = new ArrayList<BufferedImage[]>();
@@ -107,6 +110,30 @@ public abstract class Room {
 	
 	public float getBackgroundBlend() {
 		return backgroundBlend;
+	}
+
+	public double[] getCameraPosition() {
+		return cameraPosition;
+	}
+
+	public void setCameraPosition(double[] cameraPosition) {
+		if (cameraPosition == null || cameraPosition.length != 3) {
+			return;
+		}
+		
+		this.cameraPosition = cameraPosition.clone();
+	}
+
+	public double[] getCameraCentre() {
+		return cameraCentre;
+	}
+
+	public void setCameraCentre(double[] cameraCentre) {
+		if (cameraCentre == null || cameraCentre.length != 3) {
+			return;
+		}
+		
+		this.cameraCentre = cameraCentre.clone();
 	}
 
 	public void addEntity(Entity entity) {

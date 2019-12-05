@@ -35,6 +35,7 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import amyGLGraphics.IO.GraphicsNotifier;
+import amyGLGraphics.IO.GraphicsQueue;
 import amyInterface.Component;
 import movement.Room;
 
@@ -108,12 +109,11 @@ public abstract class GLWindow implements Runnable {
 
 		GL.createCapabilities();
 		//Uncomment this for error callback
-		GLUtil.setupDebugMessageCallback();
+		//GLUtil.setupDebugMessageCallback();
 
 		setupGLSettings();
 
 		graphicsContext = new GLGraphicsHandler();
-		graphicsContext.setCamera(camera);
 
 		if (handler != null) {
 			handler.graphicsCreated();
@@ -128,6 +128,7 @@ public abstract class GLWindow implements Runnable {
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			// swap the buffers
+			resolveGraphicsQueue();
 			graphicsContext.render();
 			glfwSwapBuffers(window);
 			// Poll for window events. The key callback above will only be
@@ -147,6 +148,36 @@ public abstract class GLWindow implements Runnable {
 			glfwSetErrorCallback(null).free();
 		}
 		System.exit(0);
+	}
+	
+	protected void resolveGraphicsQueue() {
+		Room room;
+		while ((room = GraphicsQueue.getNextRoomToAdd()) != null) {
+			addRoom(room);
+		}
+		
+		while ((room = GraphicsQueue.getNextRoomToRemove()) != null) {
+			removeRoom(room);
+		}
+		
+		room = GraphicsQueue.getRoomToSwitch();
+		if (room != null) {
+			setActiveRoom(room);
+		}
+		
+		Component scene;
+		while((scene = GraphicsQueue.getNextSceneToAdd()) != null) {
+			addScene(scene);
+		}
+		
+		while ((scene = GraphicsQueue.getNextSceneToRemove()) != null) {
+			removeScene(scene);
+		}
+		
+		scene = GraphicsQueue.getSceneToSwitch();
+		if (scene != null) {
+			setActiveScene(scene);
+		}
 	}
 
 	protected abstract void setupWindowHints();

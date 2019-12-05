@@ -4,14 +4,18 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.util.Pair;
+
 public class GLTextureCache {
 	private static Map<BufferedImage[], GLTexture2D> backgroundTextureMap = new HashMap<BufferedImage[], GLTexture2D>();
 	private static Map<BufferedImage[], GLTextureCube> skyboxTextureMap = new HashMap<BufferedImage[], GLTextureCube>();
 	
 	private static Map<BufferedImage, GLTexture2D> diffuseTextureMap = new HashMap<BufferedImage, GLTexture2D>();
 
-	private static Map<BufferedImage, GLTexture2D> interfaceTextureMap = new HashMap<BufferedImage, GLTexture2D>();
-	private static Map<BufferedImage, GLTexture2D> fontTextureMap = new HashMap<BufferedImage, GLTexture2D>();
+	private static Map<BufferedImage, Pair<GLTexture2D, Integer>> 
+		interfaceTextureMap = new HashMap<BufferedImage, Pair<GLTexture2D, Integer>>();
+	private static Map<BufferedImage, Pair<GLTexture2D, Integer>>
+		fontTextureMap = new HashMap<BufferedImage, Pair<GLTexture2D, Integer>>();;
 	
 	public static void addBackground(BufferedImage[] key, GLTexture2D value) {
 		backgroundTextureMap.put(key, value);
@@ -54,23 +58,47 @@ public class GLTextureCache {
 	}
 
 	public static void addInterfaceTexture(BufferedImage key, GLTexture2D value) {
-		interfaceTextureMap.put(key, value);
+		Pair<GLTexture2D, Integer> pair;
+		
+		if (interfaceTextureMap.containsKey(key)) pair = interfaceTextureMap.get(key);
+		else pair = new Pair<GLTexture2D, Integer>(value, 0);
+		
+		int count = pair.getValue() + 1;
+		pair = new Pair<GLTexture2D, Integer>(pair.getKey(), count);
+		
+		interfaceTextureMap.put(key, pair);
 	}
 
 	public static void removeInterfaceTexture(BufferedImage key) {
-		interfaceTextureMap.remove(key);
+		Pair<GLTexture2D, Integer> pair = interfaceTextureMap.get(key);
+		
+		if (pair == null) return;
+		
+		int count = pair.getValue() - 1;
+		if (count <= 0) {
+			pair.getKey().unbindTexture();
+			interfaceTextureMap.remove(key);
+		} else {
+			GLTexture2D texture = pair.getKey();
+			pair = new Pair<GLTexture2D, Integer>(texture, count);
+			interfaceTextureMap.put(key, pair);
+		}
 	}
 
 	public static GLTexture2D getInterfaceTexture(BufferedImage key) {
-		return interfaceTextureMap.get(key);
+		if (!interfaceTextureMap.containsKey(key)) return null;
+		
+		return interfaceTextureMap.get(key).getKey();
 	}
 
 	public static boolean hasInterfaceTexture(BufferedImage key) {
 		return interfaceTextureMap.containsKey(key);
 	}
 
-	public static GLTexture2D getFontTexture(BufferedImage sprite) {
-		return fontTextureMap.get(sprite);
+	public static GLTexture2D getFontTexture(BufferedImage key) {
+		if (!fontTextureMap.containsKey(key)) return null;
+		
+		return fontTextureMap.get(key).getKey();
 	}
 
 	public static boolean hasFontTexture(BufferedImage sprite) {
@@ -78,10 +106,29 @@ public class GLTextureCache {
 	}
 
 	public static void addFontTexture(BufferedImage key, GLTexture2D value) {
-		fontTextureMap.put(key, value);
+		Pair<GLTexture2D, Integer> pair;
+		
+		if (fontTextureMap.containsKey(key)) pair = fontTextureMap.get(key);
+		else pair = new Pair<GLTexture2D, Integer>(value, 0);
+		
+		int count = pair.getValue() + 1;
+		pair = new Pair<GLTexture2D, Integer>(pair.getKey(), count);
+		
+		fontTextureMap.put(key, pair);
 	}
 
-	public static void removeFontTexture(BufferedImage sprite) {
-		fontTextureMap.remove(sprite);
+	public static void removeFontTexture(BufferedImage key) {
+		Pair<GLTexture2D, Integer> pair = fontTextureMap.get(key);
+		
+		if (pair == null) return;
+		
+		int count = pair.getValue() - 1;
+		if (count <= 0) {
+			fontTextureMap.remove(key);
+		} else {
+			GLTexture2D texture = pair.getKey();
+			pair = new Pair<GLTexture2D, Integer>(texture, count);
+			fontTextureMap.put(key, pair);
+		}
 	}
 }

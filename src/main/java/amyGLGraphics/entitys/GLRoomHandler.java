@@ -76,7 +76,7 @@ public class GLRoomHandler extends RoomHandler {
 	
 	private GLFxaaRenderer fxaaRenderer = new GLFxaaRenderer();
 
-	private GLCamera camera;
+	//private GLCamera camera;
 
 	public static boolean shadows = true;
 	public static boolean softShadows = false;
@@ -84,9 +84,11 @@ public class GLRoomHandler extends RoomHandler {
 	//TODO temp
 	public static boolean fxaa = false;
 	
-	public static boolean eyeAdaption = true;
+	public static boolean eyeAdaption = false;
 	
 	public static boolean ssao = true;
+	
+	public static boolean viewCulling = false;
 
 	public boolean renderNormals = false;
 	
@@ -102,14 +104,16 @@ public class GLRoomHandler extends RoomHandler {
 	@Override
 	public void renderRoom() {
 		if (hasActiveRoom()) {
-			camera.calculatePlane();
-			//fustrumObject.update(camera.getNearPlaneBounds(), camera.getFarPlaneBounds(), camera.getPlaneNormals());
-			
 			clearBuffer(postProcessingBuffer1);
 			clearBuffer(postProcessingBuffer2);
 			
 			GLRoom glRoom = roomObjects.get(getActiveRoom());
 			glRoom.resolveQueue();
+			glRoom.updateCamera();
+			
+			GLCamera camera = glRoom.getCamera();
+			camera.calculatePlane();
+			//fustrumObject.update(camera.getNearPlaneBounds(), camera.getFarPlaneBounds(), camera.getPlaneNormals());
 
 			List<GLObject> entitys = new ArrayList<GLObject>();
 
@@ -134,7 +138,9 @@ public class GLRoomHandler extends RoomHandler {
 				
 				if (isAffectedByLight(entity)) entitys.add(object);
 				
-				if (!camera.isInFustrum(object)) continue;
+				if (viewCulling) {
+					if (!camera.isInFustrum(object)) continue;
+				}
 				
 				if (isAffectedByLight(entity)) {
 					if (object.isSemiTransparent()) {
@@ -149,9 +155,9 @@ public class GLRoomHandler extends RoomHandler {
 				}
 			}
 
-			sortOpaque(opaque);
-			sortTransparent(transparent);
-			sortTransparent(semiTransparent);
+			sortOpaque(opaque, camera);
+			sortTransparent(transparent, camera);
+			sortTransparent(semiTransparent, camera);
 
 			if (shadows) {
 				dirDepthRenderer.setSoftShadow(softShadows);
@@ -179,8 +185,10 @@ public class GLRoomHandler extends RoomHandler {
 
 			entityRenderer.setShadow(shadows);
 			entityRenderer.setSoftShadow(softShadows);
+			entityRenderer.setCamera(camera);
 			
 			gPassRenderer.clearBuffer();
+			gPassRenderer.setCamera(camera);
 			gPassRenderer.render(opaque);
 			gPassRenderer.render(transparent);
 			
@@ -190,20 +198,24 @@ public class GLRoomHandler extends RoomHandler {
 			
 			lPassRenderer.setShadow(shadows);
 			lPassRenderer.setSoftShadow(softShadows);
+			lPassRenderer.setCamera(camera);
 			lPassRenderer.render(lPassObject, postProcessingBuffer1);
 			
 			copyDepthBuffer(gPassRenderer.getPassBuffer());
 			entityRenderer.render(semiTransparent, postProcessingBuffer1);
 
+			lightRenderer.setCamera(camera);
 			lightRenderer.render(lights, postProcessingBuffer1);
 
 			if (renderNormals) {
+				normalRenderer.setCamera(camera);
 				normalRenderer.render(entitys);
 			}
 
 			if (glRoom.hasBackground() && skyBox.isGLBound()) {
 				if (glRoom.useSkybox()) {
 					skyboxRenderer.setBlend(glRoom.getBlend());
+					skyboxRenderer.setCamera(camera);
 					skyboxRenderer.render(skyBox, postProcessingBuffer1);
 				} else {
 					backgroundRenderer.setBlend(glRoom.getBlend());
@@ -416,7 +428,7 @@ public class GLRoomHandler extends RoomHandler {
 		lPassRenderer.setDirectionalLight(glRoom.getDirLight(), entityMap.get(glRoom.getDirLight()));
 	}
 	
-	private void sortTransparent(List<GLObject> transparent) {
+	private void sortTransparent(List<GLObject> transparent, GLCamera camera) {
 		Collections.sort(transparent, (GLObject ob1, GLObject ob2) -> {
 			Vector4f vec1 = ob1.getVertices().get(0).xyzwVector().mul(ob1.getModelMatrix());
 			Vector4f vec2 = ob2.getVertices().get(0).xyzwVector().mul(ob2.getModelMatrix());
@@ -438,7 +450,7 @@ public class GLRoomHandler extends RoomHandler {
 		});
 	}
 
-	private void sortOpaque(List<GLObject> opaque) {
+	private void sortOpaque(List<GLObject> opaque, GLCamera camera) {
 		Collections.sort(opaque, (GLObject ob1, GLObject ob2) -> {
 			Vector4f vec1 = ob1.getVertices().get(0).xyzwVector().mul(ob1.getModelMatrix());
 			Vector4f vec2 = ob2.getVertices().get(0).xyzwVector().mul(ob2.getModelMatrix());
@@ -458,16 +470,5 @@ public class GLRoomHandler extends RoomHandler {
 
 			return result;
 		});
-	}
-
-	public void setCamera(GLCamera camera) {
-		normalRenderer.setCamera(camera);
-		entityRenderer.setCamera(camera);
-		lightRenderer.setCamera(camera);
-		skyboxRenderer.setCamera(camera);
-		gPassRenderer.setCamera(camera);
-		lPassRenderer.setCamera(camera);
-		//ssaoRenderer.setCamera(camera);
-		this.camera = camera;
 	}
 }

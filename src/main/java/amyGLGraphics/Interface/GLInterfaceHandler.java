@@ -40,6 +40,7 @@ public class GLInterfaceHandler extends InterfaceHandler {
 				objects.add(glcomponent);
 
 				if (component instanceof Label) {
+					text.get(component).update();
 					textobjects.add(text.get(component));
 				}
 			}

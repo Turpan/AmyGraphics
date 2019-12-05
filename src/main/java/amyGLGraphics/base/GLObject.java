@@ -79,6 +79,17 @@ public abstract class GLObject {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		return indicesBufferID;
 	}
+	
+	public void updateOrderBuffer() {
+		setDrawOrder();
+		IntBuffer buffer = BufferUtils.createIntBuffer(draworder.length);
+		buffer.put(draworder);
+		buffer.flip();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectIndicesBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+	
 	public void updateBuffer() {
 		FloatBuffer buffer = createVertexBuffer();
 		glBindVertexArray(objectID);
@@ -86,6 +97,13 @@ public abstract class GLObject {
 		glBufferSubData(GL_ARRAY_BUFFER, 0, buffer);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
+	}
+	
+	public void replaceBuffer() {
+		FloatBuffer buffer = createVertexBuffer();
+		glBindBuffer(GL_ARRAY_BUFFER, objectBufferID);
+		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STREAM_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
 	public abstract void update();

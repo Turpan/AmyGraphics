@@ -97,12 +97,8 @@ public class Label extends Component {
 		return alignment;
 	}
 
-	public List<Component> getLetters() {
-		List<Component> letters = new ArrayList<Component>();
-
-		letters.addAll(this.letters);
-
-		return Collections.unmodifiableList(letters);
+	public Set<Component> getLetters() {
+		return Collections.unmodifiableSet(letters);
 	}
 
 	private void rebuildLetters() {
